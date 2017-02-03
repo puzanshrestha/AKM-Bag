@@ -1,12 +1,10 @@
 package com.example.pujan.bag.bagDetails;
 
 import android.content.Intent;
-import android.os.Parcelable;
 import android.support.v4.view.MenuItemCompat;
 import android.support.v4.widget.SearchViewCompat;
 import android.support.v7.app.AppCompatActivity;
 import android.os.Bundle;
-import android.support.v7.widget.GridLayoutManager;
 import android.support.v7.widget.LinearLayoutManager;
 import android.support.v7.widget.RecyclerView;
 import android.text.InputType;
@@ -15,13 +13,12 @@ import android.view.MenuInflater;
 import android.view.MenuItem;
 import android.view.View;
 import android.widget.SearchView;
-import android.widget.Switch;
 import android.widget.Toast;
 
-import com.example.pujan.bag.CustomRecyclerView;
+
 import com.example.pujan.bag.FunctionsThread;
 import com.example.pujan.bag.R;
-import com.example.pujan.bag.customerDetails.CustomerViewAdapter;
+
 import com.example.pujan.bag.orderDetails.OrderDisplayActivity;
 
 import org.json.JSONArray;
@@ -33,7 +30,7 @@ import java.util.concurrent.ExecutionException;
 
 public class BagListActivity extends AppCompatActivity implements BagViewAdapter.ItemClickCallback,SearchView.OnQueryTextListener{
 
-    CustomRecyclerView recView;
+    RecyclerView recView;
     BagViewAdapter bagViewAdapter;
     String customer_id;
     String source;
@@ -114,18 +111,19 @@ public class BagListActivity extends AppCompatActivity implements BagViewAdapter
             actionBar.setDisplayShowHomeEnabled(true);
         }
 
-        recView = (CustomRecyclerView)findViewById(R.id.recView);
+        recView = (RecyclerView)findViewById(R.id.recView);
 
         recView.setHasFixedSize(true);
         recView.setItemViewCacheSize(10);
         recView.setDrawingCacheEnabled(true);
         recView.setDrawingCacheQuality(View.DRAWING_CACHE_QUALITY_HIGH);
 
-        //RecyclerView.LayoutManager lm = new LinearLayoutManager(this, LinearLayoutManager.VERTICAL,false);
+        RecyclerView.LayoutManager lm = new LinearLayoutManager(this, LinearLayoutManager.VERTICAL,false);
 
 
-        int duration = 2000;
-        recView.setLayoutManager(new ScrollingLinearLayoutManager(this, LinearLayoutManager.VERTICAL, false, duration));
+
+        recView.setLayoutManager(lm);
+        //recView.setLayoutManager(new ScrollingLinearLayoutManager(this, LinearLayoutManager.VERTICAL, false, duration));
 
 
 

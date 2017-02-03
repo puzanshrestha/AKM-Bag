@@ -6,8 +6,8 @@
     android:background="@drawable/gradient_main"
     tools:context=".bagDetails.ViewBagActivity">
 
-  <com.example.pujan.bag.CustomRecyclerView
+  <android.support.v7.widget.RecyclerView
       android:layout_width="wrap_content"
       android:layout_height="wrap_content"
-      android:id="@+id/recView"></com.example.pujan.bag.CustomRecyclerView>
+      android:id="@+id/recView"></android.support.v7.widget.RecyclerView>
 </RelativeLayout>

@@ -32,7 +32,7 @@
         <activity android:name=".bagDetails.BagDetailsActivity" />
         <activity android:name=".customerDetails.CustomerDetailsActivity" />
         <activity android:name=".vendorDetails.VendorDetailsActivity" />
-        <activity android:name=".OrderDetailsActivity" />
+        <activity android:name=".orderDetails.OrderDetailsActivity" />
         <activity android:name=".bagDetails.AddBagActivity" />
         <activity android:name=".bagDetails.ViewBagActivity" />
         <activity android:name=".customerDetails.AddCustomerActivity" />

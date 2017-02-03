@@ -118,7 +118,6 @@ public class BagViewAdapter extends RecyclerView.Adapter<BagViewAdapter.TestHold
         try{
 
 
-
             Picasso
                     .with(context)
                     .load("http://" + ip + "/bagWebServices/uploads/" + item.getPhoto())
@@ -127,8 +126,6 @@ public class BagViewAdapter extends RecyclerView.Adapter<BagViewAdapter.TestHold
                     .resize(300, 300)
                     .placeholder(R.drawable.bag)
                     .into(holder.photoBox);
-
-
 
 
         }
@@ -329,8 +326,7 @@ public class BagViewAdapter extends RecyclerView.Adapter<BagViewAdapter.TestHold
                     bag_id[getAdapterPosition()]=listData.get(getAdapterPosition()).getId();
                     if(bag.equals("bag"))
                     {
-                      bagUp.setText("Edit");
-                      bagDown.setText("Delete");
+
                         id_bag=getAdapterPosition();
                       bagDown.setVisibility(View.VISIBLE);
                       bagUp.setVisibility(View.VISIBLE);
@@ -338,6 +334,8 @@ public class BagViewAdapter extends RecyclerView.Adapter<BagViewAdapter.TestHold
                     }
                     else
                     {
+                        bagUp.setText("Up");
+                        bagDown.setText("Down");
                         bagQtyTxt.setVisibility(View.VISIBLE);
                         bagDown.setVisibility(View.VISIBLE);
                         bagUp.setVisibility(View.VISIBLE);
@@ -349,13 +347,14 @@ public class BagViewAdapter extends RecyclerView.Adapter<BagViewAdapter.TestHold
                     bag_id[getAdapterPosition()]=0;
                     if(bag.equals("bag"))
                     {
-                        bagUp.setText("Edit");
-                        bagDown.setText("Delete");
+
                         bagDown.setVisibility(View.INVISIBLE);
                         bagUp.setVisibility(View.INVISIBLE);
                     }
                     else
                     {
+                        bagUp.setText("Up");
+                        bagDown.setText("Down");
                         bagQtyTxt.setVisibility(View.INVISIBLE);
                         bagDown.setVisibility(View.INVISIBLE);
                         bagUp.setVisibility(View.INVISIBLE);
