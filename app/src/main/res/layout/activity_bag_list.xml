@@ -1,0 +1,109 @@
+<?xml version="1.0" encoding="utf-8"?>
+<LinearLayout xmlns:android="http://schemas.android.com/apk/res/android"
+    android:orientation="vertical"
+    android:layout_width="match_parent"
+    android:layout_height="match_parent"
+
+    android:background="@drawable/gradient_main"
+    android:id="@+id/cont_root_item">
+
+    <LinearLayout
+        android:layout_width="match_parent"
+        android:layout_height="100dp"
+        android:background="@drawable/second_background"
+        android:orientation="horizontal"
+        android:gravity="center">
+
+
+        <LinearLayout
+            android:layout_width="0dp"
+            android:layout_height="wrap_content"
+            android:layout_weight="0.5">
+            <ImageView
+
+                android:layout_width="wrap_content"
+                android:layout_height="wrap_content"
+                android:id="@+id/photo_box"
+                android:padding="5dp"
+                />
+
+        </LinearLayout>
+
+        <LinearLayout
+            android:layout_width="0dp"
+            android:layout_height="wrap_content"
+            android:orientation="vertical"
+            android:layout_weight="1"
+
+            >
+            <TextView
+                android:layout_width="wrap_content"
+                android:layout_height="wrap_content"
+                android:id="@+id/lbl_bag_id"
+                android:text="id"/>
+            <TextView
+                android:layout_width="wrap_content"
+                android:layout_height="wrap_content"
+                android:id="@+id/lbl_bag_name"
+                android:text="name"/>
+            <TextView
+                android:layout_width="wrap_content"
+                android:layout_height="wrap_content"
+                android:id="@+id/lbl_bag_category"
+                android:text="category"/>
+            <TextView
+                android:layout_width="wrap_content"
+                android:layout_height="wrap_content"
+                android:id="@+id/lbl_bag_price"
+                android:text="company"/>
+            <TextView
+                android:layout_width="wrap_content"
+                android:layout_height="wrap_content"
+                android:id="@+id/lbl_bag_company"/>
+        </LinearLayout>
+
+
+
+        <CheckBox
+            android:layout_width="53dp"
+            android:layout_height="wrap_content"
+            android:id="@+id/bag_checkbox"/>
+
+        <LinearLayout
+            android:layout_width="0dp"
+            android:layout_height="wrap_content"
+            android:orientation="vertical"
+            android:layout_weight="0.5">
+
+
+            <Button
+                android:layout_width="80dp"
+                android:layout_height="40dp"
+                android:text="Up"
+                android:id="@+id/bag_btn_up"/>
+            <TextView
+                android:layout_marginLeft="5dp"
+                android:layout_width="70dp"
+                android:layout_height="20dp"
+                android:background="@color/colorPrimary"
+                android:id="@+id/bag_qty_txt"/>
+
+            <Button
+                android:layout_width="80dp"
+                android:layout_height="40dp"
+                android:text="Down"
+                android:id="@+id/bag_btn_down"/>
+
+        </LinearLayout>
+
+
+    </LinearLayout>
+
+
+
+    <View
+        android:layout_width="match_parent"
+        android:layout_height="20dp"
+        />
+
+</LinearLayout>

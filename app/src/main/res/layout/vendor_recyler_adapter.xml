@@ -1,0 +1,110 @@
+<?xml version="1.0" encoding="utf-8"?>
+<LinearLayout xmlns:android="http://schemas.android.com/apk/res/android"
+    android:orientation="vertical"
+    android:layout_width="match_parent"
+    android:layout_height="match_parent"
+    android:background="@drawable/gradient_main"
+    android:id="@+id/cont_ven_item">
+
+    <LinearLayout
+        android:layout_width="match_parent"
+        android:layout_height="100dp"
+        android:background="@color/cardview_shadow_end_color"
+        android:orientation="horizontal"
+        android:gravity="center">
+
+
+        <LinearLayout
+            android:layout_width="0dp"
+            android:layout_height="wrap_content"
+            android:layout_weight="0.5"
+            android:orientation="vertical">
+            <ImageView
+                android:layout_marginLeft="10dp"
+                android:layout_width="wrap_content"
+                android:layout_height="wrap_content"
+                android:src="@android:drawable/sym_def_app_icon"
+                android:id="@+id/imageView"
+                />
+
+
+        </LinearLayout>
+
+        <LinearLayout
+            android:layout_width="0dp"
+            android:layout_height="wrap_content"
+            android:orientation="vertical"
+            android:layout_weight="1"
+
+            >
+            <TextView
+                android:layout_width="wrap_content"
+                android:layout_height="wrap_content"
+                android:id="@+id/lbl_ven_id"
+                android:text="id"/>
+            <TextView
+                android:layout_width="wrap_content"
+                android:layout_height="wrap_content"
+                android:id="@+id/lbl_ven_name"
+                android:text="name"/>
+            <TextView
+                android:layout_width="wrap_content"
+                android:layout_height="wrap_content"
+                android:id="@+id/lbl_ven_address"
+                android:text="address"/>
+
+            <TextView
+                android:ems="20"
+                android:layout_width="wrap_content"
+                android:layout_height="wrap_content"
+                android:id="@+id/lbl_ven_phone"
+                android:drawableLeft="@drawable/call"
+                android:drawablePadding="5dp"
+                android:gravity="center_vertical"
+                android:text="phone"/>
+
+            <TextView
+                android:layout_width="wrap_content"
+                android:layout_height="wrap_content"
+                android:id="@+id/lbl_bag_company"/>
+        </LinearLayout>
+
+
+
+        <CheckBox
+            android:layout_width="53dp"
+            android:layout_height="wrap_content"
+            android:id="@+id/ven_checkbox"/>
+
+        <LinearLayout
+            android:layout_width="0dp"
+            android:layout_height="wrap_content"
+            android:orientation="vertical"
+            android:layout_weight="0.5">
+
+
+            <Button
+                android:layout_width="80dp"
+                android:layout_height="40dp"
+                android:text="edit"
+                android:id="@+id/cust_ven_edit"/>
+
+
+            <Button
+                android:layout_width="80dp"
+                android:layout_height="40dp"
+                android:text="Delete"
+                android:id="@+id/cust_ven_delete"/>
+
+        </LinearLayout>
+
+
+    </LinearLayout>
+
+
+
+    <ImageView
+        android:layout_width="match_parent"
+        android:layout_height="20dp" />
+
+</LinearLayout>
