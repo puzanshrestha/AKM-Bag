@@ -261,7 +261,47 @@ public class FunctionsThread extends AsyncTask<String,Void,String> {
                 return "Error Adding Customer Details";
             }
         }
+        else if(method.equals("AddRelation"))
+        {
 
+            String vendor_id = params[1];
+            String bag_name = params[2];
+            System.out.println(bag_name);
+            System.out.println(vendor_id);
+
+            try{
+                URL url = new URL(ip+"addRelation.php");
+                HttpURLConnection conn = (HttpURLConnection) url.openConnection();
+                conn.setConnectTimeout(3000);
+                conn.setRequestMethod("POST");
+                conn.setDoInput(true);
+                conn.setDoOutput(true);
+                OutputStream os = conn.getOutputStream();
+                BufferedWriter bufferedWriter = new BufferedWriter(new OutputStreamWriter(os,"UTF-8"));
+                String data = URLEncoder.encode("vendor_id","UTF-8")+"="+URLEncoder.encode(vendor_id,"UTF-8")+"&"+
+                        URLEncoder.encode("bag_name","UTF-8")+"="+URLEncoder.encode(bag_name,"UTF-8");
+                bufferedWriter.write(data);
+                bufferedWriter.flush();
+                bufferedWriter.close();
+
+                InputStream is = conn.getInputStream();
+                BufferedReader bufferedReader = new BufferedReader(new InputStreamReader(is,"ISO-8859-1"));
+                StringBuilder sb = new StringBuilder();
+                String line;
+                while((line=bufferedReader.readLine())!=null)
+                {
+                    sb.append(line);
+                }
+
+                is.close();
+                bufferedReader.close();
+                conn.disconnect();
+                return sb.toString().trim();
+            }
+            catch(Exception e){
+                return "Error Inserting relation";
+            }
+        }
 
 
 
