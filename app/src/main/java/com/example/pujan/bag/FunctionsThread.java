@@ -144,7 +144,7 @@ public class FunctionsThread extends AsyncTask<String,Void,String> {
 
         else if(method.equals("AddBag"))
         {
-            String name,type,price,company,source,bid,ext;
+            String name,type,price,company,source,bid,ext,quantity;
             name=params[1];
             type=params[2];
             price=params[3];
@@ -152,14 +152,12 @@ public class FunctionsThread extends AsyncTask<String,Void,String> {
             source=params[5];
             bid=params[6];
             ext=params[7];
+            quantity=params[8];
 
 
 
 
             try{
-
-
-
                 URL url = new URL(ip+"addBag.php");
                 HttpURLConnection con = (HttpURLConnection) url.openConnection();
                 con.setConnectTimeout(3000);
@@ -176,7 +174,8 @@ public class FunctionsThread extends AsyncTask<String,Void,String> {
                         URLEncoder.encode("bag_company","UTF-8")+"="+URLEncoder.encode(company,"UTF-8")+"&"+
                         URLEncoder.encode("source","UTF-8")+"="+URLEncoder.encode(source,"UTF-8")+"&"+
                         URLEncoder.encode("bid","UTF-8")+"="+URLEncoder.encode(bid,"UTF-8")+"&"+
-                        URLEncoder.encode("ext","UTF-8")+"="+URLEncoder.encode(ext,"UTF-8");
+                        URLEncoder.encode("ext","UTF-8")+"="+URLEncoder.encode(ext,"UTF-8")+"&"+
+                        URLEncoder.encode("quantity","UTF-8")+"="+URLEncoder.encode(quantity,"UTF-8");
 
 
 

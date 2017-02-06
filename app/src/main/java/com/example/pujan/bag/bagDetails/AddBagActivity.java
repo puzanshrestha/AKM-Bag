@@ -6,6 +6,7 @@ import android.net.Uri;
 import android.provider.MediaStore;
 import android.support.v7.app.AppCompatActivity;
 import android.os.Bundle;
+import android.view.KeyEvent;
 import android.view.View;
 import android.widget.Button;
 import android.widget.EditText;
@@ -23,16 +24,27 @@ import java.util.concurrent.ExecutionException;
 
 public class AddBagActivity extends AppCompatActivity {
 
-    EditText nameEditText, typeEditText, priceEditText, companyEditText;
+    EditText nameEditText, typeEditText, priceEditText, companyEditText, quantityEditText;
     Button addBagBtn;
     String source;
-    String bid;
-    String bagName, bagCategory, bagPrice, bagCompany;
+    String bid,vendor_id;
+    String bagName, bagCategory, bagPrice, bagCompany,bagQuantity;
 
     int selectedPic;
     String mediaSelect="";
     String ext="";
     ImageView bagPhoto;
+
+    @Override
+    public boolean onKeyDown(int keyCode, KeyEvent event)
+    {
+        if(keyCode == KeyEvent.KEYCODE_BACK)
+        {
+            Intent i= new Intent(getBaseContext(),BagDetailsActivity.class);
+            startActivity(i);
+        }
+        return false;
+    }
 
     @Override
     protected void onCreate(Bundle savedInstanceState) {
@@ -47,13 +59,14 @@ public class AddBagActivity extends AppCompatActivity {
         source=getIntent().getStringExtra("source");
 
         bid=getIntent().getStringExtra("bagid");
-
+        vendor_id=getIntent().getStringExtra("ven_id");
         addBagBtn = (Button) findViewById(R.id.addBagBtn);
 
         nameEditText = (EditText) findViewById(R.id.nameEditText);
         typeEditText = (EditText) findViewById(R.id.typeEditText);
         priceEditText = (EditText) findViewById(R.id.priceEditText);
         companyEditText = (EditText) findViewById(R.id.companyEditText);
+        quantityEditText=(EditText) findViewById(R.id.quantityEditText);
         bagPhoto =(ImageView)findViewById(R.id.bag_photo);
 
         if (source.equals("source")) {
@@ -67,6 +80,7 @@ public class AddBagActivity extends AppCompatActivity {
             typeEditText.setText(getIntent().getStringExtra("category"));
             priceEditText.setText(getIntent().getStringExtra("price"));
             companyEditText.setText(getIntent().getStringExtra("company"));
+            quantityEditText.setText(getIntent().getStringExtra("quantity"));
             String photoUri = getIntent().getStringExtra("photo");
             addBagBtn.setText("Update");
             Picasso.Builder builder = new Picasso.Builder(this);
@@ -106,49 +120,47 @@ public class AddBagActivity extends AppCompatActivity {
             public void onClick(View v) {
 
 
-
                 bagName = nameEditText.getText().toString();
                 bagCategory = typeEditText.getText().toString();
                 bagPrice = priceEditText.getText().toString();
                 bagCompany = companyEditText.getText().toString();
 
-                if (bagName.isEmpty() || bagCategory.isEmpty() || bagPrice.isEmpty() || bagCompany.isEmpty()) {
+                if (bagName.isEmpty() || bagCategory.isEmpty() || bagPrice.isEmpty() || bagCompany.isEmpty()||bagQuantity.isEmpty()) {
                     Toast.makeText(getBaseContext(), "Some of the Fields are empty", Toast.LENGTH_SHORT);
                 } else {
                     try {
 
-                        String check = new FunctionsThread(getBaseContext()).execute("AddBag", bagName, bagCategory, bagPrice, bagCompany,source,bid,ext).get();
+                        String check = new FunctionsThread().execute("AddBag", bagName, bagCategory, bagPrice, bagCompany, source, bid, ext,bagQuantity).get();
 
-
+                        String doublecheck = new FunctionsThread().execute("AddRelation", vendor_id, bagName).get();
                         System.out.println(check);
+                        System.out.println(doublecheck);
 
                         if (check.equals("Inserted")) {
                             Toast.makeText(getBaseContext(), "Inserted new bag Item", Toast.LENGTH_SHORT).show();
                             Intent i = new Intent(getBaseContext(), BagListActivity.class);
-                            i.putExtra("source","bag");
+                            i.putExtra("source", "bag");
                             startActivity(i);
-                            new FunctionsThread(getBaseContext()).execute("UploadFile",mediaSelect,bid,"b").get();
-                        }
-                        else if(check.equals("Update"))
-                        {
+                            new FunctionsThread().execute("UploadFile", mediaSelect, bid, "b").get();
+                            if (doublecheck.equals("Updated")) {
+                                Toast.makeText(getBaseContext(), "Inserted relation", Toast.LENGTH_LONG).show();
+                            }
+                        } else if (check.equals("Update")) {
                             Toast.makeText(getBaseContext(), "Bag has been Updated", Toast.LENGTH_SHORT).show();
                             Intent i = new Intent(getBaseContext(), BagListActivity.class);
-                            i.putExtra("source","bag");
+                            i.putExtra("source", "bag");
                             startActivity(i);
-                            new FunctionsThread(getBaseContext()).execute("UploadFile",mediaSelect,bid,"b").get();
-                        }
-                        else
+                            new FunctionsThread().execute("UploadFile", mediaSelect, bid, "b").get();
+                        } else
                             Toast.makeText(getBaseContext(), check, Toast.LENGTH_SHORT).show();
                     } catch (InterruptedException e) {
                         e.printStackTrace();
                     } catch (ExecutionException e) {
                         e.printStackTrace();
                     }
-
-
                 }
             }
-        });
+            });
 
 
     }

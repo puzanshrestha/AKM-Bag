@@ -83,6 +83,26 @@
             android:inputType="numberDecimal"
             />
     </LinearLayout>
+    <LinearLayout
+        android:layout_width="match_parent"
+        android:layout_height="wrap_content"
+        android:orientation="horizontal"
+        android:layout_gravity="center_horizontal"
+        >
+
+        <TextView
+            android:layout_width="80dp"
+            android:layout_height="wrap_content"
+            android:text="Quantity:"/>
+        <EditText
+            android:inputType="text"
+            android:layout_width="match_parent"
+            android:layout_height="wrap_content"
+            android:id="@+id/quantityEditText"
+            />
+
+
+    </LinearLayout>
 
     <LinearLayout
         android:layout_width="match_parent"

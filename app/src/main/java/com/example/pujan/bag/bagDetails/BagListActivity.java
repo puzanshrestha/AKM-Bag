@@ -145,6 +145,7 @@ public class BagListActivity extends AppCompatActivity implements BagViewAdapter
                 bagEntity.setCategory(jObject.getString("bag_category"));
                 bagEntity.setPrice(Integer.valueOf(jObject.getString("bag_price")));
                 bagEntity.setCompany(jObject.getString("bag_company"));
+                bagEntity.setQuantity(Integer.valueOf(jObject.getString("bag_quantity")));
                 bagEntity.setPhoto(jObject.getString("bag_photo"));
 
                 bagData.add(bagEntity);

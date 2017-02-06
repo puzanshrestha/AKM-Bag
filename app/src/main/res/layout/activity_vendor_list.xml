@@ -12,5 +12,18 @@
         android:layout_width="wrap_content"
         android:layout_height="wrap_content"
         android:id="@+id/recView"></android.support.v7.widget.RecyclerView>
-
+    <android.support.design.widget.FloatingActionButton
+        xmlns:app="http://schemas.android.com/apk/res-auto"
+        android:layout_width="wrap_content"
+        android:layout_height="wrap_content"
+        android:layout_gravity="bottom|right"
+        android:src="@android:drawable/ic_input_add"
+        android:id="@+id/ven_float"
+        app:backgroundTint="@android:color/white"
+        android:elevation="12dp"
+        android:layout_marginLeft="16dp"
+        android:layout_marginRight="16dp"
+        android:layout_alignParentBottom="true"
+        android:layout_marginBottom="40dp"
+        android:layout_alignParentEnd="true" />
 </RelativeLayout>

@@ -181,6 +181,7 @@ public class BagViewAdapter extends RecyclerView.Adapter<BagViewAdapter.TestHold
         private TextView name;
         private TextView price;
         private TextView category;
+        private TextView quantity;
         private TextView company;
         private Button bagUp,bagDown;
         TextView bagQtyTxt;
@@ -199,6 +200,7 @@ public class BagViewAdapter extends RecyclerView.Adapter<BagViewAdapter.TestHold
             price = (TextView)itemView.findViewById(R.id.lbl_bag_price);
             category = (TextView)itemView.findViewById(R.id.lbl_bag_category);
             company = (TextView)itemView.findViewById(R.id.lbl_bag_company);
+            quantity=(TextView)itemView.findViewById(R.id.lbl_bag_quantity);
             container = itemView.findViewById(R.id.cont_root_item);
             photoBox =(ImageView) itemView.findViewById(R.id.photo_box);
             bagUp = (Button) itemView.findViewById(R.id.bag_btn_up);
@@ -222,11 +224,13 @@ public class BagViewAdapter extends RecyclerView.Adapter<BagViewAdapter.TestHold
                         String name=item.getName();
                         String company=item.getCompany();
                         String price=Integer.toString(item.getPrice());
+                        String quantity=Integer.toString(item.getQuantity());
                         i.putExtra("bagid",bagid);
                         i.putExtra("name",name);
                         i.putExtra("category",category);
                         i.putExtra("price",price);
                         i.putExtra("company",company);
+                        i.putExtra("bagquantity",quantity);
                         i.putExtra("source","source");
                         i.putExtra("photo",item.getPhoto());
                         context.startActivity(i);
@@ -260,7 +264,7 @@ public class BagViewAdapter extends RecyclerView.Adapter<BagViewAdapter.TestHold
                                         final String check;
                                         try {
                                             System.out.println("------------"+bagid+"  "+a);
-                                            check = new FunctionsThread(context).execute("AddBag", a, a, a, a,"delete", bagid,a).get();
+                                            check = new FunctionsThread(context).execute("AddBag", a, a, a, a,"delete", bagid,a,a).get();
                                             System.out.println(check);
                                             if (check.equals("delete")){
                                                 Intent i= new Intent(context,BagListActivity.class);

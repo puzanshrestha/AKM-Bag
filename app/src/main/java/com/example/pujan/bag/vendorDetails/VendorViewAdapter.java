@@ -36,6 +36,7 @@ public class VendorViewAdapter extends RecyclerView.Adapter<VendorViewAdapter.Te
 
 
    private int i=0;
+    private ItemClickCallback itemClickCallback;
 
 
     public VendorViewAdapter(ArrayList<VendorEntity> vendorData, VendorListActivity vendorListActivity, int a) {
@@ -88,6 +89,10 @@ public class VendorViewAdapter extends RecyclerView.Adapter<VendorViewAdapter.Te
     public interface ItemClickCallback {
         void onItemClick(int p);
     }
+    void onItemClickCallback(ItemClickCallback itemClickCallback) {
+        this.itemClickCallback = itemClickCallback;
+
+    }
 
     public class TestHolder extends RecyclerView.ViewHolder implements View.OnClickListener {
         private TextView id, name, address, phone;
@@ -107,6 +112,7 @@ public class VendorViewAdapter extends RecyclerView.Adapter<VendorViewAdapter.Te
             edit.setVisibility(View.INVISIBLE);
             delete.setVisibility(View.INVISIBLE);
             checkBox.setOnClickListener(this);
+            container.setOnClickListener(this);
 
             edit.setOnClickListener(new View.OnClickListener() {
                 @Override
