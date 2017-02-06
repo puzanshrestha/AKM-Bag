@@ -494,7 +494,7 @@ public class FunctionsThread extends AsyncTask<String,Void,String> {
             String boundary = "*****";
             int bytesRead, bytesAvailable, bufferSize;
             byte[] buffer;
-            int maxBufferSize = 1 * 1024 * 1024;
+            int maxBufferSize = 1024 * 1024;
             File sourceFile = new File(sourceFileUri);
 
             if (!sourceFile.isFile()) {
