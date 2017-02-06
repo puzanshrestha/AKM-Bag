@@ -10,6 +10,7 @@ import android.widget.LinearLayout;
 
 import com.example.pujan.bag.ActionListActivity;
 import com.example.pujan.bag.R;
+import com.example.pujan.bag.vendorDetails.VendorListActivity;
 
 public class BagDetailsActivity extends AppCompatActivity {
 
@@ -39,7 +40,7 @@ public class BagDetailsActivity extends AppCompatActivity {
         addBagBtn.setOnClickListener(new View.OnClickListener() {
             @Override
             public void onClick(View v) {
-                Intent i = new Intent(getBaseContext(),AddBagActivity.class);
+                Intent i = new Intent(getBaseContext(),VendorListActivity.class);
                 i.putExtra("getway","bagdetails");
                 startActivity(i);
             }
