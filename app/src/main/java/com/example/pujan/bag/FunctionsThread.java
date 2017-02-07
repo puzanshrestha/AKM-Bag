@@ -155,15 +155,19 @@ public class FunctionsThread extends AsyncTask<String,Void,String> {
             quantity=params[8];
 
             try{
+
                 URL url = new URL(ip+"addBag.php");
+
                 HttpURLConnection con = (HttpURLConnection) url.openConnection();
+                System.out.println("Inside the try of view bag");
                 con.setConnectTimeout(3000);
                 con.setRequestMethod("POST");
                 con.setDoOutput(true);
                 con.setDoInput(true);
                 OutputStream os = con.getOutputStream();
-                BufferedWriter bufferedWriter = new BufferedWriter(new OutputStreamWriter(os,"UTF-8"));
 
+
+                BufferedWriter bufferedWriter = new BufferedWriter(new OutputStreamWriter(os,"UTF-8"));
 
                 String data = URLEncoder.encode("bag_name","UTF-8")+"="+URLEncoder.encode(name,"UTF-8")+"&"+
                         URLEncoder.encode("bag_category","UTF-8")+"="+URLEncoder.encode(type,"UTF-8")+"&"+
@@ -172,7 +176,7 @@ public class FunctionsThread extends AsyncTask<String,Void,String> {
                         URLEncoder.encode("source","UTF-8")+"="+URLEncoder.encode(source,"UTF-8")+"&"+
                         URLEncoder.encode("bid","UTF-8")+"="+URLEncoder.encode(bid,"UTF-8")+"&"+
                         URLEncoder.encode("ext","UTF-8")+"="+URLEncoder.encode(ext,"UTF-8")+"&"+
-                        URLEncoder.encode("quantity","UTF-8")+"="+URLEncoder.encode(quantity,"UTF-8");
+                        URLEncoder.encode("bag_quantity","UTF-8")+"="+URLEncoder.encode(quantity,"UTF-8");
 
 
 
@@ -183,23 +187,20 @@ public class FunctionsThread extends AsyncTask<String,Void,String> {
                 InputStream is = con.getInputStream();
                 BufferedReader bufferedReader = new BufferedReader(new InputStreamReader(is,"iso-8859-1"));
                 StringBuilder sb = new StringBuilder();
-                String line = new String();
+                String line;
 
                 while((line=bufferedReader.readLine())!=null)
                 {
                     sb.append(line);
                 }
-
                 bufferedReader.close();
                 is.close();
                 con.disconnect();
-                System.out.println(sb.toString().trim());
                 return sb.toString().trim();
             }
-            catch (Exception e){
-
+            catch (Exception e)
+            {
                 return "Error Adding bag Details";
-
             }
 
         }
@@ -236,7 +237,7 @@ public class FunctionsThread extends AsyncTask<String,Void,String> {
                 bufferedWriter.write(data);
                 bufferedWriter.flush();
                 bufferedWriter.close();
-                System.out.println("breakpoint.............//////////");
+
 
                 InputStream is = conn.getInputStream();
                 BufferedReader bufferedReader = new BufferedReader(new InputStreamReader(is,"ISO-8859-1"));

@@ -128,8 +128,7 @@ public class AddBagActivity extends AppCompatActivity {
                         String check = new FunctionsThread().execute("AddBag", bagName, bagCategory, bagPrice, bagCompany, source, bid, ext,bagQuantity).get();
 
                         String doublecheck = new FunctionsThread().execute("AddRelation", vendor_id, bagName).get();
-                        System.out.println(check);
-                        System.out.println(doublecheck);
+
 
                         if (check.equals("Inserted")) {
                             Toast.makeText(getBaseContext(), "Inserted new bag Item", Toast.LENGTH_SHORT).show();
