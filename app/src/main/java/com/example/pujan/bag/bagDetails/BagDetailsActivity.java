@@ -51,7 +51,6 @@ public class BagDetailsActivity extends AppCompatActivity {
             public void onClick(View v) {
                 Intent i = new Intent(getBaseContext(),BagListActivity.class);
                 i.putExtra("source","bag");
-
                 startActivity(i);
             }
         });

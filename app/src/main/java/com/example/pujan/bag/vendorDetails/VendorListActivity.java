@@ -28,7 +28,7 @@ public  class VendorListActivity extends AppCompatActivity implements VendorView
     ArrayList<VendorEntity> vendorData;
     int a = 0;
     String getway;
-    FloatingActionButton floatingActionButton;
+
 
     public boolean onKeyDown(int keyCode, KeyEvent event) {
         if (keyCode == KeyEvent.KEYCODE_BACK) {
@@ -45,15 +45,7 @@ public  class VendorListActivity extends AppCompatActivity implements VendorView
         setContentView(R.layout.activity_vendor_list);
         vendorData = new ArrayList<>();
         getway = getIntent().getStringExtra("getway");
-        floatingActionButton = (FloatingActionButton) findViewById(R.id.ven_float);
-        floatingActionButton.setOnClickListener(new View.OnClickListener() {
-            @Override
-            public void onClick(View v) {
-                Intent i = new Intent(getBaseContext(), AddVendorActivity.class);
-                i.putExtra("source", "float_vendor");
-                startActivity(i);
-            }
-        });
+
         try {
             String response = new FunctionsThread(this).execute("ViewVendor").get();
             JSONObject object = new JSONObject(response);
@@ -75,7 +67,7 @@ public  class VendorListActivity extends AppCompatActivity implements VendorView
         }
         recyclerView = (RecyclerView) findViewById(R.id.recView);
         recyclerView.setLayoutManager(new LinearLayoutManager(this, LinearLayoutManager.VERTICAL, false));
-        viewAdapter = new VendorViewAdapter(vendorData, this, a);
+        viewAdapter = new VendorViewAdapter(vendorData, this,getway, a);
         recyclerView.setAdapter(viewAdapter);
         viewAdapter.notifyDataSetChanged();
         viewAdapter.onItemClickCallback(this);
@@ -84,8 +76,9 @@ public  class VendorListActivity extends AppCompatActivity implements VendorView
 
     @Override
     public void onItemClick(int p) {
-        System.out.println(p);
-        if (getway.equals("bagdetails")) {
+           if (getway.equals("bagdetails"))
+           {
+               System.out.println("Vendor Selected");
             VendorEntity vendorEntity;
             vendorEntity = vendorData.get(p);
             int ven_id = vendorEntity.getId();
@@ -93,10 +86,8 @@ public  class VendorListActivity extends AppCompatActivity implements VendorView
             Intent i = new Intent(getBaseContext(), AddBagActivity.class);
             i.putExtra("ven_id", Integer.toString(ven_id));
             i.putExtra("bagid", "1");
-            i.putExtra("source", "");
+            i.putExtra("source", "insert");
             startActivity(i);
-
-
         }
     }
 }

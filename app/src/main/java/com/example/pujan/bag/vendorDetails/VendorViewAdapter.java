@@ -32,6 +32,9 @@ public class VendorViewAdapter extends RecyclerView.Adapter<VendorViewAdapter.Te
     Context context;
     private int a;
     private int ven_id=-1;
+    String getway;
+
+
 
 
 
@@ -39,10 +42,11 @@ public class VendorViewAdapter extends RecyclerView.Adapter<VendorViewAdapter.Te
     private ItemClickCallback itemClickCallback;
 
 
-    public VendorViewAdapter(ArrayList<VendorEntity> vendorData, VendorListActivity vendorListActivity, int a) {
+    public VendorViewAdapter(ArrayList<VendorEntity> vendorData, VendorListActivity vendorListActivity, String getway,int a) {
         this.listdata=vendorData;
         this.context=vendorListActivity;
         this.inflater=LayoutInflater.from(vendorListActivity);
+        this.getway=getway;
 
 
     }
@@ -104,33 +108,39 @@ public class VendorViewAdapter extends RecyclerView.Adapter<VendorViewAdapter.Te
             id= (TextView) itemView.findViewById(R.id.lbl_ven_id);
             name= (TextView) itemView.findViewById(R.id.lbl_ven_name);
             address= (TextView) itemView.findViewById(R.id.lbl_ven_address);
-            checkBox= (CheckBox) itemView.findViewById(R.id.ven_checkbox);
+            checkBox = (CheckBox) itemView.findViewById(R.id.ven_checkbox);
             edit= (Button) itemView.findViewById(R.id.cust_ven_edit);
             delete= (Button) itemView.findViewById(R.id.cust_ven_delete);
             container=itemView.findViewById(R.id.cont_ven_item);
+            if(getway.equals("bagdetails"))
+            {
+                checkBox.setVisibility(View.INVISIBLE);
+                container.setOnClickListener(this);
+            }
+            else if(getway.equals("actionlist"))
+            {
+                edit.setVisibility(View.INVISIBLE);
+                delete.setVisibility(View.INVISIBLE);
+                checkBox.setOnClickListener(this);
+                container.setOnClickListener(this);
 
-            edit.setVisibility(View.INVISIBLE);
-            delete.setVisibility(View.INVISIBLE);
-            checkBox.setOnClickListener(this);
-            container.setOnClickListener(this);
+                edit.setOnClickListener(new View.OnClickListener() {
+                    @Override
+                    public void onClick(View v) {
 
-            edit.setOnClickListener(new View.OnClickListener() {
-                @Override
-                public void onClick(View v) {
-
-                    VendorEntity vendorEntity=new VendorEntity();
-                    vendorEntity=listdata.get(getAdapterPosition());
-                    Intent i=new Intent(context,AddVendorActivity.class);
-                    i.putExtra("source","update");
-                    i.putExtra("name",vendorEntity.getName());
-                    i.putExtra("id",Integer.toString(vendorEntity.getId()));
-                    i.putExtra("address",vendorEntity.getAddress());
-                    context.startActivity(i);
-                }
-            });
-            delete.setOnClickListener(new View.OnClickListener() {
-                @Override
-                public void onClick(View v) {
+                        VendorEntity vendorEntity;
+                        vendorEntity = listdata.get(getAdapterPosition());
+                        Intent i = new Intent(context, AddVendorActivity.class);
+                        i.putExtra("source", "update");
+                        i.putExtra("name", vendorEntity.getName());
+                        i.putExtra("id", Integer.toString(vendorEntity.getId()));
+                        i.putExtra("address", vendorEntity.getAddress());
+                        context.startActivity(i);
+                    }
+                });
+                delete.setOnClickListener(new View.OnClickListener() {
+                    @Override
+                    public void onClick(View v) {
 
 
                         final AlertDialog.Builder alertDialogBuilder = new AlertDialog.Builder(context);
@@ -139,20 +149,19 @@ public class VendorViewAdapter extends RecyclerView.Adapter<VendorViewAdapter.Te
                                 new DialogInterface.OnClickListener() {
                                     @Override
                                     public void onClick(DialogInterface arg0, int arg1) {
-                                        String a="";
-                                        int position=getAdapterPosition();
-                                        VendorEntity vendorEntity= listdata.get(position);
-                                        String id= Integer.toString(vendorEntity.getId());
+                                        String a = "";
+                                        int position = getAdapterPosition();
+                                        VendorEntity vendorEntity = listdata.get(position);
+                                        String id = Integer.toString(vendorEntity.getId());
                                         final String check;
                                         try {
-                                            check = new FunctionsThread(context).execute("AddVendor",a,a,"delete",id).get();
+                                            check = new FunctionsThread(context).execute("AddVendor", a, a, "delete", id).get();
                                             System.out.println(check);
                                             if (check.equals("Delete")) {
-                                                Intent i = new Intent(context,VendorListActivity.class);
+                                                Intent i = new Intent(context, VendorListActivity.class);
                                                 context.startActivity(i);
-                                            }
-                                            else
-                                                Toast.makeText(context,"error in delete",Toast.LENGTH_LONG).show();
+                                            } else
+                                                Toast.makeText(context, "error in delete", Toast.LENGTH_LONG).show();
                                         } catch (InterruptedException e) {
                                             e.printStackTrace();
                                         } catch (ExecutionException e) {
@@ -175,18 +184,16 @@ public class VendorViewAdapter extends RecyclerView.Adapter<VendorViewAdapter.Te
                         alertDialog.show();
 
 
-
-
-
-                }
-            });
+                    }
+                });
+            }
 
 
         }
 
         @Override
         public void onClick(View v) {
-
+            itemClickCallback.onItemClick(getAdapterPosition());
             if (v.getId()==R.id.ven_checkbox){
                 if (checkBox.isChecked()){
                     ven_id=(getAdapterPosition());

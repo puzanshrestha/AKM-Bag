@@ -111,7 +111,7 @@ public class ActionListActivity extends AppCompatActivity {
             @Override
             public void onClick(View v) {
                 Intent i = new Intent(getBaseContext(),VendorDetailsActivity.class);
-                i.putExtra("getway","actionlist");
+
                 startActivity(i);
 
             }

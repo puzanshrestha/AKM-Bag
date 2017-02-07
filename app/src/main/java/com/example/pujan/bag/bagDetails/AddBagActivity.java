@@ -70,12 +70,6 @@ public class AddBagActivity extends AppCompatActivity {
         bagPhoto =(ImageView)findViewById(R.id.bag_photo);
 
         if (source.equals("source")) {
-
-
-/*            bagName=getIntent().getStringExtra("name");
-            bagCategory=getIntent().getStringExtra("category");
-            bagPrice=getIntent().getStringExtra("price");
-            bagCompany=getIntent().getStringExtra("company");*/
             nameEditText.setText(getIntent().getStringExtra("name"));
             typeEditText.setText(getIntent().getStringExtra("category"));
             priceEditText.setText(getIntent().getStringExtra("price"));
@@ -124,8 +118,9 @@ public class AddBagActivity extends AppCompatActivity {
                 bagCategory = typeEditText.getText().toString();
                 bagPrice = priceEditText.getText().toString();
                 bagCompany = companyEditText.getText().toString();
+                bagQuantity=quantityEditText.getText().toString();
 
-                if (bagName.isEmpty() || bagCategory.isEmpty() || bagPrice.isEmpty() || bagCompany.isEmpty()||bagQuantity.isEmpty()) {
+                if (bagName.isEmpty() || bagCategory.isEmpty() || bagPrice.isEmpty() || bagCompany.isEmpty()||bagQuantity.isEmpty()||ext.equals("")) {
                     Toast.makeText(getBaseContext(), "Some of the Fields are empty", Toast.LENGTH_SHORT);
                 } else {
                     try {
@@ -177,15 +172,8 @@ public class AddBagActivity extends AppCompatActivity {
                 cursor.moveToFirst();
                 int columnIndex = cursor.getColumnIndex(projection[0]);
                 mediaSelect = cursor.getString(columnIndex);
-                System.out.println(mediaSelect);
                 bagPhoto.setImageURI(uri);
                 ext=mediaSelect.substring(mediaSelect.lastIndexOf(".") + 1, mediaSelect.length());
-                System.out.println(ext);
-
-
-
-
-
             }
 
 

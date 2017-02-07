@@ -107,11 +107,9 @@ public class CustomerListActivity extends AppCompatActivity implements CustomerV
         if (method.equals("orderView")) {
             System.out.println("this is list activity");
             Toast.makeText(this, "Item " + p + "has been clicked", Toast.LENGTH_SHORT).show();
-
             CustomerEntity customerEntity = new CustomerEntity();
             customerEntity = customerData.get(p);
             int customer_id = customerEntity.getId();
-
             Intent i = new Intent(getBaseContext(), BagListActivity.class);
             i.putExtra("customer_id", Integer.toString(customer_id));
             i.putExtra("source", "customer");

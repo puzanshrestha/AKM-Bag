@@ -42,6 +42,7 @@ public class VendorDetailsActivity extends AppCompatActivity {
             @Override
             public void onClick(View v) {
                 Intent i = new Intent(getBaseContext(),VendorListActivity.class);
+                i.putExtra("getway","actionlist");
                 startActivity(i);
 
             }

@@ -154,9 +154,6 @@ public class FunctionsThread extends AsyncTask<String,Void,String> {
             ext=params[7];
             quantity=params[8];
 
-
-
-
             try{
                 URL url = new URL(ip+"addBag.php");
                 HttpURLConnection con = (HttpURLConnection) url.openConnection();
