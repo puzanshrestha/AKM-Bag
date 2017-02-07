@@ -38,19 +38,24 @@ public class FunctionsThread extends AsyncTask<String,Void,String> {
 
     Context c;
 
+
     String ipMain;
-    DbHelper dbh ;
+
     public FunctionsThread(Context c){
         this.c = c;
         DbHelper db = new DbHelper(c);
 
-        try{ipMain = db.getIP();
+        try
+        {
+            ipMain = db.getIP();
         }catch (Exception e){}
         finally {
             db.close();
         }
 
+
     }
+
     public FunctionsThread(){
 
     }
@@ -64,7 +69,7 @@ public class FunctionsThread extends AsyncTask<String,Void,String> {
 
 
 
-        final String ip = "http://"+ipMain+"/bagWebServices/";
+        final String ip = "http://"+MainActivity.ip+"/bagWebServices/";
         String method=params[0];
 
         if(method.equals("retrieve"))
@@ -99,6 +104,7 @@ public class FunctionsThread extends AsyncTask<String,Void,String> {
 
             try{
                 URL url = new URL(ip+"login.php");
+                System.out.println(url);
                 HttpURLConnection httpURLConnection = (HttpURLConnection) url.openConnection();
                 httpURLConnection.setConnectTimeout(3000);
                 httpURLConnection.setRequestMethod("POST");
@@ -157,14 +163,15 @@ public class FunctionsThread extends AsyncTask<String,Void,String> {
             try{
 
                 URL url = new URL(ip+"addBag.php");
-
+                System.out.println(url);
                 HttpURLConnection con = (HttpURLConnection) url.openConnection();
-                System.out.println("Inside the try of view bag");
+
                 con.setConnectTimeout(3000);
                 con.setRequestMethod("POST");
                 con.setDoOutput(true);
                 con.setDoInput(true);
                 OutputStream os = con.getOutputStream();
+                System.out.println("Inside the try of view bag");
 
 
                 BufferedWriter bufferedWriter = new BufferedWriter(new OutputStreamWriter(os,"UTF-8"));
@@ -218,6 +225,7 @@ public class FunctionsThread extends AsyncTask<String,Void,String> {
                 System.out.println();
 
                 URL url = new URL(ip+"addCustomer.php");
+                System.out.println(url);
                 HttpURLConnection conn = (HttpURLConnection) url.openConnection();
                 conn.setConnectTimeout(3000);
                 conn.setRequestMethod("POST");

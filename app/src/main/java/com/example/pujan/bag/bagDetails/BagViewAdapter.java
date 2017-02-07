@@ -105,6 +105,7 @@ public class BagViewAdapter extends RecyclerView.Adapter<BagViewAdapter.TestHold
         holder.category.setText(item.getCategory());
         holder.price.setText(Integer.toString(item.getPrice()));
         holder.company.setText(item.getCompany());
+        holder.quantity.setText(Integer.toString(item.getQuantity()));
         holder.bagQtyTxt.setVisibility(View.INVISIBLE);
         holder.bagDown.setVisibility(View.INVISIBLE);
         holder.bagUp.setVisibility(View.INVISIBLE);
@@ -230,7 +231,7 @@ public class BagViewAdapter extends RecyclerView.Adapter<BagViewAdapter.TestHold
                         i.putExtra("category",category);
                         i.putExtra("price",price);
                         i.putExtra("company",company);
-                        i.putExtra("bagquantity",quantity);
+                        i.putExtra("quantity",quantity);
                         i.putExtra("source","source");
                         i.putExtra("photo",item.getPhoto());
                         context.startActivity(i);
