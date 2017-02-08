@@ -120,7 +120,7 @@ public class AddBagActivity extends AppCompatActivity {
                 bagCompany = companyEditText.getText().toString();
                 bagQuantity=quantityEditText.getText().toString();
 
-                if (bagName.isEmpty() || bagCategory.isEmpty() || bagPrice.isEmpty() || bagCompany.isEmpty()||bagQuantity.isEmpty()||ext.equals("")) {
+                if (bagName.isEmpty() || bagCategory.isEmpty() || bagPrice.isEmpty() || bagCompany.isEmpty()||bagQuantity.isEmpty()||ext.isEmpty()) {
                     Toast.makeText(getBaseContext(), "Some of the Fields are empty", Toast.LENGTH_SHORT);
                 } else {
                     try {

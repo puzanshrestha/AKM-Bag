@@ -215,7 +215,7 @@ public class BagViewAdapter extends RecyclerView.Adapter<BagViewAdapter.TestHold
                 @Override
                 public void onClick(View v) {
                     Intent i;
-                    if(bag.equals("bag"))
+                    if(bag.equals("bag"))//EDIT
                     {
                         i=new Intent(context,AddBagActivity.class);
                         int position=getAdapterPosition();
@@ -250,7 +250,7 @@ public class BagViewAdapter extends RecyclerView.Adapter<BagViewAdapter.TestHold
             bagDown.setOnClickListener(new View.OnClickListener() {
                 @Override
                 public void onClick(View v) {
-                    if(bag.equals("bag"))
+                    if(bag.equals("bag"))//DELETE
                     {   final String a=" ";
                         int position=getAdapterPosition();
                         BagEntity item=listData.get(position);

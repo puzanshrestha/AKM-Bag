@@ -167,8 +167,7 @@ public class MainActivity extends AppCompatActivity {
             else
             {
                 Toast.makeText(getBaseContext(),"Network Error",Toast.LENGTH_SHORT).show();
-                Intent i = new Intent(getBaseContext(),ActionListActivity.class);
-                startActivity(i);
+
             }
         }
         catch (Exception e)
