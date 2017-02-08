@@ -16,6 +16,7 @@ import android.widget.Toast;
 import com.example.pujan.bag.FunctionsThread;
 import com.example.pujan.bag.MainActivity;
 import com.example.pujan.bag.R;
+import com.example.pujan.bag.vendorDetails.VendorListActivity;
 import com.squareup.picasso.MemoryPolicy;
 import com.squareup.picasso.NetworkPolicy;
 import com.squareup.picasso.Picasso;
@@ -35,16 +36,7 @@ public class AddBagActivity extends AppCompatActivity {
     String ext="";
     ImageView bagPhoto;
 
-    @Override
-    public boolean onKeyDown(int keyCode, KeyEvent event)
-    {
-        if(keyCode == KeyEvent.KEYCODE_BACK)
-        {
-            Intent i= new Intent(getBaseContext(),BagDetailsActivity.class);
-            startActivity(i);
-        }
-        return false;
-    }
+
 
     @Override
     protected void onCreate(Bundle savedInstanceState) {

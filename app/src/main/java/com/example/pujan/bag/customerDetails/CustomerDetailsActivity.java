@@ -4,15 +4,26 @@ import android.content.Intent;
 import android.support.v7.app.ActionBar;
 import android.support.v7.app.AppCompatActivity;
 import android.os.Bundle;
+import android.view.KeyEvent;
 import android.view.View;
 import android.widget.Button;
 import android.widget.LinearLayout;
 
+import com.example.pujan.bag.ActionListActivity;
 import com.example.pujan.bag.R;
 
 public class CustomerDetailsActivity extends AppCompatActivity {
 
     LinearLayout addCustomer,viewCustomer;
+    public boolean onKeyDown(int keyCode, KeyEvent event)
+    {
+        if(keyCode == KeyEvent.KEYCODE_BACK)
+        {
+            Intent i= new Intent(getBaseContext(),ActionListActivity.class);
+            startActivity(i);
+        }
+        return false;
+    }
 
     @Override
     protected void onCreate(Bundle savedInstanceState) {

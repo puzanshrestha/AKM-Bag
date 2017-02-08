@@ -7,10 +7,12 @@ import android.net.Uri;
 import android.support.v4.app.ActivityCompat;
 import android.support.v7.app.AppCompatActivity;
 import android.os.Bundle;
+import android.view.KeyEvent;
 import android.view.View;
 import android.widget.Button;
 import android.widget.LinearLayout;
 
+import com.example.pujan.bag.ActionListActivity;
 import com.example.pujan.bag.R;
 
 public class VendorDetailsActivity extends AppCompatActivity {
@@ -18,6 +20,15 @@ public class VendorDetailsActivity extends AppCompatActivity {
     LinearLayout addVendorBtn, viewVendorBtn;
 
     @Override
+    public boolean onKeyDown(int keyCode, KeyEvent event)
+    {
+        if(keyCode == KeyEvent.KEYCODE_BACK)
+        {
+            Intent i= new Intent(getBaseContext(),ActionListActivity.class);
+            startActivity(i);
+        }
+        return false;
+    }
     protected void onCreate(Bundle savedInstanceState) {
         super.onCreate(savedInstanceState);
         setContentView(R.layout.activity_vendor_details);

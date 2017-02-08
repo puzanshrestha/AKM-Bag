@@ -48,7 +48,7 @@ public class ActionListActivity extends AppCompatActivity {
     {
         switch (item.getItemId()) {
             case R.id.sign_out:
-                Toast.makeText(getBaseContext(), "hello :D", Toast.LENGTH_LONG).show();
+                Toast.makeText(getBaseContext(), "Logged Out", Toast.LENGTH_LONG).show();
                 Intent i= new Intent(getBaseContext(),MainActivity.class);
                 startActivity(i);
                 return true;

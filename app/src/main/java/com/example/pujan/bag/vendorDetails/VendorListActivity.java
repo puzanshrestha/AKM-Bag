@@ -30,16 +30,9 @@ public  class VendorListActivity extends AppCompatActivity implements VendorView
     String getway;
 
 
-    public boolean onKeyDown(int keyCode, KeyEvent event) {
-        if (keyCode == KeyEvent.KEYCODE_BACK) {
-            Intent i = new Intent(getBaseContext(), VendorDetailsActivity.class);
-            startActivity(i);
-        }
-        return false;
-    }
-
 
     @Override
+
     protected void onCreate(Bundle savedInstanceState) {
         super.onCreate(savedInstanceState);
         setContentView(R.layout.activity_vendor_list);
