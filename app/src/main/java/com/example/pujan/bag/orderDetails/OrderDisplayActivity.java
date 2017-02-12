@@ -10,6 +10,7 @@ import android.widget.Button;
 import android.widget.TableLayout;
 import android.widget.TableRow;
 import android.widget.TextView;
+import android.widget.Toast;
 
 import com.example.pujan.bag.FunctionsThread;
 import com.example.pujan.bag.R;
@@ -17,6 +18,7 @@ import com.example.pujan.bag.bagDetails.BagEntity;
 import com.example.pujan.bag.printPackage.DeviceListActivity;
 import com.example.pujan.bag.printPackage.PrintDemo;
 import com.example.pujan.bag.printPackage.PrintEntity;
+import com.google.gson.Gson;
 
 import org.json.JSONArray;
 import org.json.JSONException;
@@ -34,6 +36,7 @@ public class OrderDisplayActivity extends Activity {
         super.onCreate(savedInstanceState);
         setContentView(R.layout.activity_order_display);
         final ArrayList<PrintEntity> print=new ArrayList<>();
+        final ArrayList<AddOrderEntity> addOrderValue = new ArrayList<>();
         final int customer_id=Integer.valueOf(getIntent().getStringExtra("cid"));
         String customer_name="";
         final int[] bag_id = getIntent().getIntArrayExtra("bid");
@@ -173,11 +176,9 @@ public class OrderDisplayActivity extends Activity {
         tr.addView(Qty);
 
         tableLayout.addView(tr);
-int sn=0;
+        int sn=0;
         for(int i=0;i<bag_id.length;i++)
         {
-
-
                 tr1 = new TableRow(this);
                 TableRow.LayoutParams tb = new TableRow.LayoutParams(TableRow.LayoutParams.WRAP_CONTENT, TableRow.LayoutParams.MATCH_PARENT);
                 tb.gravity = Gravity.CENTER;
@@ -186,6 +187,11 @@ int sn=0;
             if(bag_id[i]!=0){
                 sn+=1;
 
+                AddOrderEntity aoe = new AddOrderEntity();
+                aoe.setBag_id(bag_id[i]);
+                aoe.setCustomer_id(customer_id);
+                aoe.setQuantity(quantity[i]);
+                addOrderValue.add(aoe);
                 PrintEntity printentity=new PrintEntity();
                 printentity.setId(sn);
                 printentity.setProducts(bag_name[i]);
@@ -252,7 +258,24 @@ int sn=0;
             public void onClick(View v) {
                 Intent i=new Intent(getBaseContext(),PrintDemo.class);
                 i.putExtra("PrintValue",print);
+
+                Gson gson = new Gson();
+                String test = gson.toJson(addOrderValue);
+                try {
+                    String reply=new FunctionsThread(getBaseContext()).execute("AddOrder",test).get();
+                    System.out.println(reply);
+
+                } catch (InterruptedException e) {
+                    e.printStackTrace();
+                } catch (ExecutionException e) {
+                    e.printStackTrace();
+                }
+
+
+
+                //TEMPORARY SOLUTION>....................................Function needs to be in printdemo activity
                 startActivity(i);
+
 
             }
 

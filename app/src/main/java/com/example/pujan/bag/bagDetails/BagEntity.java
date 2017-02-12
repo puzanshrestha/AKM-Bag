@@ -11,10 +11,19 @@ public class BagEntity implements Serializable{
     private String category;
     private int price;
     private String company;
+    private int quantity;
     private String photo;
 
     public String getPhoto() {
         return photo;
+    }
+
+    public int getQuantity() {
+        return quantity;
+    }
+
+    public void setQuantity(int quantity) {
+        this.quantity = quantity;
     }
 
     public void setPhoto(String photo) {
