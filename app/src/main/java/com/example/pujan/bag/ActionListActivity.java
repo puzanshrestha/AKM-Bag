@@ -14,11 +14,12 @@ import com.example.pujan.bag.bagDetails.BagDetailsActivity;
 import com.example.pujan.bag.customerDetails.CustomerDetailsActivity;
 import com.example.pujan.bag.customerDetails.CustomerListActivity;
 import com.example.pujan.bag.customerDetails.ViewCustomerActivity;
+import com.example.pujan.bag.transactionalReports.BagReports;
 import com.example.pujan.bag.vendorDetails.VendorDetailsActivity;
 
 public class ActionListActivity extends AppCompatActivity {
 
-    LinearLayout bagDetailsBtn,customerDetailsBtn,orderDetailsBtn,vendorDetailsBtn;
+    LinearLayout bagDetailsBtn,customerDetailsBtn,orderDetailsBtn,vendorDetailsBtn,bagRecordsBtn;
 
 
 
@@ -40,6 +41,7 @@ public class ActionListActivity extends AppCompatActivity {
         customerDetailsBtn = (LinearLayout)findViewById(R.id.customerDetailsBtn);
         orderDetailsBtn = (LinearLayout)findViewById(R.id.orderDetailsBtn);
         vendorDetailsBtn = (LinearLayout)findViewById(R.id.vendorDetailsBtn);
+        bagRecordsBtn = (LinearLayout)findViewById(R.id.bagRecordsBtn);
 
         bagDetailsBtn.setOnClickListener(new View.OnClickListener() {
             @Override
@@ -75,6 +77,19 @@ public class ActionListActivity extends AppCompatActivity {
 
             }
         });
+        bagRecordsBtn.setOnClickListener(new View.OnClickListener() {
+            @Override
+            public void onClick(View v) {
+                Intent i = new Intent(getBaseContext(),BagReports.class);
+                startActivity(i);
+
+
+
+            }
+        });
+
+
+
 
 
 

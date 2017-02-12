@@ -2,16 +2,15 @@
 <manifest xmlns:android="http://schemas.android.com/apk/res/android"
     package="com.example.pujan.bag">
 
-    <uses-permission android:name="android.permission.READ_EXTERNAL_STORAGE"/>
-    <uses-permission android:name="android.permission.WRITE_EXTERNAL_STORAGE"/>
+    <uses-permission android:name="android.permission.READ_EXTERNAL_STORAGE" />
+    <uses-permission android:name="android.permission.WRITE_EXTERNAL_STORAGE" />
     <uses-permission android:name="android.permission.CALL_PHONE" />
     <uses-permission android:name="android.permission.INTERNET" />
     <uses-permission android:name="android.permission.ACCESS_NETWORK_STATE" />
     <uses-permission android:name="android.permission.ACCESS_WIFI_STATE" />
     <uses-permission android:name="android.permission.BLUETOOTH" />
     <uses-permission android:name="android.permission.BLUETOOTH_ADMIN" />
-    <uses-permission android:name="android.permission.READ_EXTERNAL_STORAGE"/>
-
+    <uses-permission android:name="android.permission.READ_EXTERNAL_STORAGE" />
 
     <uses-feature android:name="android.hardware.camera" />
 
@@ -48,8 +47,8 @@
         <activity android:name=".printPackage.PrintDemo" />
         <activity android:name=".printPackage.DeviceListActivity" />
         <activity android:name=".orderDetails.OrderDisplayActivity" />
-        <activity android:name=".bagDetails.ViewBag" />
-        <activity android:name=".vendorDetails.VendorListActivity"></activity>
+        <activity android:name=".vendorDetails.VendorListActivity" />
+        <activity android:name=".transactionalReports.BagReports"></activity>
     </application>
 
 </manifest>
