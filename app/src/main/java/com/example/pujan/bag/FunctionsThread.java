@@ -499,6 +499,94 @@ public class FunctionsThread extends AsyncTask<String, Void, String> {
             } catch (IOException e) {
                 e.printStackTrace();
             }
+        } else if (method.equals("ViewStockInformation")) {
+            String bag_id = params[1];
+
+
+            try {
+                URL url = new URL(ip + "viewStockInformation.php");
+                HttpURLConnection httpURLConnection = (HttpURLConnection) url.openConnection();
+                httpURLConnection.setConnectTimeout(3000);
+                httpURLConnection.setRequestMethod("POST");
+
+
+                httpURLConnection.setDoInput(true);
+                httpURLConnection.setDoOutput(true);
+                OutputStream os = httpURLConnection.getOutputStream();
+                BufferedWriter bufferedWriter = new BufferedWriter(new OutputStreamWriter(os, "UTF-8"));
+                String data = URLEncoder.encode("bag_id", "UTF-8") + "=" + URLEncoder.encode(bag_id, "UTF-8");
+                bufferedWriter.write(data);
+                bufferedWriter.flush();
+                bufferedWriter.close();
+                os.close();
+
+                InputStream is = httpURLConnection.getInputStream();
+                BufferedReader bufferedReader = new BufferedReader(new InputStreamReader(is, "iso-8859-1"));
+                StringBuilder response = new StringBuilder();
+                String line;
+                while ((line = bufferedReader.readLine()) != null) {
+                    response.append(line);
+                }
+
+                bufferedReader.close();
+                is.close();
+                httpURLConnection.disconnect();
+                System.out.println(response.toString().trim());
+                return response.toString().trim();
+
+
+            } catch (Exception e) {
+                e.printStackTrace();
+                System.out.println("Error in ");
+                return "error";
+
+            }
+        } else if (method.equals("UpdateStockInformation")) {
+            String bag_id = params[1];
+            String color = params[2];
+            String quantity = params[3];
+
+
+            try {
+                URL url = new URL(ip + "updateStockInformation.php");
+                HttpURLConnection httpURLConnection = (HttpURLConnection) url.openConnection();
+                httpURLConnection.setConnectTimeout(3000);
+                httpURLConnection.setRequestMethod("POST");
+
+
+                httpURLConnection.setDoInput(true);
+                httpURLConnection.setDoOutput(true);
+                OutputStream os = httpURLConnection.getOutputStream();
+                BufferedWriter bufferedWriter = new BufferedWriter(new OutputStreamWriter(os, "UTF-8"));
+                String data = URLEncoder.encode("bag_id", "UTF-8") + "=" + URLEncoder.encode(bag_id, "UTF-8") + "&" +
+                        URLEncoder.encode("color", "UTF-8") + "=" + URLEncoder.encode(color, "UTF-8") + "&" +
+                        URLEncoder.encode("quantity", "UTF-8") + "=" + URLEncoder.encode(quantity, "UTF-8");
+                bufferedWriter.write(data);
+                bufferedWriter.flush();
+                bufferedWriter.close();
+                os.close();
+
+                InputStream is = httpURLConnection.getInputStream();
+                BufferedReader bufferedReader = new BufferedReader(new InputStreamReader(is, "iso-8859-1"));
+                StringBuilder response = new StringBuilder();
+                String line;
+                while ((line = bufferedReader.readLine()) != null) {
+                    response.append(line);
+                }
+
+                bufferedReader.close();
+                is.close();
+                httpURLConnection.disconnect();
+                System.out.println(response.toString().trim());
+                return response.toString().trim();
+
+
+            } catch (Exception e) {
+                e.printStackTrace();
+                System.out.println("Error in ");
+                return "error";
+
+            }
         } else if (method == "UploadFile") {
 
             String sourceFileUri = params[1];

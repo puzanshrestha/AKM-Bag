@@ -1,25 +1,22 @@
 package com.example.pujan.bag;
 
 import android.content.Intent;
-import android.graphics.Color;
-import android.graphics.drawable.ColorDrawable;
-import android.support.v7.app.ActionBar;
 import android.support.v7.app.AppCompatActivity;
 import android.os.Bundle;
 import android.view.View;
-import android.widget.Button;
 import android.widget.LinearLayout;
 
 import com.example.pujan.bag.bagDetails.BagDetailsActivity;
+import com.example.pujan.bag.bagStock.StockDetailsActivity;
+import com.example.pujan.bag.bagStock.StockListActivity;
 import com.example.pujan.bag.customerDetails.CustomerDetailsActivity;
 import com.example.pujan.bag.customerDetails.CustomerListActivity;
-import com.example.pujan.bag.customerDetails.ViewCustomerActivity;
 import com.example.pujan.bag.transactionalReports.BagReports;
 import com.example.pujan.bag.vendorDetails.VendorDetailsActivity;
 
 public class ActionListActivity extends AppCompatActivity {
 
-    LinearLayout bagDetailsBtn,customerDetailsBtn,orderDetailsBtn,vendorDetailsBtn,bagRecordsBtn;
+    LinearLayout bagDetailsBtn,customerDetailsBtn,orderDetailsBtn,vendorDetailsBtn,bagRecordsBtn,bagStockBtn;
 
 
 
@@ -42,6 +39,7 @@ public class ActionListActivity extends AppCompatActivity {
         orderDetailsBtn = (LinearLayout)findViewById(R.id.orderDetailsBtn);
         vendorDetailsBtn = (LinearLayout)findViewById(R.id.vendorDetailsBtn);
         bagRecordsBtn = (LinearLayout)findViewById(R.id.bagRecordsBtn);
+        bagStockBtn = (LinearLayout)findViewById(R.id.bagStockBtn);
 
         bagDetailsBtn.setOnClickListener(new View.OnClickListener() {
             @Override
@@ -84,6 +82,14 @@ public class ActionListActivity extends AppCompatActivity {
                 startActivity(i);
 
 
+
+            }
+        });
+        bagStockBtn.setOnClickListener(new View.OnClickListener() {
+            @Override
+            public void onClick(View v) {
+                Intent i = new Intent(getBaseContext(),StockDetailsActivity.class);
+                startActivity(i);
 
             }
         });
