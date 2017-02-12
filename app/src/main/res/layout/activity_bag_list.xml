@@ -9,7 +9,7 @@
 
     <LinearLayout
         android:layout_width="match_parent"
-        android:layout_height="100dp"
+        android:layout_height="150dp"
         android:background="@drawable/second_background"
         android:orientation="horizontal"
         android:gravity="center">
@@ -55,11 +55,18 @@
                 android:layout_width="wrap_content"
                 android:layout_height="wrap_content"
                 android:id="@+id/lbl_bag_price"
-                android:text="company"/>
+                android:text="price"/>
             <TextView
                 android:layout_width="wrap_content"
                 android:layout_height="wrap_content"
-                android:id="@+id/lbl_bag_company"/>
+                android:id="@+id/lbl_bag_quantity"
+                android:text="quantity"/>
+            <TextView
+                android:layout_width="wrap_content"
+                android:layout_height="wrap_content"
+                android:id="@+id/lbl_bag_company"
+                android:text="company"/>
+
         </LinearLayout>
 
 

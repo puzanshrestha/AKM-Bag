@@ -1,15 +1,8 @@
 package com.example.pujan.bag;
 
-import android.app.Activity;
-import android.app.AlertDialog;
-import android.app.ProgressDialog;
 import android.content.Context;
-import android.content.Intent;
-
-import android.content.SharedPreferences;
 import android.os.AsyncTask;
 import android.os.Environment;
-import android.renderscript.ScriptGroup;
 import android.util.Log;
 
 import com.example.pujan.bag.database.DbHelper;
@@ -36,7 +29,7 @@ import java.net.URLEncoder;
 /**
  * Created by Pujan on 12/23/2016.
  */
-public class FunctionsThread extends AsyncTask<String,Void,String> {
+public class FunctionsThread extends AsyncTask<String, Void, String> {
 
     Context c;
 
@@ -137,7 +130,7 @@ public class FunctionsThread extends AsyncTask<String,Void,String> {
 
             }
         } else if (method.equals("AddBag")) {
-            String name, type, price, company, source, bid, ext;
+            String name, type, price, company, source, bid, ext, quantity;
             name = params[1];
             type = params[2];
             price = params[3];
@@ -145,11 +138,11 @@ public class FunctionsThread extends AsyncTask<String,Void,String> {
             source = params[5];
             bid = params[6];
             ext = params[7];
+            quantity = params[8];
+            System.out.println("Inside thread");
 
 
             try {
-
-
                 URL url = new URL(ip + "addBag.php");
                 HttpURLConnection con = (HttpURLConnection) url.openConnection();
                 con.setConnectTimeout(3000);
@@ -166,7 +159,8 @@ public class FunctionsThread extends AsyncTask<String,Void,String> {
                         URLEncoder.encode("bag_company", "UTF-8") + "=" + URLEncoder.encode(company, "UTF-8") + "&" +
                         URLEncoder.encode("source", "UTF-8") + "=" + URLEncoder.encode(source, "UTF-8") + "&" +
                         URLEncoder.encode("bid", "UTF-8") + "=" + URLEncoder.encode(bid, "UTF-8") + "&" +
-                        URLEncoder.encode("ext", "UTF-8") + "=" + URLEncoder.encode(ext, "UTF-8");
+                        URLEncoder.encode("ext", "UTF-8") + "=" + URLEncoder.encode(ext, "UTF-8") + "&" +
+                        URLEncoder.encode("bag_quantity", "UTF-8") + "=" + URLEncoder.encode(quantity, "UTF-8");
 
 
                 bufferedWriter.write(data);
@@ -193,6 +187,43 @@ public class FunctionsThread extends AsyncTask<String,Void,String> {
 
             }
 
+        } else if (method.equals("AddRelation")) {
+
+            String vendor_id = params[1];
+            String bag_name = params[2];
+            System.out.println(bag_name);
+            System.out.println(vendor_id);
+
+            try {
+                URL url = new URL(ip + "addRelation.php");
+                HttpURLConnection conn = (HttpURLConnection) url.openConnection();
+                conn.setConnectTimeout(3000);
+                conn.setRequestMethod("POST");
+                conn.setDoInput(true);
+                conn.setDoOutput(true);
+                OutputStream os = conn.getOutputStream();
+                BufferedWriter bufferedWriter = new BufferedWriter(new OutputStreamWriter(os, "UTF-8"));
+                String data = URLEncoder.encode("vendor_id", "UTF-8") + "=" + URLEncoder.encode(vendor_id, "UTF-8") + "&" +
+                        URLEncoder.encode("bag_name", "UTF-8") + "=" + URLEncoder.encode(bag_name, "UTF-8");
+                bufferedWriter.write(data);
+                bufferedWriter.flush();
+                bufferedWriter.close();
+
+                InputStream is = conn.getInputStream();
+                BufferedReader bufferedReader = new BufferedReader(new InputStreamReader(is, "ISO-8859-1"));
+                StringBuilder sb = new StringBuilder();
+                String line;
+                while ((line = bufferedReader.readLine()) != null) {
+                    sb.append(line);
+                }
+
+                is.close();
+                bufferedReader.close();
+                conn.disconnect();
+                return sb.toString().trim();
+            } catch (Exception e) {
+                return "Error Inserting relation";
+            }
         } else if (method.equals("AddCustomer")) {
             String customerName = params[1];
             String customerAddress = params[2];
@@ -224,7 +255,7 @@ public class FunctionsThread extends AsyncTask<String,Void,String> {
                 bufferedWriter.write(data);
                 bufferedWriter.flush();
                 bufferedWriter.close();
-                System.out.println("breakpoint.............//////////");
+
 
                 InputStream is = conn.getInputStream();
                 BufferedReader bufferedReader = new BufferedReader(new InputStreamReader(is, "ISO-8859-1"));
@@ -390,7 +421,7 @@ public class FunctionsThread extends AsyncTask<String,Void,String> {
 
         } else if (method == "AddOrder") {
 
-           String orderJson = params[1];
+            String orderJson = params[1];
 
             try {
                 URL url = new URL(ip + "addOrder.php");
@@ -427,12 +458,10 @@ public class FunctionsThread extends AsyncTask<String,Void,String> {
             } catch (IOException e) {
                 e.printStackTrace();
             }
-        }
-
-        else if (method == "ViewRecords") {
+        } else if (method == "ViewRecords") {
 
             String dateTo = params[1];
-            String dateFrom=params[2];
+            String dateFrom = params[2];
 
             try {
                 URL url = new URL(ip + "viewRecords.php");
@@ -443,7 +472,7 @@ public class FunctionsThread extends AsyncTask<String,Void,String> {
                 conn.setDoOutput(true);
                 OutputStream os = conn.getOutputStream();
                 BufferedWriter bufferedWriter = new BufferedWriter(new OutputStreamWriter(os, "UTF-8"));
-                String data = URLEncoder.encode("dateTo", "UTF-8") + "=" + URLEncoder.encode(dateTo, "UTF-8")+"&"+
+                String data = URLEncoder.encode("dateTo", "UTF-8") + "=" + URLEncoder.encode(dateTo, "UTF-8") + "&" +
                         URLEncoder.encode("dateFrom", "UTF-8") + "=" + URLEncoder.encode(dateFrom, "UTF-8");
                 bufferedWriter.write(data);
                 bufferedWriter.flush();
@@ -470,8 +499,7 @@ public class FunctionsThread extends AsyncTask<String,Void,String> {
             } catch (IOException e) {
                 e.printStackTrace();
             }
-        }
-        else if (method == "UploadFile") {
+        } else if (method == "UploadFile") {
 
             String sourceFileUri = params[1];
             String upLoadServerUri = ip + "upload.php";
@@ -615,12 +643,8 @@ public class FunctionsThread extends AsyncTask<String,Void,String> {
             return "Error-- No method found";
         }
 
-return null;
+        return null;
     }
-
-
-
-
 
 
     @Override

@@ -38,7 +38,7 @@ public class BagReports extends Activity {
     Calendar dateTime = Calendar.getInstance();
     SimpleDateFormat format = new SimpleDateFormat("yyyy-MM-dd");
 
-    TableRow tr, tr1, trc;
+    TableRow tr1;
     ArrayList<BagReportEntity> bagReport;
     TableLayout tableLayout;
 

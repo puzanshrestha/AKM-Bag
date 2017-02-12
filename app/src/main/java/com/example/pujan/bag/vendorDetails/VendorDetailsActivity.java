@@ -1,23 +1,20 @@
 package com.example.pujan.bag.vendorDetails;
 
-import android.Manifest;
 import android.content.Intent;
-import android.content.pm.PackageManager;
-import android.net.Uri;
-import android.support.v4.app.ActivityCompat;
-import android.support.v7.app.AppCompatActivity;
 import android.os.Bundle;
+import android.support.v7.app.AppCompatActivity;
+import android.view.KeyEvent;
 import android.view.View;
-import android.widget.Button;
 import android.widget.LinearLayout;
 
+import com.example.pujan.bag.ActionListActivity;
 import com.example.pujan.bag.R;
 
 public class VendorDetailsActivity extends AppCompatActivity {
 
     LinearLayout addVendorBtn, viewVendorBtn;
 
-    @Override
+
     protected void onCreate(Bundle savedInstanceState) {
         super.onCreate(savedInstanceState);
         setContentView(R.layout.activity_vendor_details);
@@ -33,7 +30,7 @@ public class VendorDetailsActivity extends AppCompatActivity {
             @Override
             public void onClick(View v) {
                 Intent i = new Intent(getBaseContext(), AddVendorActivity.class);
-                i.putExtra("source","");
+                i.putExtra("source", "");
                 startActivity(i);
             }
         });
@@ -41,12 +38,12 @@ public class VendorDetailsActivity extends AppCompatActivity {
         viewVendorBtn.setOnClickListener(new View.OnClickListener() {
             @Override
             public void onClick(View v) {
-                Intent i = new Intent(getBaseContext(),VendorListActivity.class);
+                Intent i = new Intent(getBaseContext(), VendorListActivity.class);
+                i.putExtra("getway", "actionlist");
                 startActivity(i);
 
             }
         });
-
 
 
     }
