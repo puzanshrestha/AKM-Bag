@@ -1,6 +1,7 @@
 package com.example.pujan.bag.bagStock;
 
 import android.app.Activity;
+import android.net.Uri;
 import android.os.Bundle;
 import android.view.Gravity;
 import android.view.View;
@@ -8,6 +9,7 @@ import android.widget.AdapterView;
 import android.widget.ArrayAdapter;
 import android.widget.Button;
 import android.widget.EditText;
+import android.widget.ImageView;
 import android.widget.LinearLayout;
 import android.widget.Spinner;
 import android.widget.TableLayout;
@@ -16,7 +18,13 @@ import android.widget.TextView;
 import android.widget.Toast;
 
 import com.example.pujan.bag.FunctionsThread;
+import com.example.pujan.bag.MainActivity;
 import com.example.pujan.bag.R;
+import com.example.pujan.bag.bagDetails.BagEntity;
+import com.example.pujan.bag.database.DbHelper;
+import com.squareup.picasso.MemoryPolicy;
+import com.squareup.picasso.NetworkPolicy;
+import com.squareup.picasso.Picasso;
 
 import org.json.JSONArray;
 import org.json.JSONException;
@@ -34,6 +42,15 @@ public class StockUpdateActivity extends Activity {
     String bag_id="";
     EditText quantity;
     Button updateStockBtn;
+    private  TextView nameEditText;
+    private  TextView typeEditText;
+    private  TextView priceEditText;
+    private  TextView companyEditText;
+    private  TextView quantityEditText;
+    private  ImageView bagPhoto;
+    BagEntity bagEntity;
+
+
     @Override
     protected void onCreate(Bundle savedInstanceState) {
         super.onCreate(savedInstanceState);
@@ -42,6 +59,14 @@ public class StockUpdateActivity extends Activity {
         quantity=(EditText)findViewById(R.id.cqty);
         updateStockBtn = (Button) findViewById(R.id.updateStockBtn);
 
+        nameEditText = (TextView) findViewById(R.id.nameEditText);
+        typeEditText = (TextView) findViewById(R.id.typeEditText);
+        priceEditText = (TextView) findViewById(R.id.priceEditText);
+        companyEditText = (TextView) findViewById(R.id.companyEditText);
+        quantityEditText = (TextView) findViewById(R.id.quantityEditText);
+        bagPhoto = (ImageView) findViewById(R.id.bag_photo);
+
+
 
         bag_id = getIntent().getStringExtra("bag_id");
 
@@ -49,26 +74,43 @@ public class StockUpdateActivity extends Activity {
 
         populateTableLayout();
 
+        nameEditText.setText(bagEntity.getName());
+        typeEditText.setText(bagEntity.getCategory());
+        priceEditText.setText(Integer.toString(bagEntity.getPrice()));
+        companyEditText.setText(bagEntity.getCompany());
+        quantityEditText.setText(Integer.toString(bagEntity.getQuantity()));
+
+        DbHelper dbh = new DbHelper(this);
+        String ip = dbh.getIP();
+        dbh.close();
+
+        Picasso
+                .with(this)
+                .load("http://" + ip + "/bagWebServices/uploads/" + bagEntity.getPhoto())
+                .memoryPolicy(MemoryPolicy.NO_CACHE)
+                .networkPolicy(NetworkPolicy.NO_CACHE)
+                .resize(300, 300)
+                .placeholder(R.drawable.bag)
+                .into(bagPhoto);
+
+
+
+
 
 
         colorCombo.setOnItemSelectedListener(new AdapterView.OnItemSelectedListener() {
             @Override
             public void onItemSelected(AdapterView<?> parent, View view, int position, long id) {
                 Toast.makeText(getBaseContext(),colorCombo.getSelectedItem().toString(),Toast.LENGTH_SHORT).show();
+                array_spinner[0]="VIOLET";
             }
 
             @Override
             public void onNothingSelected(AdapterView<?> parent) {
 
+
             }
         });
-
-
-
-
-
-
-
 
     }
 
@@ -90,6 +132,18 @@ public class StockUpdateActivity extends Activity {
                 cqe.setCquantity(Integer.valueOf(jObject.getString("quantityColor")));
                 colorValues.add(cqe);
             }
+
+            JSONArray bagInfoJsonArray = stockJson.getJSONArray("bagInfo");
+            JSONObject jObject = bagInfoJsonArray.getJSONObject(0);
+            bagEntity = new BagEntity();
+            bagEntity.setId(Integer.valueOf(jObject.getString("bag_id")));
+            bagEntity.setName(jObject.getString("bag_name"));
+            bagEntity.setCategory(jObject.getString("bag_category"));
+            bagEntity.setPrice(Integer.valueOf(jObject.getString("bag_price")));
+            bagEntity.setCompany(jObject.getString("bag_company"));
+            bagEntity.setQuantity(Integer.valueOf(jObject.getString("bag_quantity")));
+            bagEntity.setPhoto(jObject.getString("bag_photo"));
+
 
 
         } catch (InterruptedException e) {
@@ -209,16 +263,12 @@ public class StockUpdateActivity extends Activity {
 
     public void populateColor()
     {
-        array_spinner=new String[5];
-        array_spinner[0]="RED";
-        array_spinner[1]="GREEN";
-        array_spinner[2]="BLACK";
-        array_spinner[3]="BLUE";
-        array_spinner[4]="MAROON";
+        array_spinner=getResources().getStringArray(R.array.comboColor);
         ArrayAdapter adapter = new ArrayAdapter(this,
-                android.R.layout.simple_spinner_dropdown_item, array_spinner);
+                android.R.layout.simple_selectable_list_item, array_spinner);
         colorCombo.setAdapter(adapter);
     }
+
 
 
 

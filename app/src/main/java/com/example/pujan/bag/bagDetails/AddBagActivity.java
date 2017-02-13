@@ -124,7 +124,7 @@ public class AddBagActivity extends AppCompatActivity {
                         Intent i = new Intent(getBaseContext(), BagListActivity.class);
                         i.putExtra("source", "bag");
                         startActivity(i);
-                        new FunctionsThread().execute("UploadFile", mediaSelect, bid, "b").get();
+                        new FunctionsThread(getBaseContext()).execute("UploadFile", mediaSelect, bid, "b").get();
                         if (doublecheck.equals("Updated")) {
                             Toast.makeText(getBaseContext(), "Inserted relation", Toast.LENGTH_LONG).show();
                         }
@@ -133,7 +133,7 @@ public class AddBagActivity extends AppCompatActivity {
                         Intent i = new Intent(getBaseContext(), BagListActivity.class);
                         i.putExtra("source", "bag");
                         startActivity(i);
-                        new FunctionsThread().execute("UploadFile", mediaSelect, bid, "b").get();
+                        new FunctionsThread(getBaseContext()).execute("UploadFile", mediaSelect, bid, "b").get();
                     } else
                         Toast.makeText(getBaseContext(), check, Toast.LENGTH_SHORT).show();
                 } catch (InterruptedException e) {

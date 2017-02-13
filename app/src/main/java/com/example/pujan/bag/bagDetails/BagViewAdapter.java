@@ -3,30 +3,31 @@ package com.example.pujan.bag.bagDetails;
 import android.content.Context;
 import android.content.DialogInterface;
 import android.content.Intent;
-import android.net.Uri;
 import android.support.v7.app.AlertDialog;
+import android.support.v7.widget.PopupMenu;
 import android.support.v7.widget.RecyclerView;
-import android.text.TextUtils;
 import android.view.LayoutInflater;
+import android.view.MenuItem;
+import android.view.MotionEvent;
 import android.view.View;
 import android.view.ViewGroup;
+import android.widget.Adapter;
+import android.widget.AdapterView;
+import android.widget.ArrayAdapter;
 import android.widget.Button;
 import android.widget.CheckBox;
-import android.widget.CompoundButton;
 import android.widget.ImageView;
+import android.widget.Spinner;
 import android.widget.TextView;
 import android.widget.Toast;
 
 import com.example.pujan.bag.FunctionsThread;
-import com.example.pujan.bag.MainActivity;
+import com.example.pujan.bag.NDSpinner;
 import com.example.pujan.bag.R;
-import com.example.pujan.bag.customerDetails.CustomerListActivity;
 import com.example.pujan.bag.database.DbHelper;
 import com.squareup.picasso.MemoryPolicy;
 import com.squareup.picasso.NetworkPolicy;
 import com.squareup.picasso.Picasso;
-
-import org.w3c.dom.Text;
 
 import java.util.ArrayList;
 import java.util.concurrent.ExecutionException;
@@ -44,6 +45,9 @@ public class BagViewAdapter extends RecyclerView.Adapter<BagViewAdapter.TestHold
     private String bag;
     private Context context;
     String ip = "";
+
+    String[] array_spinner;
+
 
     private ItemClickCallback itemClickCallback;
 
@@ -108,10 +112,12 @@ public class BagViewAdapter extends RecyclerView.Adapter<BagViewAdapter.TestHold
         holder.bagUp.setVisibility(View.INVISIBLE);
         holder.bagQtyTxt.setText((Integer.toString(bag_qty[position])));
 
+        holder.colorOption.setVisibility(View.INVISIBLE);
+        holder.optionsMenu.setVisibility(View.VISIBLE);
+        holder.bagCheck.setVisibility(View.INVISIBLE);
+
 
         try {
-
-
             Picasso
                     .with(context)
                     .load("http://" + ip + "/bagWebServices/uploads/" + item.getPhoto())
@@ -121,7 +127,6 @@ public class BagViewAdapter extends RecyclerView.Adapter<BagViewAdapter.TestHold
                     .placeholder(R.drawable.bag)
                     .into(holder.photoBox);
 
-
         } catch (Exception e) {
             System.out.println("No file found");
         }
@@ -129,29 +134,24 @@ public class BagViewAdapter extends RecyclerView.Adapter<BagViewAdapter.TestHold
 
         if (bag.equals("customer")) {
 
+            holder.bagCheck.setVisibility(View.VISIBLE);
+            holder.optionsMenu.setVisibility(View.INVISIBLE);
+
+
             if (bag_id[position] == 0) {
                 holder.bagCheck.setChecked(false);
-                holder.bagQtyTxt.setVisibility(View.INVISIBLE);
-                holder.bagDown.setVisibility(View.INVISIBLE);
                 holder.bagUp.setVisibility(View.INVISIBLE);
+                holder.bagDown.setVisibility(View.INVISIBLE);
+                holder.bagQtyTxt.setVisibility(View.INVISIBLE);
+                holder.colorOption.setVisibility(View.INVISIBLE);
+
 
             } else {
                 holder.bagCheck.setChecked(true);
+                holder.bagUp.setVisibility(View.VISIBLE);
+                holder.bagDown.setVisibility(View.VISIBLE);
                 holder.bagQtyTxt.setVisibility(View.VISIBLE);
-                holder.bagDown.setVisibility(View.VISIBLE);
-                holder.bagUp.setVisibility(View.VISIBLE);
-            }
-        } else {
-            if (id_bag != position) {
-                holder.bagCheck.setChecked(false);
-                holder.bagQtyTxt.setVisibility(View.INVISIBLE);
-                holder.bagDown.setVisibility(View.INVISIBLE);
-                holder.bagUp.setVisibility(View.INVISIBLE);
-            } else {
-                holder.bagCheck.setChecked(true);
-                holder.bagQtyTxt.setVisibility(View.INVISIBLE);
-                holder.bagDown.setVisibility(View.VISIBLE);
-                holder.bagUp.setVisibility(View.VISIBLE);
+                holder.colorOption.setVisibility(View.VISIBLE);
             }
         }
 
@@ -162,7 +162,6 @@ public class BagViewAdapter extends RecyclerView.Adapter<BagViewAdapter.TestHold
         return listData.size();
     }
 
-    int qty = 0;
 
     class TestHolder extends RecyclerView.ViewHolder implements View.OnClickListener {
 
@@ -173,10 +172,12 @@ public class BagViewAdapter extends RecyclerView.Adapter<BagViewAdapter.TestHold
         private TextView quantity;
         private TextView company;
         private Button bagUp, bagDown;
-        TextView bagQtyTxt;
+        private TextView bagQtyTxt;
         private View container;
         private CheckBox bagCheck;
         private ImageView photoBox;
+        private NDSpinner colorOption;
+        private TextView optionsMenu;
 
 
         public TestHolder(View itemView) {
@@ -195,37 +196,20 @@ public class BagViewAdapter extends RecyclerView.Adapter<BagViewAdapter.TestHold
             bagQtyTxt = (TextView) itemView.findViewById(R.id.bag_qty_txt);
             bagCheck = (CheckBox) itemView.findViewById(R.id.bag_checkbox);
 
+            optionsMenu = (TextView) itemView.findViewById(R.id.optionsMenu);
+            colorOption = (NDSpinner) itemView.findViewById(R.id.colorOption);
             context = itemView.getContext();
+
 
             bagUp.setOnClickListener(new View.OnClickListener() {
                 @Override
                 public void onClick(View v) {
-                    Intent i;
-                    if (bag.equals("bag"))//EDIT
-                    {
-                        i = new Intent(context, AddBagActivity.class);
-                        int position = getAdapterPosition();
-                        BagEntity item = listData.get(position);
-                        String bagid = Integer.toString(item.getId());
-                        String category = item.getCategory();
-                        String name = item.getName();
-                        String company = item.getCompany();
-                        String price = Integer.toString(item.getPrice());
-                        String quantity = Integer.toString(item.getQuantity());
-                        i.putExtra("bagid", bagid);
-                        i.putExtra("name", name);
-                        i.putExtra("category", category);
-                        i.putExtra("price", price);
-                        i.putExtra("company", company);
-                        i.putExtra("quantity", quantity);
-                        i.putExtra("source", "source");
-                        i.putExtra("photo", item.getPhoto());
-                        context.startActivity(i);
-                    } else {
-                        qty++;
-                        bag_qty[getAdapterPosition()] = qty;
-                        bagQtyTxt.setText(Integer.toString(qty));
-                    }
+
+                    int qty = Integer.parseInt(bagQtyTxt.getText().toString());
+                    qty++;
+
+                    bag_qty[getAdapterPosition()] = qty;
+                    bagQtyTxt.setText(Integer.toString(qty));
 
 
                 }
@@ -234,68 +218,89 @@ public class BagViewAdapter extends RecyclerView.Adapter<BagViewAdapter.TestHold
             bagDown.setOnClickListener(new View.OnClickListener() {
                 @Override
                 public void onClick(View v) {
-                    if (bag.equals("bag"))//DELETE
-                    {
-                        final String a = " ";
-                        int position = getAdapterPosition();
-                        BagEntity item = listData.get(position);
-                        final String bagid = Integer.toString(item.getId());
 
-                        final AlertDialog.Builder alertDialogBuilder = new AlertDialog.Builder(context);
-                        alertDialogBuilder.setMessage("Are you sure,You wanted to Delete?");
-                        alertDialogBuilder.setPositiveButton("Yes",
-                                new DialogInterface.OnClickListener() {
-                                    @Override
-                                    public void onClick(DialogInterface arg0, int arg1) {
-                                        final String check;
-                                        try {
-                                            System.out.println("------------" + bagid + "  " + a);
-                                            check = new FunctionsThread(context).execute("AddBag", a, a, a, a, "delete", bagid, a, a).get();
-                                            System.out.println(check);
-                                            if (check.equals("delete")) {
-                                                Intent i = new Intent(context, BagListActivity.class);
-                                                i.putExtra("source", "bag");
-                                                context.startActivity(i);
-                                                Toast.makeText(context, "deleted successfully :)", Toast.LENGTH_LONG).show();
-                                            } else {
-                                                Toast.makeText(context, "cannot delete :(", Toast.LENGTH_LONG).show();
-                                            }
-                                        } catch (InterruptedException e) {
-                                            e.printStackTrace();
-                                        } catch (ExecutionException e) {
-                                            e.printStackTrace();
-                                        }
+                    int qty = Integer.parseInt(bagQtyTxt.getText().toString());
+                    qty--;
+                    if (qty < 0)
+                        qty = 0;
+                    bag_qty[getAdapterPosition()] = qty;
+                    bagQtyTxt.setText(Integer.toString(qty));
 
-
-                                    }
-                                });
-
-                        alertDialogBuilder.setNegativeButton("No", new DialogInterface.OnClickListener() {
-                            @Override
-
-                            public void onClick(DialogInterface dialog, int which) {
-
-                            }
-                        });
-
-                        AlertDialog alertDialog = alertDialogBuilder.create();
-                        alertDialog.show();
-
-
-                    } else {
-                        qty--;
-                        if (qty < 0)
-                            qty = 0;
-                        bag_qty[getAdapterPosition()] = qty;
-                        bagQtyTxt.setText(Integer.toString(qty));
-                    }
                 }
 
             });
 
-            bagCheck.setOnClickListener(this);
 
+            bagCheck.setOnClickListener(this);
             container.setOnClickListener(this);
+
+            optionsMenu.setOnClickListener(new View.OnClickListener() {
+                @Override
+                public void onClick(View v) {
+
+
+                    PopupMenu popup = new PopupMenu(context, v);
+                    //inflating menu from xml resource
+                    popup.inflate(R.menu.bag_option_menu);
+                    //adding click listener
+                    popup.setOnMenuItemClickListener(new PopupMenu.OnMenuItemClickListener() {
+                        @Override
+                        public boolean onMenuItemClick(MenuItem item) {
+                            switch (item.getItemId()) {
+                                case R.id.editMenu:
+                                    edit(getAdapterPosition());
+                                    break;
+                                case R.id.deleteMenu:
+                                    delete(getAdapterPosition());
+                                    break;
+
+                            }
+                            return false;
+                        }
+                    });
+                    //displaying the popup
+                    popup.show();
+
+
+                }
+            });
+
+            if (bag.equals("customer")) {
+
+                array_spinner = context.getResources().getStringArray(R.array.comboColor);
+                ArrayAdapter adapter = new ArrayAdapter(context,
+                        android.R.layout.simple_selectable_list_item, array_spinner);
+                colorOption.setAdapter(adapter);
+                colorOption.setSelection(Adapter.NO_SELECTION,false);
+
+
+                colorOption.setOnTouchListener(new View.OnTouchListener() {
+                    @Override
+                    public boolean onTouch(View v, MotionEvent event) {
+                        array_spinner[0]="VIOLET";
+                        ArrayAdapter adapter = new ArrayAdapter(context,
+                                android.R.layout.simple_selectable_list_item, array_spinner);
+                        colorOption.setAdapter(adapter);
+                        colorOption.setSelection(Adapter.NO_SELECTION,false);
+                        return false;
+                    }
+                });
+
+
+                colorOption.setOnItemSelectedListener(new AdapterView.OnItemSelectedListener() {
+                    @Override
+                    public void onItemSelected(AdapterView<?> parent, View view, int position, long id) {
+                        Toast.makeText(context, colorOption.getSelectedItem().toString(), Toast.LENGTH_SHORT).show();
+
+                    }
+
+                    @Override
+                    public void onNothingSelected(AdapterView<?> parent) {
+
+
+                    }
+                });
+            }
 
 
         }
@@ -307,41 +312,30 @@ public class BagViewAdapter extends RecyclerView.Adapter<BagViewAdapter.TestHold
             if (v.getId() == R.id.bag_checkbox) {
                 if (bagCheck.isChecked()) {
                     bag_id[getAdapterPosition()] = listData.get(getAdapterPosition()).getId();
-                    if (bag.equals("bag")) {
-
-                        id_bag = getAdapterPosition();
-                        bagDown.setVisibility(View.VISIBLE);
-                        bagUp.setVisibility(View.VISIBLE);
-                        notifyDataSetChanged();
-                    } else {
-                        bagUp.setText("Up");
-                        bagDown.setText("Down");
-                        bagQtyTxt.setVisibility(View.VISIBLE);
-                        bagDown.setVisibility(View.VISIBLE);
-                        bagUp.setVisibility(View.VISIBLE);
-                        qty = 0;
-                    }
+                    bagUp.setVisibility(View.VISIBLE);
+                    bagDown.setVisibility(View.VISIBLE);
+                    bagQtyTxt.setVisibility(View.VISIBLE);
+                    colorOption.setVisibility(View.VISIBLE);
                 } else {
                     bag_id[getAdapterPosition()] = 0;
-                    if (bag.equals("bag")) {
-
-                        bagDown.setVisibility(View.INVISIBLE);
-                        bagUp.setVisibility(View.INVISIBLE);
-                    } else {
-                        bagUp.setText("Up");
-                        bagDown.setText("Down");
-                        bagQtyTxt.setVisibility(View.INVISIBLE);
-                        bagDown.setVisibility(View.INVISIBLE);
-                        bagUp.setVisibility(View.INVISIBLE);
-                    }
+                    array_spinner[0]="SELECT COLOR";
+                    ArrayAdapter adapter = new ArrayAdapter(context,
+                            android.R.layout.simple_selectable_list_item, array_spinner);
+                    colorOption.setAdapter(adapter);
+                    colorOption.setSelection(Adapter.NO_SELECTION,false);
+                    bagUp.setVisibility(View.INVISIBLE);
+                    bagDown.setVisibility(View.INVISIBLE);
+                    bagQtyTxt.setVisibility(View.INVISIBLE);
+                    colorOption.setVisibility(View.INVISIBLE);
                 }
+
 
                 bagQtyTxt.setText("0");
 
             }
 
-
         }
+
 
     }
 
@@ -350,6 +344,86 @@ public class BagViewAdapter extends RecyclerView.Adapter<BagViewAdapter.TestHold
         recValue.setBag_id(bag_id);
         recValue.setQuantity(bag_qty);
         return recValue;
+    }
+
+
+    public void edit(int position) {
+        Intent i;
+        if (bag.equals("bag"))//EDIT
+        {
+            i = new Intent(context, AddBagActivity.class);
+
+            BagEntity item = listData.get(position);
+            String bagid = Integer.toString(item.getId());
+            String category = item.getCategory();
+            String name = item.getName();
+            String company = item.getCompany();
+            String price = Integer.toString(item.getPrice());
+            String quantity = Integer.toString(item.getQuantity());
+            i.putExtra("bagid", bagid);
+            i.putExtra("name", name);
+            i.putExtra("category", category);
+            i.putExtra("price", price);
+            i.putExtra("company", company);
+            i.putExtra("quantity", quantity);
+            i.putExtra("source", "source");
+            i.putExtra("photo", item.getPhoto());
+            context.startActivity(i);
+        }
+
+
+    }
+
+    public void delete(int position) {
+        if (bag.equals("bag"))//DELETE
+        {
+            final String a = " ";
+
+            BagEntity item = listData.get(position);
+            final String bagid = Integer.toString(item.getId());
+
+            final AlertDialog.Builder alertDialogBuilder = new AlertDialog.Builder(context);
+            alertDialogBuilder.setMessage("Are you sure,You wanted to Delete?");
+            alertDialogBuilder.setPositiveButton("Yes",
+                    new DialogInterface.OnClickListener() {
+                        @Override
+                        public void onClick(DialogInterface arg0, int arg1) {
+                            final String check;
+                            try {
+                                System.out.println("------------" + bagid + "  " + a);
+                                check = new FunctionsThread(context).execute("AddBag", a, a, a, a, "delete", bagid, a, a).get();
+                                System.out.println(check);
+                                if (check.equals("delete")) {
+                                    Intent i = new Intent(context, BagListActivity.class);
+                                    i.putExtra("source", "bag");
+                                    context.startActivity(i);
+                                    Toast.makeText(context, "deleted successfully :)", Toast.LENGTH_LONG).show();
+                                } else {
+                                    Toast.makeText(context, "cannot delete :(", Toast.LENGTH_LONG).show();
+                                }
+                            } catch (InterruptedException e) {
+                                e.printStackTrace();
+                            } catch (ExecutionException e) {
+                                e.printStackTrace();
+                            }
+
+
+                        }
+                    });
+
+            alertDialogBuilder.setNegativeButton("No", new DialogInterface.OnClickListener() {
+                @Override
+
+                public void onClick(DialogInterface dialog, int which) {
+
+                }
+            });
+
+            AlertDialog alertDialog = alertDialogBuilder.create();
+            alertDialog.show();
+
+
+        }
     }
 
 

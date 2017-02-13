@@ -12,4 +12,5 @@
     <string name="menu_settings">set</string>
     <string name="strLang">en</string>
     <string name="button_scan">Scan for devices</string>
+
 </resources>
