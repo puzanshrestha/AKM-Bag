@@ -8,14 +8,17 @@
     android:paddingRight="@dimen/activity_horizontal_margin"
     android:paddingTop="@dimen/activity_vertical_margin"
     android:orientation="vertical"
+    android:background="@drawable/gradient_main"
     tools:context="com.example.pujan.bag.transactionalReports.BagReports">
 
     <LinearLayout
         android:layout_width="wrap_content"
         android:layout_height="wrap_content"
-        android:orientation="horizontal">
+        android:orientation="horizontal"
+        android:paddingTop="10dp"
+        android:paddingBottom="10dp">
         <TextView
-            android:layout_width="wrap_content"
+            android:layout_width="75dp"
             android:layout_height="wrap_content"
             android:textSize="10pt"
             android:text="From: "/>
@@ -34,13 +37,16 @@
     <LinearLayout
         android:layout_width="wrap_content"
         android:layout_height="wrap_content"
+        android:paddingTop="10dp"
+        android:paddingBottom="10dp"
         >
         <TextView
-            android:layout_width="wrap_content"
+            android:layout_width="75dp"
             android:layout_height="wrap_content"
             android:textSize="10pt"
             android:text="To:     "
             />
+
         <EditText
             android:layout_width="wrap_content"
             android:layout_height="wrap_content"
@@ -54,8 +60,11 @@
     <ScrollView
         android:layout_width="fill_parent"
         android:layout_height="fill_parent"
+        android:paddingTop="10dp"
+        android:paddingBottom="10dp"
         android:scrollbars="none"
-        android:layout_weight="1">
+        android:layout_weight="1"
+        android:background="#fff">
         <TableLayout
             android:layout_width="fill_parent"
             android:layout_height="wrap_content"
