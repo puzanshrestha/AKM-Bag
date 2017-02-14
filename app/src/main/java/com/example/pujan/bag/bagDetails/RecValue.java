@@ -7,6 +7,15 @@ public class RecValue {
 
     private int bag_id[];
     private int quantity[];
+    private String color[];
+
+    public String[] getColor() {
+        return color;
+    }
+
+    public void setColor(String[] color) {
+        this.color = color;
+    }
 
     public int[] getBag_id() {
         return bag_id;

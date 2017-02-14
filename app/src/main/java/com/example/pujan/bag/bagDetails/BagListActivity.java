@@ -66,6 +66,7 @@ public class BagListActivity extends AppCompatActivity implements BagViewAdapter
                     i.putExtra("cid", customer_id.toString());
                     i.putExtra("bid", bagViewAdapter.getRecValues().getBag_id());
                     i.putExtra("quantity", bagViewAdapter.getRecValues().getQuantity());
+                    i.putExtra("color",bagViewAdapter.getRecValues().getColor());
                     startActivity(i);
                     return true;
             }
