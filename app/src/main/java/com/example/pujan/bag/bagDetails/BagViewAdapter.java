@@ -49,9 +49,7 @@ public class BagViewAdapter extends RecyclerView.Adapter<BagViewAdapter.TestHold
 
     private ArrayList<BagEntity> listData;
     private LayoutInflater inflater;
-    private int bag_id[];
-    private int bag_qty[];
-    private String bag_color[];
+
     private String bag;
     private Context context;
     String ip = "";
@@ -84,15 +82,6 @@ public class BagViewAdapter extends RecyclerView.Adapter<BagViewAdapter.TestHold
         this.inflater = LayoutInflater.from(c);
         this.bag = viewsource;
         this.context = c;
-
-        bag_color = new String[listData.size()];
-        bag_id = new int[listData.size()];
-        bag_qty = new int[listData.size()];
-        for (int i = 0; i < listData.size(); i++) {
-            bag_id[i] = 0;
-            bag_qty[i] = 0;
-
-        }
 
 
         DbHelper db = new DbHelper(context);
@@ -138,7 +127,6 @@ public class BagViewAdapter extends RecyclerView.Adapter<BagViewAdapter.TestHold
         holder.optionsMenu.setVisibility(View.VISIBLE);
 
 
-
         try {
             Picasso
                     .with(context)
@@ -158,8 +146,7 @@ public class BagViewAdapter extends RecyclerView.Adapter<BagViewAdapter.TestHold
 
             holder.optionsMenu.setVisibility(View.GONE);
 
-        }
-        else
+        } else
             holder.bagDialog.setVisibility(View.GONE);
 
     }
@@ -187,7 +174,6 @@ public class BagViewAdapter extends RecyclerView.Adapter<BagViewAdapter.TestHold
         private Button bagDialog;
 
 
-
         public TestHolder(View itemView) {
             super(itemView);
 
@@ -201,7 +187,6 @@ public class BagViewAdapter extends RecyclerView.Adapter<BagViewAdapter.TestHold
             photoBox = (ImageView) itemView.findViewById(R.id.photo_box);
 
 
-
             bagDialog = (Button) itemView.findViewById(R.id.dialogWindow);
 
             optionsMenu = (TextView) itemView.findViewById(R.id.optionsMenu);
@@ -209,15 +194,12 @@ public class BagViewAdapter extends RecyclerView.Adapter<BagViewAdapter.TestHold
             context = itemView.getContext();
 
 
-
             container.setOnClickListener(this);
             bagDialog.setOnClickListener(this);
 
             if (bag.equals("customer")) {
                 optionsMenu.setVisibility(View.INVISIBLE);
-            }
-            else
-            {
+            } else {
                 bagDialog.setVisibility(View.INVISIBLE);
             }
 
@@ -251,8 +233,6 @@ public class BagViewAdapter extends RecyclerView.Adapter<BagViewAdapter.TestHold
 
                 }
             });
-
-
 
 
         }
@@ -297,11 +277,10 @@ public class BagViewAdapter extends RecyclerView.Adapter<BagViewAdapter.TestHold
                 bagPhoto = (ImageView) mydialog.findViewById(R.id.bag_photo);
                 tableLayout = (TableLayout) mydialog.findViewById(R.id.tableLayout);
 
-                addDoneBtn=(Button)mydialog.findViewById(R.id.addDoneBtn);
-                addColorBtn=(Button)mydialog.findViewById(R.id.addColorBtn);
+                addDoneBtn = (Button) mydialog.findViewById(R.id.addDoneBtn);
+                addColorBtn = (Button) mydialog.findViewById(R.id.addColorBtn);
 
                 bid = listData.get(getAdapterPosition()).getId();
-
 
 
                 try {
@@ -474,26 +453,23 @@ public class BagViewAdapter extends RecyclerView.Adapter<BagViewAdapter.TestHold
                 newHorizontalLine(tableLayout1);
 
 
-
-
                 final BagColorQuantity bcq = new BagColorQuantity();
                 bcq.setBag_id(bid);
 
-                LinkedHashMap<String,Integer> colorMap = new LinkedHashMap<String, Integer>();
+                LinkedHashMap<String, Integer> colorMap = new LinkedHashMap<String, Integer>();
 
 
-                    for (int j = 0; j < colorQuantities.size(); j++) {
-                        if (bid== colorQuantities.get(j).getBag_id()) {
-                            colorMap = colorQuantities.get(j).getQuantityColor();
-                        }
+                for (int j = 0; j < colorQuantities.size(); j++) {
+                    if (bid == colorQuantities.get(j).getBag_id()) {
+                        colorMap = colorQuantities.get(j).getQuantityColor();
                     }
+                }
 
 
                 final LinkedHashMap<String, Integer> finalColorMap = colorMap;
-                int total2 = 0;
 
-                populateOrder(tableLayout1,finalColorMap);
 
+                populateOrder(tableLayout1, finalColorMap);
 
 
                 mydialog.show();
@@ -502,10 +478,8 @@ public class BagViewAdapter extends RecyclerView.Adapter<BagViewAdapter.TestHold
                     @Override
                     public void onClick(View v) {
                         bcq.setQuantityColor(finalColorMap);
-                        for(int i=0;i<colorQuantities.size();i++)
-                        {
-                            if(bid==colorQuantities.get(i).getBag_id())
-                            {
+                        for (int i = 0; i < colorQuantities.size(); i++) {
+                            if (bid == colorQuantities.get(i).getBag_id()) {
                                 colorQuantities.remove(i);
 
 
@@ -517,13 +491,12 @@ public class BagViewAdapter extends RecyclerView.Adapter<BagViewAdapter.TestHold
                 });
 
 
-
                 addColorBtn.setOnClickListener(new View.OnClickListener() {
                     @Override
                     public void onClick(View v) {
 
                         finalColorMap.put(colorCombo.getSelectedItem().toString(), Integer.valueOf(quantity.getText().toString()));
-                        populateOrder(tableLayout1,finalColorMap);
+                        populateOrder(tableLayout1, finalColorMap);
 
 
                     }
@@ -536,14 +509,8 @@ public class BagViewAdapter extends RecyclerView.Adapter<BagViewAdapter.TestHold
         }
     }
 
-    public RecValue getRecValues() {
-        RecValue recValue = new RecValue();
-        recValue.setBag_id(bag_id);
-        recValue.setQuantity(bag_qty);
-        recValue.setColor(bag_color);
-
-
-        return recValue;
+    public ArrayList<BagColorQuantity> getRecValues() {
+        return colorQuantities;
     }
 
 
@@ -662,14 +629,12 @@ public class BagViewAdapter extends RecyclerView.Adapter<BagViewAdapter.TestHold
     }
 
 
-    public void populateOrder(TableLayout tableLayout1,LinkedHashMap<String,Integer> finalColorMap)
-    {
+    public void populateOrder(TableLayout tableLayout1, LinkedHashMap<String, Integer> finalColorMap) {
 
         tableLayout1.removeAllViews();
-        int bigText=20;
+        int bigText = 20;
         int total = 0;
-        for(LinkedHashMap.Entry<String,Integer> entry : finalColorMap.entrySet())
-        {
+        for (LinkedHashMap.Entry<String, Integer> entry : finalColorMap.entrySet()) {
             TableRow tr1s2 = new TableRow(context);
             TableRow.LayoutParams tb1cs2 = new TableRow.LayoutParams(TableRow.LayoutParams.MATCH_PARENT, TableRow.LayoutParams.MATCH_PARENT);
             tb1cs2.gravity = Gravity.CENTER;

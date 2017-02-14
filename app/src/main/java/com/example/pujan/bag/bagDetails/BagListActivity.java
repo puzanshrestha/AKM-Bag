@@ -36,6 +36,8 @@ public class BagListActivity extends AppCompatActivity implements BagViewAdapter
     String source;
     ArrayList<BagEntity> bagData = new ArrayList<>();
 
+    ArrayList<BagColorQuantity> colorQuantities = new ArrayList<>();
+
 
     public boolean onCreateOptionsMenu(Menu menu) {
 
@@ -64,9 +66,7 @@ public class BagListActivity extends AppCompatActivity implements BagViewAdapter
                 case R.id.action_cart:
                     Intent i = new Intent(this, OrderDisplayActivity.class);
                     i.putExtra("cid", customer_id.toString());
-                    i.putExtra("bid", bagViewAdapter.getRecValues().getBag_id());
-                    i.putExtra("quantity", bagViewAdapter.getRecValues().getQuantity());
-                    i.putExtra("color",bagViewAdapter.getRecValues().getColor());
+                    i.putExtra("recValue", colorQuantities);
                     startActivity(i);
                     return true;
             }
@@ -166,8 +166,7 @@ public class BagListActivity extends AppCompatActivity implements BagViewAdapter
     @Override
     public void onItemClick(int p) {
 
-        RecValue recValue = bagViewAdapter.getRecValues();
-        int a[], b[];
+        colorQuantities = bagViewAdapter.getRecValues();
 
 
     }
