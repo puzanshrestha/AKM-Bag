@@ -189,16 +189,19 @@ public class OrderDisplayActivity extends Activity {
         tableLayout.addView(tr);
         int sn = 0;
         for (int i = 0; i < bag_ids.length; i++) {
+
+            LinkedHashMap<String, Integer> finalColorMap = getData.get(i).getQuantityColor();
+
+            for (LinkedHashMap.Entry<String, Integer> entry : finalColorMap.entrySet()) {
+                sn += 1;
+
             tr1 = new TableRow(this);
             TableRow.LayoutParams tb = new TableRow.LayoutParams(TableRow.LayoutParams.WRAP_CONTENT, TableRow.LayoutParams.MATCH_PARENT);
             tb.gravity = Gravity.CENTER;
             tr1.setLayoutParams(tb);
 
 
-            LinkedHashMap<String, Integer> finalColorMap = getData.get(i).getQuantityColor();
 
-            for (LinkedHashMap.Entry<String, Integer> entry : finalColorMap.entrySet()) {
-                sn += 1;
 
 
                 sids = new TextView(this);
