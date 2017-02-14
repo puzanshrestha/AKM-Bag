@@ -125,6 +125,8 @@ public class PrintDemo extends Activity {
             		cmd[2] &= 0xEF;
             		mService.write(cmd);
 
+					/*
+
 					msg+="Cus Name: "+getData.get(0).getCustomer_name()+"\n\n";
 					msg+="SN| Products| Rate| Qty| T.Price\n";
 					msg+="--------------------------------\n";
@@ -222,6 +224,7 @@ public class PrintDemo extends Activity {
 
 
 
+*/
             	}else if((lang.compareTo("ch")) == 0){
             		cmd[2] |= 0x10;
             		mService.write(cmd);           //��������ģʽ

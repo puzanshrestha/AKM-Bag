@@ -384,8 +384,8 @@ public class FunctionsThread extends AsyncTask<String, Void, String> {
 
         } else if (method.equals("AddOrderTemp")) {
             String customer_id = params[1];
-            String bag_ids = params[2];
-            String qtys = params[3];
+            String bag_id_code = params[2];
+
             try {
                 URL url = new URL(ip + "addOrderTemp.php");
                 HttpURLConnection conn = (HttpURLConnection) url.openConnection();
@@ -396,8 +396,7 @@ public class FunctionsThread extends AsyncTask<String, Void, String> {
                 OutputStream os = conn.getOutputStream();
                 BufferedWriter bufferedWriter = new BufferedWriter(new OutputStreamWriter(os, "UTF-8"));
                 String data = URLEncoder.encode("customer_id", "UTF-8") + "=" + URLEncoder.encode(customer_id, "UTF-8") + "&" +
-                        URLEncoder.encode("qtys", "UTF-8") + "=" + URLEncoder.encode(qtys, "UTF-8") + "&" +
-                        URLEncoder.encode("bag_ids", "UTF-8") + "=" + URLEncoder.encode(bag_ids, "UTF-8");
+                        URLEncoder.encode("bag_id", "UTF-8") + "=" + URLEncoder.encode(bag_id_code, "UTF-8");
                 bufferedWriter.write(data);
                 bufferedWriter.flush();
                 bufferedWriter.close();

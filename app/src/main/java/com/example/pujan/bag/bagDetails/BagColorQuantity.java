@@ -1,12 +1,13 @@
 package com.example.pujan.bag.bagDetails;
 
+import java.io.Serializable;
 import java.util.LinkedHashMap;
 import java.util.Map;
 
 /**
  * Created by Pujan on 14-Feb-17.
  */
-public class BagColorQuantity {
+public class BagColorQuantity implements Serializable{
     private int bag_id;
     LinkedHashMap<String, Integer> quantityColor;
 

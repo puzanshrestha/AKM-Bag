@@ -14,6 +14,7 @@ import android.widget.Toast;
 
 import com.example.pujan.bag.FunctionsThread;
 import com.example.pujan.bag.R;
+import com.example.pujan.bag.bagDetails.BagColorQuantity;
 import com.example.pujan.bag.bagDetails.BagEntity;
 import com.example.pujan.bag.printPackage.DeviceListActivity;
 import com.example.pujan.bag.printPackage.PrintDemo;
@@ -25,6 +26,7 @@ import org.json.JSONException;
 import org.json.JSONObject;
 
 import java.util.ArrayList;
+import java.util.LinkedHashMap;
 import java.util.concurrent.ExecutionException;
 
 public class OrderDisplayActivity extends Activity {
@@ -35,59 +37,52 @@ public class OrderDisplayActivity extends Activity {
     protected void onCreate(Bundle savedInstanceState) {
         super.onCreate(savedInstanceState);
         setContentView(R.layout.activity_order_display);
-        final ArrayList<PrintEntity> print=new ArrayList<>();
+        final ArrayList<PrintEntity> print = new ArrayList<>();
         final ArrayList<AddOrderEntity> addOrderValue = new ArrayList<>();
-        final int customer_id=Integer.valueOf(getIntent().getStringExtra("cid"));
-        String customer_name="";
-        final int[] bag_id = getIntent().getIntArrayExtra("bid");
-        final int[] quantity = getIntent().getIntArrayExtra("quantity");
-        final String[] color = getIntent().getStringArrayExtra("color");
-
-        final int [] bag_price=new int[bag_id.length];
-        final String [] bag_name=new String[bag_id.length];
+        String customer_id = getIntent().getStringExtra("cid");
+        String customer_name = "";
 
 
-        Button printBtn = (Button)findViewById(R.id.printBtn);
+        ArrayList<BagColorQuantity> getData = (ArrayList<BagColorQuantity>) getIntent().getSerializableExtra("recValue");
 
 
+        Button printBtn = (Button) findViewById(R.id.printBtn);
 
-        String customer_id_code=Integer.toString(customer_id);
-        String bag_id_code="";
-        String quantity_code="";
-
-
-        for(int i=0;i<bag_id.length;i++)
-        {
-            bag_id_code = Integer.toString(bag_id[bag_id.length-i-1])+"#"+bag_id_code;
-            quantity_code =Integer.toString(quantity[bag_id.length-i-1])+"#"+quantity_code;
-
+        int bag_ids[] = new int[getData.size()];
+        for (int i = 0; i < getData.size(); i++) {
+            bag_ids[i] = getData.get(i).getBag_id();
         }
+
+        Gson gson = new Gson();
+        String bag_id_code = gson.toJson(bag_ids);
+
         System.out.println(bag_id_code);
-        System.out.println(quantity_code);
+
 
         try {
 
-            String response = new FunctionsThread(this).execute("AddOrderTemp",customer_id_code,bag_id_code,quantity_code).get();
+            String response = new FunctionsThread(this).execute("AddOrderTemp", customer_id, bag_id_code).get();
             System.out.println(response);
+
+
             JSONObject bag_nameJson = new JSONObject(response);
             JSONArray bag_nameJsonArray = bag_nameJson.getJSONArray("result");
 
             JSONObject customer_nameJson = new JSONObject(response);
-            customer_name=customer_nameJson.getString("customer_name");
-            System.out.println(customer_name);
+            customer_name = customer_nameJson.getString("customer_name");
 
+            for (int i = 0; i < bag_nameJsonArray.length(); i++) {
+                JSONObject jsonObject = bag_nameJsonArray.getJSONObject(i);
 
-            for(int i=0;i<bag_nameJsonArray.length();i++)
-            {
-                JSONObject jsonObjectName = bag_nameJsonArray.getJSONObject(i);
+                PrintEntity printentity = new PrintEntity();
+                printentity.setBag_id(bag_ids[i]);
+                printentity.setProduct(jsonObject.getString("bag_name"));
+                printentity.setPrice(Integer.parseInt(jsonObject.getString("bag_price")));
+                printentity.setColorQuantity(getData.get(i).getQuantityColor());
 
-                bag_name[i]=jsonObjectName.getString("bag_name");
-                bag_price[i]=Integer.valueOf(jsonObjectName.getString("bag_price"));
-                System.out.println(bag_name[i]);
+                print.add(printentity);
+
             }
-
-
-
 
 
         } catch (InterruptedException e) {
@@ -100,7 +95,7 @@ public class OrderDisplayActivity extends Activity {
 
 
         TableRow tr, tr1, trc;
-        TextView sid, CusName, BagName,Rate, Qty;
+        TextView sid, CusName, BagName, Rate, Qty;
         TextView sids, BagNames, Rates, Qtys;
 
         TableLayout tableLayout;
@@ -170,6 +165,16 @@ public class OrderDisplayActivity extends Activity {
         Rate.setLayoutParams(pl);
         tr.addView(Rate);
 
+        TextView colors = new TextView(this);
+        colors.setPadding(6, 6, 6, 6);
+        colors.setText("Color");
+        colors.setTextSize(15);
+        colors.setSingleLine();
+        TableRow.LayoutParams lncs = new TableRow.LayoutParams(TableRow.LayoutParams.WRAP_CONTENT, TableRow.LayoutParams.WRAP_CONTENT);
+        lncs.gravity = Gravity.RIGHT;
+        colors.setLayoutParams(lncs);
+        tr.addView(colors);
+
 
         Qty = new TextView(this);
         Qty.setPadding(6, 6, 6, 6);
@@ -182,32 +187,21 @@ public class OrderDisplayActivity extends Activity {
         tr.addView(Qty);
 
         tableLayout.addView(tr);
-        int sn=0;
-        for(int i=0;i<bag_id.length;i++)
-        {
-                tr1 = new TableRow(this);
-                TableRow.LayoutParams tb = new TableRow.LayoutParams(TableRow.LayoutParams.WRAP_CONTENT, TableRow.LayoutParams.MATCH_PARENT);
-                tb.gravity = Gravity.CENTER;
-                tr1.setLayoutParams(tb);
+        int sn = 0;
+        for (int i = 0; i < bag_ids.length; i++) {
 
-            if(bag_id[i]!=0){
-                sn+=1;
+            LinkedHashMap<String, Integer> finalColorMap = getData.get(i).getQuantityColor();
 
-                AddOrderEntity aoe = new AddOrderEntity();
-                aoe.setBag_id(bag_id[i]);
-                aoe.setCustomer_id(customer_id);
-                aoe.setQuantity(quantity[i]);
-                aoe.setColor(color[i]);
-                addOrderValue.add(aoe);
+            for (LinkedHashMap.Entry<String, Integer> entry : finalColorMap.entrySet()) {
+                sn += 1;
 
-                PrintEntity printentity=new PrintEntity();
-                printentity.setId(sn);
-                printentity.setProducts(bag_name[i]);
-                printentity.setPrice(bag_price[i]);
-                printentity.setQuantity(quantity[i]);
-                printentity.setCustomer_name(customer_name);
+            tr1 = new TableRow(this);
+            TableRow.LayoutParams tb = new TableRow.LayoutParams(TableRow.LayoutParams.WRAP_CONTENT, TableRow.LayoutParams.MATCH_PARENT);
+            tb.gravity = Gravity.CENTER;
+            tr1.setLayoutParams(tb);
 
-                print.add(printentity);
+
+
 
 
                 sids = new TextView(this);
@@ -223,7 +217,7 @@ public class OrderDisplayActivity extends Activity {
 
                 BagNames = new TextView(this);
                 BagNames.setPadding(6, 6, 6, 6);
-                BagNames.setText(bag_name[i]);
+                BagNames.setText(print.get(i).getProduct().toString());
                 BagNames.setTextSize(15);
                 BagNames.setSingleLine();
                 TableRow.LayoutParams lns = new TableRow.LayoutParams(TableRow.LayoutParams.WRAP_CONTENT, TableRow.LayoutParams.WRAP_CONTENT);
@@ -234,7 +228,7 @@ public class OrderDisplayActivity extends Activity {
 
                 Rates = new TextView(this);
                 Rates.setPadding(6, 6, 6, 6);
-                Rates.setText(Integer.toString(bag_price[i]));
+                Rates.setText(Integer.toString(print.get(i).getPrice()));
                 Rates.setTextSize(15);
                 Rates.setSingleLine();
                 TableRow.LayoutParams pls = new TableRow.LayoutParams(TableRow.LayoutParams.WRAP_CONTENT, TableRow.LayoutParams.WRAP_CONTENT);
@@ -243,9 +237,20 @@ public class OrderDisplayActivity extends Activity {
                 tr1.addView(Rates);
 
 
+                TextView colors2 = new TextView(this);
+                colors2.setPadding(6, 6, 6, 6);
+                colors2.setText(entry.getKey().toString());
+                colors2.setTextSize(15);
+                colors2.setSingleLine();
+                TableRow.LayoutParams lncs2 = new TableRow.LayoutParams(TableRow.LayoutParams.WRAP_CONTENT, TableRow.LayoutParams.WRAP_CONTENT);
+                lncs2.gravity = Gravity.CENTER;
+                colors2.setLayoutParams(lncs2);
+                tr1.addView(colors2);
+
+
                 Qtys = new TextView(this);
                 Qtys.setPadding(6, 6, 6, 6);
-                Qtys.setText(Integer.toString(quantity[i]));
+                Qtys.setText(Integer.toString(entry.getValue()));
                 Qtys.setTextSize(15);
                 Qtys.setSingleLine();
                 TableRow.LayoutParams tls = new TableRow.LayoutParams(TableRow.LayoutParams.WRAP_CONTENT, TableRow.LayoutParams.WRAP_CONTENT);
@@ -258,19 +263,17 @@ public class OrderDisplayActivity extends Activity {
         }
 
 
-
-
         printBtn.setOnClickListener(new View.OnClickListener() {
             @Override
             public void onClick(View v) {
-                Intent i=new Intent(getBaseContext(),PrintDemo.class);
-                i.putExtra("PrintValue",print);
+                Intent i = new Intent(getBaseContext(), PrintDemo.class);
+                i.putExtra("PrintValue", print);
 
                 Gson gson = new Gson();
                 String test = gson.toJson(addOrderValue);
                 System.out.println(test);
                 try {
-                    String reply=new FunctionsThread(getBaseContext()).execute("AddOrder",test).get();
+                    String reply = new FunctionsThread(getBaseContext()).execute("AddOrder", test).get();
                     System.out.println(reply);
 
                 } catch (InterruptedException e) {
@@ -280,7 +283,6 @@ public class OrderDisplayActivity extends Activity {
                 }
 
 
-
                 //TEMPORARY SOLUTION>....................................Function needs to be in printdemo activity
                 startActivity(i);
 
@@ -288,12 +290,6 @@ public class OrderDisplayActivity extends Activity {
             }
 
         });
-
-
-
-
-
-
 
 
     }
