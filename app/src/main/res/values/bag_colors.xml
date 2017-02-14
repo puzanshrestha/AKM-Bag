@@ -1,0 +1,22 @@
+<?xml version="1.0" encoding="utf-8"?>
+<resources>
+    <string-array name="comboColor">
+        <item>SELECT COLOR</item>
+        <item>INDIGO</item>
+        <item>BLUE</item>
+        <item>GREEN</item>
+        <item>YELLOW</item>
+        <item>ORANGE</item>
+        <item>RED</item>
+    </string-array>
+
+<string-array name="comboColorOriginal">
+    <item>VIOLET</item>
+    <item>INDIGO</item>
+    <item>BLUE</item>
+    <item>GREEN</item>
+    <item>YELLOW</item>
+    <item>ORANGE</item>
+    <item>RED</item>
+</string-array>
+</resources>
