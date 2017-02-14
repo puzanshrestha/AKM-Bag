@@ -11,7 +11,8 @@
         android:layout_height="100dp"
         android:background="@color/cardview_shadow_end_color"
         android:orientation="horizontal"
-        android:gravity="center">
+        android:gravity="center"
+        >
 
 
         <LinearLayout

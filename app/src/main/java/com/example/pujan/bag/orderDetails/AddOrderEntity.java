@@ -7,6 +7,15 @@ public class AddOrderEntity {
     private int customer_id;
     private int bag_id;
     private int quantity;
+    private String color;
+
+    public String getColor() {
+        return color;
+    }
+
+    public void setColor(String color) {
+        this.color = color;
+    }
 
     public int getCustomer_id() {
         return customer_id;

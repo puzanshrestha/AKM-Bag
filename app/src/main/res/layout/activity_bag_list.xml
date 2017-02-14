@@ -1,16 +1,26 @@
 <?xml version="1.0" encoding="utf-8"?>
 <LinearLayout xmlns:android="http://schemas.android.com/apk/res/android"
+    xmlns:card_view="http://schemas.android.com/apk/res-auto"
     android:orientation="vertical"
     android:layout_width="match_parent"
     android:layout_height="match_parent"
-    android:background="@drawable/gradient_main"
     android:padding="5dp"
     android:id="@+id/cont_root_item">
 
+    <android.support.v7.widget.CardView
+        android:layout_marginTop="2dp"
+        android:layout_marginLeft="6dp"
+        android:layout_marginRight="6dp"
+        card_view:cardCornerRadius="2dp"
+        card_view:cardElevation="6dp"
+        card_view:cardUseCompatPadding="true"
+        card_view:contentPadding="10dp"
+        android:layout_height="wrap_content"
+        android:layout_width="wrap_content">
     <LinearLayout
         android:layout_width="match_parent"
         android:layout_height="150dp"
-        android:background="@drawable/second_background"
+
         android:orientation="horizontal"
         android:gravity="center"
         android:padding="5dp">
@@ -73,61 +83,8 @@
 
 
 
-        <CheckBox
-            android:layout_width="wrap_content"
-            android:layout_height="wrap_content"
-            android:id="@+id/bag_checkbox"/>
-        <LinearLayout
-            android:layout_width="0dp"
-            android:layout_height="wrap_content"
-            android:orientation="vertical"
-            android:layout_weight="0.2">
-            <LinearLayout
-                android:layout_width="wrap_content"
-                android:layout_height="wrap_content"
-                android:orientation="horizontal"
-                android:layout_gravity="center">
-                <com.example.pujan.bag.NDSpinner
-                    android:layout_width="100dp"
-                    android:layout_height="wrap_content"
-                    android:id="@+id/colorOption"
 
 
-                    />
-            </LinearLayout>
-
-        <LinearLayout
-            android:layout_width="wrap_content"
-            android:layout_height="wrap_content"
-
-            android:orientation="horizontal"
-            android:layout_gravity="center"
-            >
-
-
-            <Button
-                android:layout_width="35dp"
-                android:layout_height="35dp"
-                android:text="+"
-                android:id="@+id/bag_btn_up"
-                />
-            <TextView
-
-                android:gravity="center"
-                android:layout_width="20dp"
-                android:layout_height="20dp"
-                android:background="@color/colorPrimary"
-                android:id="@+id/bag_qty_txt"/>
-
-            <Button
-                android:layout_width="35dp"
-                android:layout_height="35dp"
-                android:text="-"
-                android:id="@+id/bag_btn_down"/>
-
-        </LinearLayout>
-
-        </LinearLayout>
 
 
 
@@ -143,6 +100,11 @@
 
     </LinearLayout>
 
+        <Button
+            android:layout_width="40dp"
+            android:layout_height="wrap_content"
+            android:text="+"
+            android:id="@+id/dialogWindow"/>
         <TextView
             android:id="@+id/optionsMenu"
             android:layout_width="wrap_content"
@@ -156,9 +118,13 @@
     </LinearLayout>
 
 
+
     <View
         android:layout_width="match_parent"
         android:layout_height="20dp"
         />
+
+    </android.support.v7.widget.CardView>
+
 
 </LinearLayout>

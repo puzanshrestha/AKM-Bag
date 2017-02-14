@@ -41,20 +41,26 @@ public class OrderDisplayActivity extends Activity {
         String customer_name="";
         final int[] bag_id = getIntent().getIntArrayExtra("bid");
         final int[] quantity = getIntent().getIntArrayExtra("quantity");
+        final String[] color = getIntent().getStringArrayExtra("color");
+
         final int [] bag_price=new int[bag_id.length];
         final String [] bag_name=new String[bag_id.length];
 
 
         Button printBtn = (Button)findViewById(R.id.printBtn);
 
+
+
         String customer_id_code=Integer.toString(customer_id);
         String bag_id_code="";
         String quantity_code="";
+
 
         for(int i=0;i<bag_id.length;i++)
         {
             bag_id_code = Integer.toString(bag_id[bag_id.length-i-1])+"#"+bag_id_code;
             quantity_code =Integer.toString(quantity[bag_id.length-i-1])+"#"+quantity_code;
+
         }
         System.out.println(bag_id_code);
         System.out.println(quantity_code);
@@ -191,13 +197,16 @@ public class OrderDisplayActivity extends Activity {
                 aoe.setBag_id(bag_id[i]);
                 aoe.setCustomer_id(customer_id);
                 aoe.setQuantity(quantity[i]);
+                aoe.setColor(color[i]);
                 addOrderValue.add(aoe);
+
                 PrintEntity printentity=new PrintEntity();
                 printentity.setId(sn);
                 printentity.setProducts(bag_name[i]);
                 printentity.setPrice(bag_price[i]);
                 printentity.setQuantity(quantity[i]);
                 printentity.setCustomer_name(customer_name);
+
                 print.add(printentity);
 
 
@@ -249,9 +258,7 @@ public class OrderDisplayActivity extends Activity {
         }
 
 
-        {
 
-        };
 
         printBtn.setOnClickListener(new View.OnClickListener() {
             @Override
@@ -261,6 +268,7 @@ public class OrderDisplayActivity extends Activity {
 
                 Gson gson = new Gson();
                 String test = gson.toJson(addOrderValue);
+                System.out.println(test);
                 try {
                     String reply=new FunctionsThread(getBaseContext()).execute("AddOrder",test).get();
                     System.out.println(reply);
