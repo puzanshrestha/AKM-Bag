@@ -4,7 +4,7 @@
         android:color="@color/colorCenter"/>
 
     <stroke android:width="3dp"
-        android:color="#ff000000"
+        android:color="@color/colorCenter"
         />
 
     <padding android:left="1dp"

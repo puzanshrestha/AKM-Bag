@@ -1,5 +1,6 @@
 package com.example.pujan.bag;
 
+import android.app.ProgressDialog;
 import android.content.Context;
 import android.os.AsyncTask;
 import android.os.Environment;
@@ -35,6 +36,7 @@ public class FunctionsThread extends AsyncTask<String, Void, String> {
 
     String ipMain;
     DbHelper dbh;
+    ProgressDialog pd;
 
     public FunctionsThread(Context c) {
         this.c = c;
@@ -46,6 +48,11 @@ public class FunctionsThread extends AsyncTask<String, Void, String> {
         } finally {
             db.close();
         }
+        pd= new ProgressDialog(c);
+        pd.setIndeterminate(true);
+        pd.setTitle("Working");
+        pd.setMessage("loading...");
+        pd.show();
 
     }
 
@@ -55,6 +62,7 @@ public class FunctionsThread extends AsyncTask<String, Void, String> {
 
     @Override
     protected void onPreExecute() {
+
 
     }
 
@@ -736,6 +744,6 @@ public class FunctionsThread extends AsyncTask<String, Void, String> {
 
     @Override
     protected void onPostExecute(String result) {
-
+pd.dismiss();
     }
 }
