@@ -1,25 +1,29 @@
 <?xml version="1.0" encoding="utf-8"?>
-
-<RelativeLayout xmlns:android="http://schemas.android.com/apk/res/android"
+<LinearLayout xmlns:android="http://schemas.android.com/apk/res/android"
     xmlns:tools="http://schemas.android.com/tools"
     android:layout_width="match_parent"
     android:layout_height="match_parent"
     android:background="@drawable/gradient_main"
-    android:paddingBottom="@dimen/activity_vertical_margin"
-    android:paddingLeft="@dimen/activity_horizontal_margin"
-    android:paddingRight="@dimen/activity_horizontal_margin"
-    android:paddingTop="@dimen/activity_vertical_margin"
-    tools:context=".bagDetails.AddBagActivity"
+    android:padding="5dp"
+    android:orientation="vertical"
+    tools:context=".bagDetails.AddBagActivity">
 
-    >
 
-    <ScrollView
-        android:layout_width="wrap_content"
-        android:layout_height="wrap_content">
+
         <LinearLayout
             android:layout_width="wrap_content"
-            android:layout_height="wrap_content"
+            android:layout_height="0dp"
+            android:layout_weight="0.5"
             android:orientation="vertical">
+
+            <ScrollView
+                android:layout_width="wrap_content"
+                android:layout_height="wrap_content"
+                android:background="@drawable/second_background">
+            <LinearLayout
+                android:layout_width="wrap_content"
+                android:layout_height="wrap_content"
+                android:orientation="vertical">
 
 
             <ImageView
@@ -143,14 +147,13 @@
 
             <LinearLayout
                 android:layout_width="wrap_content"
-                android:layout_height="wrap_content"
-                >
+                android:layout_height="wrap_content">
 
                 <TextView
                     android:layout_width="0dp"
                     android:layout_height="wrap_content"
                     android:text="Current Stock"
-                    android:layout_weight="0.5"/>
+                    android:layout_weight="0.5" />
 
             </LinearLayout>
 
@@ -172,6 +175,7 @@
                         android:layout_height="180dp"
                         android:scrollbars="none"
                         android:layout_weight="1">
+
                         <TableLayout
                             android:id="@+id/tableLayout"
                             android:layout_width="wrap_content"
@@ -247,28 +251,42 @@
 
             </TableLayout>
 
-
-            <Button
-                android:id="@+id/addColorBtn"
-                style="@style/Base.Widget.AppCompat.Button.Borderless.Colored"
-                android:layout_width="wrap_content"
-                android:layout_height="wrap_content"
-                android:layout_gravity="center"
-                android:text="Add" />
-
-
-            <Button
-                android:id="@+id/addDoneBtn"
-                style="@style/Base.Widget.AppCompat.Button.Borderless.Colored"
-                android:layout_width="wrap_content"
-                android:layout_height="wrap_content"
-                android:layout_gravity="center"
-                android:text="Done" />
+            </LinearLayout>
+            </ScrollView>
 
 
 
         </LinearLayout>
-    </ScrollView>
-</RelativeLayout>
 
 
+<View
+    android:layout_width="wrap_content"
+    android:layout_height="20dp"/>
+
+            <LinearLayout
+                android:layout_width="match_parent"
+                android:layout_weight="0.15"
+                android:layout_height="0dp"
+                android:layout_gravity="center"
+                android:orientation="vertical"
+                android:background="@drawable/second_background">
+
+                <Button
+                    android:id="@+id/addColorBtn"
+                    android:layout_width="wrap_content"
+                    android:layout_height="wrap_content"
+                    android:layout_gravity="center"
+                    android:text="Add" />
+
+
+                <Button
+                    android:id="@+id/addDoneBtn"
+                    android:layout_width="wrap_content"
+                    android:layout_height="wrap_content"
+                    android:layout_gravity="center"
+                    android:text="Done" />
+
+            </LinearLayout>
+
+
+</LinearLayout>

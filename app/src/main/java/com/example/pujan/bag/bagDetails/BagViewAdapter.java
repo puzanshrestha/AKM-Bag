@@ -198,9 +198,11 @@ public class BagViewAdapter extends RecyclerView.Adapter<BagViewAdapter.TestHold
             bagDialog.setOnClickListener(this);
 
             if (bag.equals("customer")) {
-                optionsMenu.setVisibility(View.INVISIBLE);
+                optionsMenu.setVisibility(View.GONE);
+
             } else {
-                bagDialog.setVisibility(View.INVISIBLE);
+                bagDialog.setVisibility(View.GONE);
+
             }
 
             optionsMenu.setOnClickListener(new View.OnClickListener() {
