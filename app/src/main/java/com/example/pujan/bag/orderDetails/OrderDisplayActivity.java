@@ -47,19 +47,23 @@ public class OrderDisplayActivity extends Activity {
 
         SimpleDateFormat format = new SimpleDateFormat("yyyy-MM-dd");
 
-
         ArrayList<BagColorQuantity> getData = (ArrayList<BagColorQuantity>) getIntent().getSerializableExtra("recValue");
 
-
+        LinkedHashMap<String,Integer> colorQuantity=new LinkedHashMap<>();
         Button printBtn = (Button) findViewById(R.id.printBtn);
 
         int bag_ids[] = new int[getData.size()];
-        for (int i = 0; i < getData.size(); i++) {
+        for (int i = 0; i < getData.size(); i++)
+        {
             bag_ids[i] = getData.get(i).getBag_id();
+
+
         }
 
         Gson gson = new Gson();
         String bag_id_code = gson.toJson(bag_ids);
+
+
 
 
 
@@ -77,13 +81,11 @@ public class OrderDisplayActivity extends Activity {
 
             for (int i = 0; i < bag_nameJsonArray.length(); i++) {
                 JSONObject jsonObject = bag_nameJsonArray.getJSONObject(i);
-
                 PrintEntity printentity = new PrintEntity();
                 printentity.setBag_id(bag_ids[i]);
                 printentity.setProduct(jsonObject.getString("bag_name"));
                 printentity.setPrice(Integer.parseInt(jsonObject.getString("bag_price")));
                 printentity.setColorQuantity(getData.get(i).getQuantityColor());
-
                 print.add(printentity);
 
             }
@@ -203,10 +205,14 @@ public class OrderDisplayActivity extends Activity {
         for (int i = 0; i < bag_ids.length; i++) {
 
             LinkedHashMap<String, Integer> finalColorMap = getData.get(i).getQuantityColor();
+            AddOrderEntity addOrderEntity=new AddOrderEntity();
+            addOrderEntity.setBag_id(bag_ids[i]);
+            addOrderEntity.setCustomer_id(Integer.valueOf(customer_id));
+            addOrderEntity.setColorQuantity(getData.get(i).getQuantityColor());
+            addOrderValue.add(addOrderEntity);
 
             for (LinkedHashMap.Entry<String, Integer> entry : finalColorMap.entrySet()) {
                 sn += 1;
-
 
                 TableRow tableRow = new TableRow(this);
                 tableRow.setBackgroundColor(Color.WHITE);

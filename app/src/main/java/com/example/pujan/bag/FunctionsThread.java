@@ -394,6 +394,7 @@ public class FunctionsThread extends AsyncTask<String, Void, String> {
             String customer_id = params[1];
             String bag_id_code = params[2];
 
+
             try {
                 URL url = new URL(ip + "addOrderTemp.php");
                 HttpURLConnection conn = (HttpURLConnection) url.openConnection();
