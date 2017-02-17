@@ -1,6 +1,9 @@
 package com.example.pujan.bag.bagDetails;
 
+import com.example.pujan.bag.bagStock.ColorQuantityEntity;
+
 import java.io.Serializable;
+import java.util.ArrayList;
 import java.util.LinkedHashMap;
 import java.util.Map;
 

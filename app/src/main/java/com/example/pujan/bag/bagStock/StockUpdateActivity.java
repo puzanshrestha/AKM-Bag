@@ -1,16 +1,22 @@
 package com.example.pujan.bag.bagStock;
 
 import android.app.Activity;
+import android.app.AlertDialog;
+import android.content.DialogInterface;
+import android.graphics.Color;
 import android.net.Uri;
 import android.os.Bundle;
+import android.text.InputType;
 import android.view.Gravity;
 import android.view.View;
+import android.view.ViewGroup;
 import android.widget.AdapterView;
 import android.widget.ArrayAdapter;
 import android.widget.Button;
 import android.widget.EditText;
 import android.widget.ImageView;
 import android.widget.LinearLayout;
+import android.widget.ScrollView;
 import android.widget.Spinner;
 import android.widget.TableLayout;
 import android.widget.TableRow;
@@ -19,9 +25,11 @@ import android.widget.Toast;
 
 import com.example.pujan.bag.FunctionsThread;
 import com.example.pujan.bag.MainActivity;
+import com.example.pujan.bag.NDSpinner;
 import com.example.pujan.bag.R;
 import com.example.pujan.bag.bagDetails.BagEntity;
 import com.example.pujan.bag.database.DbHelper;
+import com.google.gson.Gson;
 import com.squareup.picasso.MemoryPolicy;
 import com.squareup.picasso.NetworkPolicy;
 import com.squareup.picasso.Picasso;
@@ -36,12 +44,12 @@ import java.util.concurrent.ExecutionException;
 public class StockUpdateActivity extends Activity {
 
     String array_spinner[];
-    Spinner colorCombo;
+    NDSpinner colorCombo;
     TableLayout tableLayout;
     ArrayList<ColorQuantityEntity> colorValues;
     String bag_id="";
     EditText quantity;
-    Button updateStockBtn;
+    Button updateStockBtn,editStockBtn;
     private  TextView nameEditText;
     private  TextView typeEditText;
     private  TextView priceEditText;
@@ -51,13 +59,15 @@ public class StockUpdateActivity extends Activity {
     BagEntity bagEntity;
 
 
+
     @Override
     protected void onCreate(Bundle savedInstanceState) {
         super.onCreate(savedInstanceState);
         setContentView(R.layout.activity_stock_update);
-        colorCombo = (Spinner) findViewById(R.id.colorCombo);
-        quantity=(EditText)findViewById(R.id.cqty);
+        colorCombo = (NDSpinner) findViewById(R.id.colorCombo);
+        quantity = (EditText) findViewById(R.id.cqty);
         updateStockBtn = (Button) findViewById(R.id.updateStockBtn);
+        editStockBtn =(Button)findViewById(R.id.editStockBtn);
 
         nameEditText = (TextView) findViewById(R.id.nameEditText);
         typeEditText = (TextView) findViewById(R.id.typeEditText);
@@ -65,7 +75,6 @@ public class StockUpdateActivity extends Activity {
         companyEditText = (TextView) findViewById(R.id.companyEditText);
         quantityEditText = (TextView) findViewById(R.id.quantityEditText);
         bagPhoto = (ImageView) findViewById(R.id.bag_photo);
-
 
 
         bag_id = getIntent().getStringExtra("bag_id");
@@ -94,15 +103,11 @@ public class StockUpdateActivity extends Activity {
                 .into(bagPhoto);
 
 
-
-
-
-
         colorCombo.setOnItemSelectedListener(new AdapterView.OnItemSelectedListener() {
             @Override
             public void onItemSelected(AdapterView<?> parent, View view, int position, long id) {
-                Toast.makeText(getBaseContext(),colorCombo.getSelectedItem().toString(),Toast.LENGTH_SHORT).show();
-                array_spinner[0]="VIOLET";
+                Toast.makeText(getBaseContext(), colorCombo.getSelectedItem().toString(), Toast.LENGTH_SHORT).show();
+                array_spinner[0] = "VIOLET";
             }
 
             @Override
@@ -111,6 +116,117 @@ public class StockUpdateActivity extends Activity {
 
             }
         });
+
+        updateStockBtn.setOnClickListener(new View.OnClickListener() {
+            @Override
+            public void onClick(View v) {
+
+                try {
+                    System.out.println("stockButton clicked");
+                    String response = new FunctionsThread(getBaseContext()).execute("UpdateStockInformation", bag_id,colorCombo.getSelectedItem().toString(), quantity.getText().toString()).get();
+                    System.out.println(response);
+                    populateTableLayout();
+                    Toast.makeText(getBaseContext(), "Stock has been updated", Toast.LENGTH_SHORT).show();
+                } catch (InterruptedException e) {
+                    e.printStackTrace();
+                } catch (ExecutionException e) {
+                    e.printStackTrace();
+                }
+
+
+            }
+        });
+
+        editStockBtn.setOnClickListener(new View.OnClickListener() {
+            @Override
+            public void onClick(View v) {
+                final AlertDialog.Builder editStock = new AlertDialog.Builder(StockUpdateActivity.this);
+                editStock.setTitle("Edit Stock");
+                final TextView[] colorName = new TextView[colorValues.size()];
+                final EditText[] colorsQty = new EditText[colorValues.size()];
+
+                LinearLayout layout = new LinearLayout(StockUpdateActivity.this);
+                layout.setOrientation(LinearLayout.VERTICAL);
+                TableRow.LayoutParams param = new TableRow.LayoutParams(ViewGroup.LayoutParams.WRAP_CONTENT, ViewGroup.LayoutParams.WRAP_CONTENT);
+                param.setMargins(6,6,6,6);
+                layout.setLayoutParams(param);
+                layout.setPadding(10,10,10,10);
+                layout.setBackgroundColor(Color.LTGRAY);
+
+
+                for(int i=0;i<colorsQty.length;i++)
+                {
+
+                    colorName[i] = new TextView(StockUpdateActivity.this);
+                    colorsQty[i]= new EditText(StockUpdateActivity.this);
+                    colorsQty[i].setPadding(6,6,6,6);
+                    colorsQty[i].setBackgroundColor(Color.BLUE);
+                    colorsQty[i].setTextColor(Color.WHITE);
+                    colorsQty[i].setInputType(InputType.TYPE_CLASS_NUMBER);
+                    colorName[i].setText(colorValues.get(i).getColor());
+                    colorsQty[i].setText(String.valueOf(colorValues.get(i).getCquantity()));
+
+                    layout.addView(colorName[i]);
+                    layout.addView(colorsQty[i]);
+
+                }
+
+
+                editStock.setView(layout);
+
+                editStock.setPositiveButton("OK", new DialogInterface.OnClickListener() {
+                    @Override
+                    public void onClick(DialogInterface dialog, int which) {
+                        ArrayList<ColorQuantityEntity> cqeArray = new ArrayList<ColorQuantityEntity>();
+                        boolean noChange = true;
+                        for(int i=0;i<colorsQty.length;i++)
+                        {
+
+                            ColorQuantityEntity cqe = new ColorQuantityEntity();
+                            cqe.setColor(colorName[i].getText().toString());
+                            int qty=0;
+                            try {
+                                qty = Integer.parseInt(colorsQty[i].getText().toString());
+                            }
+                            catch (Exception e)
+                            {
+
+                            }
+                            cqe.setCquantity(qty);
+                            cqeArray.add(cqe);
+
+                            if(qty!=colorValues.get(i).getCquantity())
+                                noChange=false;
+                        }
+                        if(!noChange) {
+                            Gson stockEdit = new Gson();
+                            String stockEditJson = stockEdit.toJson(cqeArray);
+                            try {
+                                String response =new FunctionsThread(getBaseContext()).execute("EditStockInformation",bag_id,stockEditJson).get();
+                                populateTableLayout();
+                                Toast.makeText(getBaseContext(),response,Toast.LENGTH_SHORT).show();
+                            } catch (InterruptedException e) {
+                                e.printStackTrace();
+                            } catch (ExecutionException e) {
+                                e.printStackTrace();
+                            }
+
+                        }
+
+
+                    }
+                });
+                editStock.setNegativeButton("Cancel", new DialogInterface.OnClickListener() {
+                    @Override
+                    public void onClick(DialogInterface dialog, int which) {
+                        dialog.dismiss();
+                    }
+                });
+                editStock.show();
+            }
+        });
+
+
 
     }
 
@@ -158,104 +274,80 @@ public class StockUpdateActivity extends Activity {
 
         tableLayout = (TableLayout) findViewById(R.id.tableLayout);
 
+
         tableLayout.removeAllViews();
-        TableRow tr1 = new TableRow(this);
-        TableRow.LayoutParams tb1c = new TableRow.LayoutParams(TableRow.LayoutParams.MATCH_PARENT, TableRow.LayoutParams.MATCH_PARENT);
-        tb1c.gravity = Gravity.CENTER;
-        tr1.setLayoutParams(tb1c);
+        TableLayout.LayoutParams tableLayoutParams = new TableLayout.LayoutParams();
+        tableLayout.setBackgroundColor(Color.WHITE);
+
+
+        TableRow.LayoutParams tableRowParams = new TableRow.LayoutParams();
+        tableRowParams.setMargins(3, 3, 3, 3);
+        tableRowParams.weight = 1;
+
+        TableRow tableRow1 = new TableRow(this);
+        tableRow1.setBackgroundColor(Color.parseColor("#0087e2"));
+
 
         TextView color = new TextView(this);
-        color.setPadding(6, 6, 6, 6);
-        color.setText("Colors ");
-        color.setTextSize(bigText);
-        color.setSingleLine();
-        TableRow.LayoutParams lnc = new TableRow.LayoutParams(TableRow.LayoutParams.WRAP_CONTENT, TableRow.LayoutParams.WRAP_CONTENT);
-        lnc.gravity = Gravity.CENTER;
-        color.setLayoutParams(lnc);
-        tr1.addView(color);
+        color.setBackgroundColor(Color.parseColor("#ff6600"));
+        color.setTextColor(Color.parseColor("#FFFFFF"));
+        color.setPadding(16,6,16,6);
+        color.setGravity(Gravity.CENTER);
+        color.setText("Color");
+        tableRow1.addView(color,tableRowParams);
+
+        TextView quantityV = new TextView(this);
+        quantityV.setBackgroundColor(Color.parseColor("#ff6600"));
+        quantityV.setTextColor(Color.parseColor("#FFFFFF"));
+        quantityV.setPadding(16,6,16,6);
+        quantityV.setGravity(Gravity.CENTER);
+        quantityV.setText("QTY");
+        tableRow1.addView(quantityV,tableRowParams);
+
+        tableLayout.addView(tableRow1,tableLayoutParams);
 
 
-
-        TextView qty = new TextView(this);
-        qty.setPadding(6, 6, 6, 6);
-        qty.setText(" Quantity");
-        qty.setTextSize(bigText);
-        qty.setSingleLine();
-        TableRow.LayoutParams lnq = new TableRow.LayoutParams(TableRow.LayoutParams.WRAP_CONTENT, TableRow.LayoutParams.WRAP_CONTENT);
-        lnq.gravity = Gravity.CENTER;
-        qty.setLayoutParams(lnq);
-        tr1.addView(qty);
-
-        tableLayout.addView(tr1);
-        newHorizontalLine();
-
-        int total=0;
-        for(int i=0;i<colorValues.size();i++)
-        {
-            TableRow tr1s = new TableRow(this);
-            TableRow.LayoutParams tb1cs = new TableRow.LayoutParams(TableRow.LayoutParams.MATCH_PARENT, TableRow.LayoutParams.MATCH_PARENT);
-            tb1cs.gravity = Gravity.CENTER;
-            tr1s.setLayoutParams(tb1c);
+        int total = 0;
+        for (int i = 0; i < colorValues.size(); i++) {
+            TableRow tableRow = new TableRow(this);
+            tableRow.setBackgroundColor(Color.WHITE);
 
             TextView colors = new TextView(this);
-            colors.setPadding(6, 6, 6, 6);
+            colors.setBackgroundColor(Color.parseColor("#a9a7a5"));
+            colors.setTextColor(Color.parseColor("#FFFFFF"));
+            colors.setPadding(6,6,6,6);
+            colors.setGravity(Gravity.CENTER);
             colors.setText(colorValues.get(i).getColor());
-            colors.setTextSize(bigText);
-            colors.setSingleLine();
-            TableRow.LayoutParams lncs = new TableRow.LayoutParams(TableRow.LayoutParams.WRAP_CONTENT, TableRow.LayoutParams.WRAP_CONTENT);
-            lncs.gravity = Gravity.CENTER;
-            colors.setLayoutParams(lncs);
-            tr1s.addView(colors);
+            tableRow.addView(colors,tableRowParams);
 
+            TextView quantitys = new TextView(this);
+            quantitys.setBackgroundColor(Color.parseColor("#a9a7a5"));
+            quantitys.setTextColor(Color.parseColor("#FFFFFF"));
+            quantitys.setPadding(6,6,6,6);
+            quantitys.setGravity(Gravity.CENTER);
+            quantitys.setText(String.valueOf(colorValues.get(i).getCquantity()));
+            tableRow.addView(quantitys,tableRowParams);
 
             total+=colorValues.get(i).getCquantity();
 
-            TextView qtys = new TextView(this);
-            qtys.setPadding(6, 6, 6, 6);
-            qtys.setText(Integer.toString(colorValues.get(i).getCquantity()));
-            qtys.setTextSize(bigText);
-            qtys.setSingleLine();
-            TableRow.LayoutParams lnqs = new TableRow.LayoutParams(TableRow.LayoutParams.WRAP_CONTENT, TableRow.LayoutParams.WRAP_CONTENT);
-            lnqs.gravity = Gravity.CENTER;
-            qtys.setLayoutParams(lnqs);
-            tr1s.addView(qtys);
-
-            tableLayout.addView(tr1s);
+            tableLayout.addView(tableRow,tableLayoutParams);
         }
 
-        newHorizontalLine();
+        TableRow tableRowlast = new TableRow(this);
+        tableRowlast.setBackgroundColor(Color.parseColor("#FFFFFF"));
 
-        TableRow tr1s = new TableRow(this);
-        TableRow.LayoutParams tb1cs = new TableRow.LayoutParams(TableRow.LayoutParams.MATCH_PARENT, TableRow.LayoutParams.MATCH_PARENT);
-        tb1cs.gravity = Gravity.CENTER;
-        tr1s.setLayoutParams(tb1c);
+        TextView totals = new TextView(this);
+        totals.setBackgroundColor(Color.parseColor("#00d857"));
+        totals.setTextColor(Color.parseColor("#FFFFFF"));
+        totals.setPadding(6,6,6,6);
+        totals.setGravity(Gravity.RIGHT);
+        totals.setText("Total: "+total);
+        TableRow.LayoutParams params = new TableRow.LayoutParams();
+        params.span = 2; //amount of columns you will span
+        totals.setLayoutParams(params);
+        tableRowlast.addView(totals,tableRowParams);
 
-        TextView colors = new TextView(this);
-        colors.setPadding(6, 6, 6, 6);
-        colors.setText("Total: ");
-        colors.setTextSize(bigText);
-        colors.setSingleLine();
-        TableRow.LayoutParams lncs = new TableRow.LayoutParams(TableRow.LayoutParams.WRAP_CONTENT, TableRow.LayoutParams.WRAP_CONTENT);
-        lncs.gravity = Gravity.RIGHT;
-        colors.setLayoutParams(lncs);
-        tr1s.addView(colors);
-
-
-
-        TextView qtys = new TextView(this);
-        qtys.setPadding(6, 6, 6, 6);
-        qtys.setText(Integer.toString(total));
-        qtys.setTextSize(bigText);
-        qtys.setSingleLine();
-        TableRow.LayoutParams lnqs = new TableRow.LayoutParams(TableRow.LayoutParams.WRAP_CONTENT, TableRow.LayoutParams.WRAP_CONTENT);
-        lnqs.gravity = Gravity.CENTER;
-        qtys.setLayoutParams(lnqs);
-        tr1s.addView(qtys);
-
-        tableLayout.addView(tr1s);
-
-
-
+        tableLayout.addView(tableRowlast,tableLayoutParams);
 
 
 
@@ -294,24 +386,5 @@ public class StockUpdateActivity extends Activity {
         linebreak2.setLayoutParams(lnbr2);
         trgap.addView(linebreak2);
 
-
-
-
-        tableLayout.addView(trgap);
-        updateStockBtn.setOnClickListener(new View.OnClickListener() {
-            @Override
-            public void onClick(View v) {
-                try {
-                    String response = new FunctionsThread(getBaseContext()).execute("UpdateStockInformation",bag_id,colorCombo.getSelectedItem().toString(),quantity.getText().toString()).get();
-                    populateTableLayout();
-                        Toast.makeText(getBaseContext(),"Stock has been updated",Toast.LENGTH_SHORT).show();
-
-                } catch (InterruptedException e) {
-                    e.printStackTrace();
-                } catch (ExecutionException e) {
-                    e.printStackTrace();
-                }
-            }
-        });
     }
 }
