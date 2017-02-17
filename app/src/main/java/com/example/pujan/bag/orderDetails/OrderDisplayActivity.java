@@ -241,7 +241,6 @@ public class OrderDisplayActivity extends Activity {
                 TextView quantitys = new TextView(this);
                 quantitys.setBackgroundColor(Color.parseColor("#a9a7a5"));
                 quantitys.setTextColor(Color.parseColor("#FFFFFF"));
-
                 quantitys.setPadding(6,6,6,6);
                 quantitys.setGravity(Gravity.CENTER);
                 quantitys.setText(String.valueOf(entry.getValue().toString()));
@@ -293,21 +292,14 @@ public class OrderDisplayActivity extends Activity {
                 i.putExtra("PrintValue", print);
 
                 Gson gson = new Gson();
-                String test = gson.toJson(addOrderValue);
+                String test = gson.toJson(print);
                 System.out.println(test);
-                try {
-                    String reply = new FunctionsThread(getBaseContext()).execute("AddOrder", test).get();
-                    System.out.println(reply);
-
-                } catch (InterruptedException e) {
-                    e.printStackTrace();
-                } catch (ExecutionException e) {
-                    e.printStackTrace();
-                }
+                //  String reply = new FunctionsThread(getBaseContext()).execute("AddOrder", test).get();
+                // System.out.println(reply);
 
 
                 //TEMPORARY SOLUTION>....................................Function needs to be in printdemo activity
-                startActivity(i);
+                //startActivity(i);
 
 
             }
