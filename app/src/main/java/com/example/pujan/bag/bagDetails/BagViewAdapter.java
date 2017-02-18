@@ -4,9 +4,12 @@ import android.app.Dialog;
 import android.content.Context;
 import android.content.DialogInterface;
 import android.content.Intent;
+import android.graphics.Color;
 import android.support.v7.app.AlertDialog;
 import android.support.v7.widget.PopupMenu;
 import android.support.v7.widget.RecyclerView;
+import android.text.InputType;
+import android.text.TextUtils;
 import android.view.Gravity;
 import android.view.LayoutInflater;
 import android.view.MenuItem;
@@ -265,6 +268,7 @@ public class BagViewAdapter extends RecyclerView.Adapter<BagViewAdapter.TestHold
                 BagEntity bagEntity;
                 Button addDoneBtn;
                 Button addColorBtn;
+                Button clearBtn;
 
 
                 colorCombo = (Spinner) mydialog.findViewById(R.id.colorCombo);
@@ -281,8 +285,11 @@ public class BagViewAdapter extends RecyclerView.Adapter<BagViewAdapter.TestHold
 
                 addDoneBtn = (Button) mydialog.findViewById(R.id.addDoneBtn);
                 addColorBtn = (Button) mydialog.findViewById(R.id.addColorBtn);
+                clearBtn =(Button)mydialog.findViewById(R.id.clearBtn);
 
                 bid = listData.get(getAdapterPosition()).getId();
+
+                populateColor(colorCombo);
 
 
                 try {
@@ -322,99 +329,78 @@ public class BagViewAdapter extends RecyclerView.Adapter<BagViewAdapter.TestHold
 
 
                 tableLayout.removeAllViews();
-                TableRow tr1 = new TableRow(context);
-                TableRow.LayoutParams tb1c = new TableRow.LayoutParams(TableRow.LayoutParams.MATCH_PARENT, TableRow.LayoutParams.MATCH_PARENT);
-                tb1c.gravity = Gravity.CENTER;
-                tr1.setLayoutParams(tb1c);
-
-                final TextView color = new TextView(context);
-                color.setPadding(6, 6, 6, 6);
-                color.setText("Colors ");
-                color.setTextSize(bigText);
-                color.setSingleLine();
-                TableRow.LayoutParams lnc = new TableRow.LayoutParams(TableRow.LayoutParams.WRAP_CONTENT, TableRow.LayoutParams.WRAP_CONTENT);
-                lnc.gravity = Gravity.CENTER;
-                color.setLayoutParams(lnc);
-                tr1.addView(color);
+                TableLayout.LayoutParams tableLayoutParams = new TableLayout.LayoutParams();
+                tableLayout.setBackgroundColor(Color.WHITE);
 
 
-                TextView qty = new TextView(context);
-                qty.setPadding(6, 6, 6, 6);
-                qty.setText(" Quantity");
-                qty.setTextSize(bigText);
-                qty.setSingleLine();
-                TableRow.LayoutParams lnq = new TableRow.LayoutParams(TableRow.LayoutParams.WRAP_CONTENT, TableRow.LayoutParams.WRAP_CONTENT);
-                lnq.gravity = Gravity.CENTER;
-                qty.setLayoutParams(lnq);
-                tr1.addView(qty);
+                TableRow.LayoutParams tableRowParams = new TableRow.LayoutParams();
+                tableRowParams.setMargins(3, 3, 3, 3);
+                tableRowParams.weight = 1;
 
-                tableLayout.addView(tr1);
-                newHorizontalLine(tableLayout);
+                TableRow tableRow1 = new TableRow(context);
+                tableRow1.setBackgroundColor(Color.parseColor("#0087e2"));
+
+
+                TextView color = new TextView(context);
+                color.setBackgroundColor(Color.parseColor("#ff6600"));
+                color.setTextColor(Color.parseColor("#FFFFFF"));
+                color.setPadding(16,6,16,6);
+                color.setGravity(Gravity.CENTER);
+                color.setText("Color");
+                tableRow1.addView(color,tableRowParams);
+
+                TextView quantityV = new TextView(context);
+                quantityV.setBackgroundColor(Color.parseColor("#ff6600"));
+                quantityV.setTextColor(Color.parseColor("#FFFFFF"));
+                quantityV.setPadding(16,6,16,6);
+                quantityV.setGravity(Gravity.CENTER);
+                quantityV.setText("QTY");
+                tableRow1.addView(quantityV,tableRowParams);
+
+                tableLayout.addView(tableRow1,tableLayoutParams);
+
 
                 int total = 0;
                 for (int i = 0; i < colorValues.size(); i++) {
-                    TableRow tr1s = new TableRow(context);
-                    TableRow.LayoutParams tb1cs = new TableRow.LayoutParams(TableRow.LayoutParams.MATCH_PARENT, TableRow.LayoutParams.MATCH_PARENT);
-                    tb1cs.gravity = Gravity.CENTER;
-                    tr1s.setLayoutParams(tb1c);
+                    TableRow tableRow = new TableRow(context);
+                    tableRow.setBackgroundColor(Color.WHITE);
 
                     TextView colors = new TextView(context);
-                    colors.setPadding(6, 6, 6, 6);
+                    colors.setBackgroundColor(Color.parseColor("#a9a7a5"));
+                    colors.setTextColor(Color.parseColor("#FFFFFF"));
+                    colors.setPadding(6,6,6,6);
+                    colors.setGravity(Gravity.CENTER);
                     colors.setText(colorValues.get(i).getColor());
-                    colors.setTextSize(bigText);
-                    colors.setSingleLine();
-                    TableRow.LayoutParams lncs = new TableRow.LayoutParams(TableRow.LayoutParams.WRAP_CONTENT, TableRow.LayoutParams.WRAP_CONTENT);
-                    lncs.gravity = Gravity.CENTER;
-                    colors.setLayoutParams(lncs);
-                    tr1s.addView(colors);
+                    tableRow.addView(colors,tableRowParams);
 
+                    TextView quantitys = new TextView(context);
+                    quantitys.setBackgroundColor(Color.parseColor("#a9a7a5"));
+                    quantitys.setTextColor(Color.parseColor("#FFFFFF"));
+                    quantitys.setPadding(6,6,6,6);
+                    quantitys.setGravity(Gravity.CENTER);
+                    quantitys.setText(String.valueOf(colorValues.get(i).getCquantity()));
+                    tableRow.addView(quantitys,tableRowParams);
 
-                    total += colorValues.get(i).getCquantity();
+                    total+=colorValues.get(i).getCquantity();
 
-                    TextView qtys = new TextView(context);
-                    qtys.setPadding(6, 6, 6, 6);
-                    qtys.setText(Integer.toString(colorValues.get(i).getCquantity()));
-                    qtys.setTextSize(bigText);
-                    qtys.setSingleLine();
-                    TableRow.LayoutParams lnqs = new TableRow.LayoutParams(TableRow.LayoutParams.WRAP_CONTENT, TableRow.LayoutParams.WRAP_CONTENT);
-                    lnqs.gravity = Gravity.CENTER;
-                    qtys.setLayoutParams(lnqs);
-                    tr1s.addView(qtys);
-
-                    tableLayout.addView(tr1s);
+                    tableLayout.addView(tableRow,tableLayoutParams);
                 }
 
-                newHorizontalLine(tableLayout);
+                TableRow tableRowlast = new TableRow(context);
+                tableRowlast.setBackgroundColor(Color.parseColor("#FFFFFF"));
 
-                TableRow tr1s = new TableRow(context);
-                TableRow.LayoutParams tb1cs = new TableRow.LayoutParams(TableRow.LayoutParams.MATCH_PARENT, TableRow.LayoutParams.MATCH_PARENT);
-                tb1cs.gravity = Gravity.CENTER;
-                tr1s.setLayoutParams(tb1c);
+                TextView totals = new TextView(context);
+                totals.setBackgroundColor(Color.parseColor("#00d857"));
+                totals.setTextColor(Color.parseColor("#FFFFFF"));
+                totals.setPadding(6,6,6,6);
+                totals.setGravity(Gravity.RIGHT);
+                totals.setText("Total: "+total);
+                TableRow.LayoutParams params = new TableRow.LayoutParams();
+                params.span = 2; //amount of columns you will span
+                totals.setLayoutParams(params);
+                tableRowlast.addView(totals,tableRowParams);
 
-                TextView colors = new TextView(context);
-                colors.setPadding(6, 6, 6, 6);
-                colors.setText("Total: ");
-                colors.setTextSize(bigText);
-                colors.setSingleLine();
-                TableRow.LayoutParams lncs = new TableRow.LayoutParams(TableRow.LayoutParams.WRAP_CONTENT, TableRow.LayoutParams.WRAP_CONTENT);
-                lncs.gravity = Gravity.RIGHT;
-                colors.setLayoutParams(lncs);
-                tr1s.addView(colors);
-
-
-                TextView qtys = new TextView(context);
-                qtys.setPadding(6, 6, 6, 6);
-                qtys.setText(Integer.toString(total));
-                qtys.setTextSize(bigText);
-                qtys.setSingleLine();
-                TableRow.LayoutParams lnqs = new TableRow.LayoutParams(TableRow.LayoutParams.WRAP_CONTENT, TableRow.LayoutParams.WRAP_CONTENT);
-                lnqs.gravity = Gravity.CENTER;
-                qtys.setLayoutParams(lnqs);
-                tr1s.addView(qtys);
-
-                populateColor(colorCombo);
-                tableLayout.addView(tr1s);
-
+                tableLayout.addView(tableRowlast,tableLayoutParams);
 
                 //Table for Stock
 
@@ -424,35 +410,6 @@ public class BagViewAdapter extends RecyclerView.Adapter<BagViewAdapter.TestHold
 
                 final TableLayout tableLayout1 = (TableLayout) mydialog.findViewById(R.id.tableLayout2);
 
-
-                TableRow tr12 = new TableRow(context);
-                TableRow.LayoutParams tb1c2 = new TableRow.LayoutParams(TableRow.LayoutParams.MATCH_PARENT, TableRow.LayoutParams.MATCH_PARENT);
-                tb1c2.gravity = Gravity.CENTER;
-                tr12.setLayoutParams(tb1c);
-
-                TextView color2 = new TextView(context);
-                color2.setPadding(6, 6, 6, 6);
-                color2.setText("Colors ");
-                color2.setTextSize(bigText);
-                color2.setSingleLine();
-                TableRow.LayoutParams lnc2 = new TableRow.LayoutParams(TableRow.LayoutParams.WRAP_CONTENT, TableRow.LayoutParams.WRAP_CONTENT);
-                lnc2.gravity = Gravity.CENTER;
-                color2.setLayoutParams(lnc2);
-                tr12.addView(color2);
-
-
-                TextView qty2 = new TextView(context);
-                qty2.setPadding(6, 6, 6, 6);
-                qty2.setText(" Quantity");
-                qty2.setTextSize(bigText);
-                qty2.setSingleLine();
-                TableRow.LayoutParams lnq2 = new TableRow.LayoutParams(TableRow.LayoutParams.WRAP_CONTENT, TableRow.LayoutParams.WRAP_CONTENT);
-                lnq2.gravity = Gravity.CENTER;
-                qty2.setLayoutParams(lnq2);
-                tr12.addView(qty2);
-
-                tableLayout1.addView(tr12);
-                newHorizontalLine(tableLayout1);
 
 
                 final BagColorQuantity bcq = new BagColorQuantity();
@@ -476,6 +433,34 @@ public class BagViewAdapter extends RecyclerView.Adapter<BagViewAdapter.TestHold
 
                 mydialog.show();
 
+                clearBtn.setOnClickListener(new View.OnClickListener() {
+                    @Override
+                    public void onClick(View v) {
+
+
+                        android.app.AlertDialog.Builder ad = new android.app.AlertDialog.Builder(context);
+                        ad.setTitle("This will Clear Your all of the Current Orders");
+                        ad.setCancelable(false);
+                        ad.setPositiveButton("OK", new DialogInterface.OnClickListener() {
+                            @Override
+                            public void onClick(DialogInterface dialog, int which) {
+                                finalColorMap.clear();
+                                populateOrder(tableLayout1, finalColorMap);
+                            }
+                        });
+
+                        ad.setNegativeButton("Cancel", new DialogInterface.OnClickListener() {
+                            @Override
+                            public void onClick(DialogInterface dialog, int which) {
+                                dialog.dismiss();
+                            }
+                        });
+
+                        ad.show();
+
+                    }
+                });
+
                 addDoneBtn.setOnClickListener(new View.OnClickListener() {
                     @Override
                     public void onClick(View v) {
@@ -497,9 +482,17 @@ public class BagViewAdapter extends RecyclerView.Adapter<BagViewAdapter.TestHold
                     @Override
                     public void onClick(View v) {
 
-                        finalColorMap.put(colorCombo.getSelectedItem().toString(), Integer.valueOf(quantity.getText().toString()));
-                        populateOrder(tableLayout1, finalColorMap);
+                       try{
+                            finalColorMap.put(colorCombo.getSelectedItem().toString(), Integer.valueOf(quantity.getText().toString()));
 
+                        }
+                       catch (Exception e)
+                       {
+                           Toast.makeText(context,"Invalid Quantity",Toast.LENGTH_SHORT).show();
+                       }
+                        finally {
+                           populateOrder(tableLayout1, finalColorMap);
+                       }
 
                     }
                 });
@@ -633,71 +626,82 @@ public class BagViewAdapter extends RecyclerView.Adapter<BagViewAdapter.TestHold
 
     public void populateOrder(TableLayout tableLayout1, LinkedHashMap<String, Integer> finalColorMap) {
 
+
         tableLayout1.removeAllViews();
-        int bigText = 20;
+        TableLayout.LayoutParams tableLayoutParams = new TableLayout.LayoutParams();
+        tableLayout1.setBackgroundColor(Color.WHITE);
+
+
+        TableRow.LayoutParams tableRowParams = new TableRow.LayoutParams();
+        tableRowParams.setMargins(3, 3, 3, 3);
+        tableRowParams.weight = 1;
+
+        TableRow tableRow1 = new TableRow(context);
+        tableRow1.setBackgroundColor(Color.parseColor("#0087e2"));
+
+
+        TextView color = new TextView(context);
+        color.setBackgroundColor(Color.parseColor("#ff6600"));
+        color.setTextColor(Color.parseColor("#FFFFFF"));
+        color.setPadding(16,6,16,6);
+        color.setGravity(Gravity.CENTER);
+        color.setText("Color");
+        tableRow1.addView(color,tableRowParams);
+
+        TextView quantityV = new TextView(context);
+        quantityV.setBackgroundColor(Color.parseColor("#ff6600"));
+        quantityV.setTextColor(Color.parseColor("#FFFFFF"));
+        quantityV.setPadding(16,6,16,6);
+        quantityV.setGravity(Gravity.CENTER);
+        quantityV.setText("QTY");
+        tableRow1.addView(quantityV,tableRowParams);
+
+        tableLayout1.addView(tableRow1,tableLayoutParams);
+
+
         int total = 0;
         for (LinkedHashMap.Entry<String, Integer> entry : finalColorMap.entrySet()) {
-            TableRow tr1s2 = new TableRow(context);
-            TableRow.LayoutParams tb1cs2 = new TableRow.LayoutParams(TableRow.LayoutParams.MATCH_PARENT, TableRow.LayoutParams.MATCH_PARENT);
-            tb1cs2.gravity = Gravity.CENTER;
-            tr1s2.setLayoutParams(tb1cs2);
 
-            TextView colors2 = new TextView(context);
-            colors2.setPadding(6, 6, 6, 6);
-            colors2.setText(entry.getKey().toString());
-            colors2.setTextSize(bigText);
-            colors2.setSingleLine();
-            TableRow.LayoutParams lncs2 = new TableRow.LayoutParams(TableRow.LayoutParams.WRAP_CONTENT, TableRow.LayoutParams.WRAP_CONTENT);
-            lncs2.gravity = Gravity.CENTER;
-            colors2.setLayoutParams(lncs2);
-            tr1s2.addView(colors2);
+            TableRow tableRow = new TableRow(context);
+            tableRow.setBackgroundColor(Color.WHITE);
 
+            TextView colors = new TextView(context);
+            colors.setBackgroundColor(Color.parseColor("#a9a7a5"));
+            colors.setTextColor(Color.parseColor("#FFFFFF"));
+            colors.setPadding(6,6,6,6);
+            colors.setGravity(Gravity.CENTER);
+            colors.setText(entry.getKey());
+            tableRow.addView(colors,tableRowParams);
 
-            total += entry.getValue();
+            TextView quantitys = new TextView(context);
+            quantitys.setBackgroundColor(Color.parseColor("#a9a7a5"));
+            quantitys.setTextColor(Color.parseColor("#FFFFFF"));
+            quantitys.setPadding(6,6,6,6);
+            quantitys.setGravity(Gravity.CENTER);
+            quantitys.setText(String.valueOf(String.valueOf(entry.getValue())));
+            tableRow.addView(quantitys,tableRowParams);
 
-            TextView qtys2 = new TextView(context);
-            qtys2.setPadding(6, 6, 6, 6);
-            qtys2.setText(entry.getValue().toString());
-            qtys2.setTextSize(bigText);
-            qtys2.setSingleLine();
-            TableRow.LayoutParams lnqs2 = new TableRow.LayoutParams(TableRow.LayoutParams.WRAP_CONTENT, TableRow.LayoutParams.WRAP_CONTENT);
-            lnqs2.gravity = Gravity.CENTER;
-            qtys2.setLayoutParams(lnqs2);
-            tr1s2.addView(qtys2);
+            total+=entry.getValue();
 
-            tableLayout1.addView(tr1s2);
+            tableLayout1.addView(tableRow,tableLayoutParams);
         }
 
-        newHorizontalLine(tableLayout1);
 
-        TableRow tr1s2 = new TableRow(context);
-        TableRow.LayoutParams tb1cs2 = new TableRow.LayoutParams(TableRow.LayoutParams.MATCH_PARENT, TableRow.LayoutParams.MATCH_PARENT);
-        tb1cs2.gravity = Gravity.CENTER;
-        tr1s2.setLayoutParams(tb1cs2);
+        TableRow tableRowlast = new TableRow(context);
+        tableRowlast.setBackgroundColor(Color.parseColor("#FFFFFF"));
 
-        TextView colors2 = new TextView(context);
-        colors2.setPadding(6, 6, 6, 6);
-        colors2.setText("Total: ");
-        colors2.setTextSize(bigText);
-        colors2.setSingleLine();
-        TableRow.LayoutParams lncs2 = new TableRow.LayoutParams(TableRow.LayoutParams.WRAP_CONTENT, TableRow.LayoutParams.WRAP_CONTENT);
-        lncs2.gravity = Gravity.RIGHT;
-        colors2.setLayoutParams(lncs2);
-        tr1s2.addView(colors2);
+        TextView totals = new TextView(context);
+        totals.setBackgroundColor(Color.parseColor("#00d857"));
+        totals.setTextColor(Color.parseColor("#FFFFFF"));
+        totals.setPadding(6,6,6,6);
+        totals.setGravity(Gravity.RIGHT);
+        totals.setText("Total: "+total);
+        TableRow.LayoutParams params = new TableRow.LayoutParams();
+        params.span = 2; //amount of columns you will span
+        totals.setLayoutParams(params);
+        tableRowlast.addView(totals,tableRowParams);
 
-
-        TextView qtys2 = new TextView(context);
-        qtys2.setPadding(6, 6, 6, 6);
-        qtys2.setText(String.valueOf(total));
-        qtys2.setTextSize(bigText);
-        qtys2.setSingleLine();
-        TableRow.LayoutParams lnqs2 = new TableRow.LayoutParams(TableRow.LayoutParams.WRAP_CONTENT, TableRow.LayoutParams.WRAP_CONTENT);
-        lnqs2.gravity = Gravity.CENTER;
-        qtys2.setLayoutParams(lnqs2);
-        tr1s2.addView(qtys2);
-
-
-        tableLayout1.addView(tr1s2);
+        tableLayout1.addView(tableRowlast,tableLayoutParams);
 
 
     }
