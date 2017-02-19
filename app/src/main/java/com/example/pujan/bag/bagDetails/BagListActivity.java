@@ -67,6 +67,7 @@ public class BagListActivity extends AppCompatActivity implements BagViewAdapter
                     Intent i = new Intent(this, OrderDisplayActivity.class);
                     i.putExtra("cid", customer_id.toString());
                     i.putExtra("recValue", colorQuantities);
+                    System.out.println(colorQuantities);
                     startActivity(i);
                     return true;
             }

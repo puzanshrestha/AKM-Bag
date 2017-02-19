@@ -26,13 +26,14 @@ import org.json.JSONArray;
 import org.json.JSONException;
 import org.json.JSONObject;
 
+import java.io.Serializable;
 import java.text.SimpleDateFormat;
 import java.util.ArrayList;
 import java.util.Calendar;
 import java.util.LinkedHashMap;
 import java.util.concurrent.ExecutionException;
 
-public class OrderDisplayActivity extends Activity {
+public class OrderDisplayActivity extends Activity{
 
 
     @Override
@@ -201,7 +202,7 @@ public class OrderDisplayActivity extends Activity {
 
         tableLayout.addView(tableRow3,tableLayoutParams);
 
-
+        int GTotal=0;
         for (int i = 0; i < bag_ids.length; i++) {
 
             LinkedHashMap<String, Integer> finalColorMap = getData.get(i).getQuantityColor();
@@ -210,9 +211,12 @@ public class OrderDisplayActivity extends Activity {
             addOrderEntity.setCustomer_id(Integer.valueOf(customer_id));
             addOrderEntity.setColorQuantity(getData.get(i).getQuantityColor());
             addOrderValue.add(addOrderEntity);
+            int Tprice=0;
 
             for (LinkedHashMap.Entry<String, Integer> entry : finalColorMap.entrySet()) {
                 sn += 1;
+
+                Tprice=print.get(i).getPrice()*entry.getValue();
 
                 TableRow tableRow = new TableRow(this);
                 tableRow.setBackgroundColor(Color.WHITE);
@@ -233,8 +237,6 @@ public class OrderDisplayActivity extends Activity {
                 products.setGravity(Gravity.CENTER);
                 products.setText(print.get(i).getProduct());
                 tableRow.addView(products,tableRowParams);
-
-
 
                 TextView colors = new TextView(this);
                 colors.setBackgroundColor(Color.parseColor("#a9a7a5"));
@@ -265,12 +267,14 @@ public class OrderDisplayActivity extends Activity {
                 totals.setTextColor(Color.parseColor("#FFFFFF"));
                 totals.setPadding(6,6,6,6);
                 totals.setGravity(Gravity.CENTER);
-                totals.setText("Total");
+                totals.setText(String.valueOf(Tprice));
                 tableRow.addView(totals,tableRowParams);
 
                 tableLayout.addView(tableRow,tableLayoutParams);
 
             }
+
+            GTotal=Tprice+GTotal;
 
 
         }
@@ -283,7 +287,7 @@ public class OrderDisplayActivity extends Activity {
         gtotals.setTextColor(Color.parseColor("#FFFFFF"));
         gtotals.setPadding(6,6,6,6);
         gtotals.setGravity(Gravity.RIGHT);
-        gtotals.setText("Total: Rs "+"542625");
+        gtotals.setText("Total: Rs "+String.valueOf(GTotal));
         params.span=6;
         gtotals.setLayoutParams(params);
         tableRowlast.addView(gtotals);
@@ -295,11 +299,11 @@ public class OrderDisplayActivity extends Activity {
             @Override
             public void onClick(View v) {
                 Intent i = new Intent(getBaseContext(), PrintDemo.class);
-                i.putExtra("PrintValue", print);
-
                 Gson gson = new Gson();
                 String test = gson.toJson(print);
+                i.putExtra("PrintValue", print);
                 System.out.println(test);
+                startActivity(i);
                 //  String reply = new FunctionsThread(getBaseContext()).execute("AddOrder", test).get();
                 // System.out.println(reply);
 

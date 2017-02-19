@@ -4,6 +4,8 @@ package com.example.pujan.bag.printPackage;
 import android.content.Intent;
 
 import com.example.pujan.bag.R;
+import com.example.pujan.bag.bagDetails.BagColorQuantity;
+import com.google.gson.Gson;
 import com.zj.btsdk.BluetoothService;
 import com.zj.btsdk.PrintPic;
 import android.annotation.SuppressLint;
@@ -23,6 +25,7 @@ import android.util.Log;
 import java.text.SimpleDateFormat;
 import java.util.ArrayList;
 import java.util.Date;
+import java.util.LinkedHashMap;
 
 
 public class PrintDemo extends Activity {
@@ -41,6 +44,22 @@ public class PrintDemo extends Activity {
 		super.onCreate(savedInstanceState);
 		setContentView(R.layout.main);
 		getData = (ArrayList<PrintEntity>) getIntent().getSerializableExtra("PrintValue");
+		int bag_ids[] = new int[getData.size()];
+		for (int i = 0; i < getData.size(); i++)
+		{
+			bag_ids[i] = getData.get(i).getBag_id();
+			LinkedHashMap<String, Integer> finalColorMap = getData.get(i).getColorQuantity();
+			for (LinkedHashMap.Entry<String, Integer> entry : finalColorMap.entrySet())
+			{
+				entry.getKey().toString();//color
+				entry.getValue().toString();//quantity
+			}
+
+		}
+
+		Gson gson = new Gson();
+		String bag_id_code = gson.toJson(bag_ids);
+
 		mService = new BluetoothService(this, mHandler);
 		//�����������˳�����
 		if( mService.isAvailable() == false ){
