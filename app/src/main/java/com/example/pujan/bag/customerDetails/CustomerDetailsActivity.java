@@ -4,6 +4,7 @@ import android.content.Intent;
 import android.support.v7.app.ActionBar;
 import android.support.v7.app.AppCompatActivity;
 import android.os.Bundle;
+import android.view.MenuItem;
 import android.view.View;
 import android.widget.Button;
 import android.widget.LinearLayout;
@@ -23,6 +24,8 @@ public class CustomerDetailsActivity extends AppCompatActivity {
         actionBar.setTitle(" Customer Details");
         actionBar.setDisplayUseLogoEnabled(true);
         actionBar.setDisplayShowHomeEnabled(true);
+        actionBar.setDisplayHomeAsUpEnabled(true);
+
         addCustomer = (LinearLayout) findViewById(R.id.addCustomerBtn);
         viewCustomer = (LinearLayout)findViewById(R.id.viewCustomerBtn);
 
@@ -44,5 +47,16 @@ public class CustomerDetailsActivity extends AppCompatActivity {
                 startActivity(i);
             }
         });
+    }
+
+    @Override
+    public boolean onOptionsItemSelected(MenuItem item) {
+        switch (item.getItemId())
+        {
+            case android.R.id.home:
+                this.finish();
+
+        }
+        return true;
     }
 }

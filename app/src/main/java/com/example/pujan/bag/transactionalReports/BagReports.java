@@ -6,9 +6,14 @@ import android.graphics.Color;
 import android.graphics.drawable.Drawable;
 import android.graphics.drawable.GradientDrawable;
 import android.os.Bundle;
+import android.support.design.widget.CoordinatorLayout;
+import android.support.design.widget.Snackbar;
+import android.support.v7.app.ActionBar;
+import android.support.v7.app.AppCompatActivity;
 import android.view.Gravity;
 import android.view.View;
 import android.widget.ArrayAdapter;
+import android.widget.Button;
 import android.widget.DatePicker;
 import android.widget.EditText;
 import android.widget.ListView;
@@ -34,7 +39,7 @@ import java.util.Date;
 import java.util.Locale;
 import java.util.concurrent.ExecutionException;
 
-public class BagReports extends Activity {
+public class BagReports extends AppCompatActivity implements FunctionsThread.AsyncResponse{
 
     EditText editTo, editFrom;
     Calendar dateTime = Calendar.getInstance();
@@ -43,6 +48,8 @@ public class BagReports extends Activity {
     TableRow tr1;
     ArrayList<BagReportEntity> bagReport;
     TableLayout tableLayout;
+    private Button view;
+    CoordinatorLayout coordinatorLayout;
 
 
     @Override
@@ -51,7 +58,18 @@ public class BagReports extends Activity {
         setContentView(R.layout.activity_bag_reports);
 
 
+        ActionBar actionBar = getSupportActionBar();
+        actionBar.setLogo(R.drawable.bagsmall);
+        actionBar.setTitle("Reports");
+        actionBar.setDisplayUseLogoEnabled(true);   // These two are for
+        actionBar.setDisplayShowHomeEnabled(true);
+        actionBar.setDisplayHomeAsUpEnabled(true);
 
+
+
+        coordinatorLayout = (CoordinatorLayout)findViewById(R.id.viewReports);
+
+        view =(Button)findViewById(R.id.view);
 
         editTo = (EditText)findViewById(R.id.editTo);
         editFrom=(EditText)findViewById(R.id.editFrom);
@@ -70,6 +88,20 @@ public class BagReports extends Activity {
             public void onClick(View v) {
                 getDate(1);
 
+            }
+        });
+
+        view.setOnClickListener(new View.OnClickListener() {
+            @Override
+            public void onClick(View v) {
+                if(editFrom.getText().toString().length()>0 & editTo.getText().toString().length()>0) {
+                    FunctionsThread t = new FunctionsThread(BagReports.this);
+                    t.execute("ViewRecords", editTo.getText().toString(), editFrom.getText().toString());
+                    t.trigAsyncResponse(BagReports.this);
+                }
+
+                else
+                    Snackbar.make(coordinatorLayout,"Please Select Date First",Snackbar.LENGTH_SHORT).show();
             }
         });
 
@@ -95,7 +127,7 @@ public class BagReports extends Activity {
             dateTime.set(Calendar.MONTH, monthOfYear);
             dateTime.set(Calendar.DAY_OF_MONTH, dayOfMonth);
             editFrom.setText(format.format(dateTime.getTime()));
-            updateTable();
+
 
 
         }
@@ -107,17 +139,17 @@ public class BagReports extends Activity {
             dateTime.set(Calendar.MONTH, monthOfYear);
             dateTime.set(Calendar.DAY_OF_MONTH, dayOfMonth);
             editTo.setText(format.format(dateTime.getTime()));
-            updateTable();
+
 
         }
     };
 
 
-    public void updateTable()
+    public void updateTable(String response)
     {
         bagReport= new ArrayList<>();
         try {
-            String response = new FunctionsThread(this).execute("ViewRecords",editTo.getText().toString(),editFrom.getText().toString()).get();
+;
 
             JSONObject recordsJson = new JSONObject(response);
             JSONArray recordsJsonArray = recordsJson.getJSONArray("result");
@@ -139,19 +171,20 @@ public class BagReports extends Activity {
             }
 
 
-        } catch (InterruptedException e) {
-            e.printStackTrace();
-        } catch (ExecutionException e) {
-            e.printStackTrace();
         } catch (JSONException e) {
             e.printStackTrace();
         } catch (ParseException e) {
             e.printStackTrace();
         }
 
+
+
+        if(bagReport.size()==0) {
+            Snackbar.make(coordinatorLayout,"No records Found",Snackbar.LENGTH_LONG).show();
+        }
+
+
         tableLayout = (TableLayout) findViewById(R.id.recordList);
-
-
         tableLayout.removeAllViews();
 
         int bigText=12;
@@ -167,6 +200,9 @@ public class BagReports extends Activity {
         tableRowParams.setMargins(3, 3, 3, 3);
         tableRowParams.weight = 1;
         int sn=1;
+
+
+
         for(int i=0;i<bagReport.size();i++) {
 
 
@@ -410,5 +446,9 @@ public class BagReports extends Activity {
     }
 
 
-
+    @Override
+    public void onComplete(String output) {
+        System.out.println(output);
+        updateTable(output);
+    }
 }

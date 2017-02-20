@@ -7,12 +7,14 @@ import android.provider.MediaStore;
 import android.support.v7.app.AppCompatActivity;
 import android.os.Bundle;
 import android.view.KeyEvent;
+import android.view.MenuItem;
 import android.view.View;
 import android.widget.Button;
 import android.widget.EditText;
 import android.widget.ImageView;
 import android.widget.Toast;
 
+import com.example.pujan.bag.FileUpload;
 import com.example.pujan.bag.FunctionsThread;
 import com.example.pujan.bag.MainActivity;
 import com.example.pujan.bag.R;
@@ -23,7 +25,7 @@ import com.squareup.picasso.Picasso;
 
 import java.util.concurrent.ExecutionException;
 
-public class AddBagActivity extends AppCompatActivity {
+public class AddBagActivity extends AppCompatActivity implements FunctionsThread.AsyncResponse {
 
     EditText nameEditText, typeEditText, priceEditText, companyEditText, quantityEditText;
     Button addBagBtn;
@@ -47,10 +49,13 @@ public class AddBagActivity extends AppCompatActivity {
         actionBar.setTitle(" Add Bag");
         actionBar.setDisplayUseLogoEnabled(true);   // These two are for
         actionBar.setDisplayShowHomeEnabled(true);
+        actionBar.setDisplayHomeAsUpEnabled(true);
+
         source = getIntent().getStringExtra("source");
 
         bid = getIntent().getStringExtra("bagid");
         vendor_id = getIntent().getStringExtra("ven_id");
+
         addBagBtn = (Button) findViewById(R.id.addBagBtn);
 
         nameEditText = (EditText) findViewById(R.id.nameEditText);
@@ -103,46 +108,21 @@ public class AddBagActivity extends AppCompatActivity {
             public void onClick(View v) {
 
 
-                System.out.println("add button clicked");
                 bagName = nameEditText.getText().toString();
                 bagCategory = typeEditText.getText().toString();
                 bagPrice = priceEditText.getText().toString();
                 bagCompany = companyEditText.getText().toString();
                 bagQuantity = quantityEditText.getText().toString();
 
-                try {
+                FunctionsThread t = new FunctionsThread(AddBagActivity.this);
+                t.execute("AddBag", bagName, bagCategory, bagPrice, bagCompany, source, bid, ext, bagQuantity);
+                t.trigAsyncResponse(AddBagActivity.this);
 
-                    String check = new FunctionsThread(getBaseContext()).execute("AddBag", bagName, bagCategory, bagPrice, bagCompany, source, bid, ext, bagQuantity).get();
+                FunctionsThread check = new FunctionsThread(AddBagActivity.this);
+                check.execute("AddRelation", vendor_id, bagName);
+                check.trigAsyncResponse(AddBagActivity.this);
 
-                    String doublecheck = new FunctionsThread(getBaseContext()).execute("AddRelation", vendor_id, bagName).get();
 
-                    System.out.println(check);
-                    System.out.println(doublecheck);
-
-                    if (check.equals("Inserted")) {
-                        Toast.makeText(getBaseContext(), "Inserted new bag Item", Toast.LENGTH_SHORT).show();
-                        Intent i = new Intent(getBaseContext(), BagListActivity.class);
-                        i.putExtra("source", "bag");
-                        startActivity(i);
-                        new FunctionsThread(getBaseContext()).execute("UploadFile", mediaSelect, bid, "b").get();
-                        if (doublecheck.equals("Updated")) {
-                            Toast.makeText(getBaseContext(), "Inserted relation", Toast.LENGTH_LONG).show();
-                        }
-                    } else if (check.equals("Update")) {
-                        Toast.makeText(getBaseContext(), "Bag has been Updated", Toast.LENGTH_SHORT).show();
-                        Intent i = new Intent(getBaseContext(), BagListActivity.class);
-                        i.putExtra("source", "bag");
-                        startActivity(i);
-                        new FunctionsThread(getBaseContext()).execute("UploadFile", mediaSelect, bid, "b").get();
-                    } else
-                        Toast.makeText(getBaseContext(), check, Toast.LENGTH_SHORT).show();
-                } catch (InterruptedException e) {
-                    System.out.println("error");
-                    e.printStackTrace();
-                } catch (ExecutionException e) {
-                    System.out.println("error");
-                    e.printStackTrace();
-                }
             }
 
         });
@@ -150,6 +130,16 @@ public class AddBagActivity extends AppCompatActivity {
 
     }
 
+    @Override
+    public boolean onOptionsItemSelected(MenuItem item) {
+        switch (item.getItemId()) {
+            case android.R.id.home:
+                this.finish();
+        }
+        return true;
+    }
+
+    @Override
     protected void onActivityResult(int requestCode, int resultCode, Intent data) {
         super.onActivityResult(requestCode, resultCode, data);
         if (requestCode == selectedPic) {
@@ -165,6 +155,45 @@ public class AddBagActivity extends AppCompatActivity {
             }
 
 
+        }
+
+    }
+
+    @Override
+    public void onComplete(String check) {
+        try {
+
+
+
+
+
+            if (check.equals("Inserted")) {
+                Toast.makeText(getBaseContext(), "Inserted new bag Item", Toast.LENGTH_SHORT).show();
+                Intent i = new Intent(getBaseContext(), BagListActivity.class);
+                i.putExtra("source", "bag");
+                startActivity(i);
+                new FileUpload(getBaseContext()).execute("UploadFile", mediaSelect, bid, "b").get();
+
+            }
+            if (check.equals("Updated")) {
+                Toast.makeText(getBaseContext(), "Inserted relation", Toast.LENGTH_LONG).show();
+            }
+
+            else if (check.equals("Update")) {
+                new FileUpload(getBaseContext()).execute(mediaSelect, bid, "b");
+                Toast.makeText(getBaseContext(), "Bag has been Updated", Toast.LENGTH_SHORT).show();
+                Intent i = new Intent(getBaseContext(), BagListActivity.class);
+                i.putExtra("source", "bag");
+               startActivity(i);
+
+            } else
+                Toast.makeText(getBaseContext(), check, Toast.LENGTH_SHORT).show();
+        } catch (InterruptedException e) {
+            System.out.println("error");
+            e.printStackTrace();
+        } catch (ExecutionException e) {
+            System.out.println("error");
+            e.printStackTrace();
         }
 
     }

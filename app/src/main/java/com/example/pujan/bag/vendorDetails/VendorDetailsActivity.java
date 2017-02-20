@@ -4,6 +4,7 @@ import android.content.Intent;
 import android.os.Bundle;
 import android.support.v7.app.AppCompatActivity;
 import android.view.KeyEvent;
+import android.view.MenuItem;
 import android.view.View;
 import android.widget.LinearLayout;
 
@@ -23,6 +24,7 @@ public class VendorDetailsActivity extends AppCompatActivity {
         actionBar.setTitle(" Vendor Details");
         actionBar.setDisplayUseLogoEnabled(true);   // These two are for
         actionBar.setDisplayShowHomeEnabled(true);
+        actionBar.setDisplayHomeAsUpEnabled(true);
         addVendorBtn = (LinearLayout) findViewById(R.id.addVendorBtn);
         viewVendorBtn = (LinearLayout) findViewById(R.id.viewVendorBtn);
 
@@ -30,7 +32,7 @@ public class VendorDetailsActivity extends AppCompatActivity {
             @Override
             public void onClick(View v) {
                 Intent i = new Intent(getBaseContext(), AddVendorActivity.class);
-                i.putExtra("source", "");
+                i.putExtra("source", "insert");
                 startActivity(i);
             }
         });
@@ -46,5 +48,14 @@ public class VendorDetailsActivity extends AppCompatActivity {
         });
 
 
+    }
+
+    @Override
+    public boolean onOptionsItemSelected(MenuItem item) {
+        switch (item.getItemId()){
+            case android.R.id.home:
+                this.finish();
+        }
+        return true;
     }
 }
