@@ -546,9 +546,7 @@ public class FunctionsThread extends AsyncTask<String, Void, String> {
 
             }
         } else if (method.equals("UpdateStockInformation")) {
-            String bag_id = params[1];
-            String color = params[2];
-            String quantity = params[3];
+            String valueall = params[1];
 
 
             try {
@@ -556,15 +554,11 @@ public class FunctionsThread extends AsyncTask<String, Void, String> {
                 HttpURLConnection httpURLConnection = (HttpURLConnection) url.openConnection();
                 httpURLConnection.setConnectTimeout(3000);
                 httpURLConnection.setRequestMethod("POST");
-
-
                 httpURLConnection.setDoInput(true);
                 httpURLConnection.setDoOutput(true);
                 OutputStream os = httpURLConnection.getOutputStream();
                 BufferedWriter bufferedWriter = new BufferedWriter(new OutputStreamWriter(os, "UTF-8"));
-                String data = URLEncoder.encode("bag_id", "UTF-8") + "=" + URLEncoder.encode(bag_id, "UTF-8") + "&" +
-                        URLEncoder.encode("color", "UTF-8") + "=" + URLEncoder.encode(color, "UTF-8") + "&" +
-                        URLEncoder.encode("quantity", "UTF-8") + "=" + URLEncoder.encode(quantity, "UTF-8");
+                String data = URLEncoder.encode("valueall", "UTF-8") + "=" + URLEncoder.encode(valueall, "UTF-8")  ;
                 bufferedWriter.write(data);
                 bufferedWriter.flush();
                 bufferedWriter.close();
