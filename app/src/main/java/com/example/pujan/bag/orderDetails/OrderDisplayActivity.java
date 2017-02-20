@@ -5,7 +5,9 @@ import android.app.SearchableInfo;
 import android.content.Intent;
 import android.graphics.Color;
 import android.os.Bundle;
+import android.support.v7.app.AppCompatActivity;
 import android.view.Gravity;
+import android.view.MenuItem;
 import android.view.View;
 import android.widget.Button;
 import android.widget.TableLayout;
@@ -32,14 +34,30 @@ import java.util.Calendar;
 import java.util.LinkedHashMap;
 import java.util.concurrent.ExecutionException;
 
-public class OrderDisplayActivity extends Activity {
+public class OrderDisplayActivity extends AppCompatActivity {
 
+    @Override
+    public boolean onOptionsItemSelected(MenuItem item) {
+        switch (item.getItemId()){
+            case android.R.id.home:
+                this.finish();
+        }
+        return true;
+    }
 
     @Override
 
     protected void onCreate(Bundle savedInstanceState) {
         super.onCreate(savedInstanceState);
         setContentView(R.layout.activity_order_display);
+
+
+        android.support.v7.app.ActionBar actionBar = getSupportActionBar();
+        actionBar.setLogo(R.drawable.customersmall);
+        actionBar.setDisplayHomeAsUpEnabled(true);
+        actionBar.setDisplayHomeAsUpEnabled(true);
+
+
         final ArrayList<PrintEntity> print = new ArrayList<>();
         final ArrayList<AddOrderEntity> addOrderValue = new ArrayList<>();
         String customer_id = getIntent().getStringExtra("cid");

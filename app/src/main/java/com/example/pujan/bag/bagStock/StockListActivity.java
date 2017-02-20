@@ -18,7 +18,7 @@ import org.json.JSONObject;
 import java.util.ArrayList;
 import java.util.concurrent.ExecutionException;
 
-public class StockListActivity extends Activity {
+public class StockListActivity extends Activity implements FunctionsThread.AsyncResponse {
     RecyclerView recView;
     StockViewAdapter stockViewAdapter;
 
@@ -43,10 +43,20 @@ public class StockListActivity extends Activity {
 
 
 
-        String response = null;
+        FunctionsThread t = new FunctionsThread(this);
+        t.execute("ViewBag");
+        t.trigAsyncResponse(StockListActivity.this);
 
+
+
+
+
+    }
+
+    @Override
+    public void onComplete(String response) {
         try {
-            response = new FunctionsThread(this).execute("ViewBag").get();
+
             JSONObject bagJson = new JSONObject(response);
             JSONArray bagJsonArray = bagJson.getJSONArray("result");
             System.out.println(response);
@@ -68,10 +78,6 @@ public class StockListActivity extends Activity {
             }
 
 
-        } catch (InterruptedException e) {
-            e.printStackTrace();
-        } catch (ExecutionException e) {
-            e.printStackTrace();
         } catch (JSONException e) {
             e.printStackTrace();
         }
@@ -83,8 +89,6 @@ public class StockListActivity extends Activity {
 
         stockViewAdapter.notifyDataSetChanged();
 
-
     }
-
 }
 
