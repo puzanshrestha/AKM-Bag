@@ -41,7 +41,7 @@ import org.json.JSONObject;
 import java.util.ArrayList;
 import java.util.concurrent.ExecutionException;
 
-public class StockUpdateActivity extends Activity {
+public class StockUpdateActivity extends Activity implements FunctionsThread.AsyncResponse{
 
     String array_spinner[];
     NDSpinner colorCombo;
@@ -83,27 +83,7 @@ public class StockUpdateActivity extends Activity {
 
         populateTableLayout();
 
-        nameEditText.setText(bagEntity.getName());
-        typeEditText.setText(bagEntity.getCategory());
-        priceEditText.setText(Integer.toString(bagEntity.getPrice()));
-        companyEditText.setText(bagEntity.getCompany());
-        quantityEditText.setText(Integer.toString(bagEntity.getQuantity()));
-
-        DbHelper dbh = new DbHelper(this);
-        String ip = dbh.getIP();
-        dbh.close();
-
-        Picasso
-                .with(this)
-                .load("http://" + ip + "/bagWebServices/uploads/" + bagEntity.getPhoto())
-                .memoryPolicy(MemoryPolicy.NO_CACHE)
-                .networkPolicy(NetworkPolicy.NO_CACHE)
-                .resize(300, 300)
-                .placeholder(R.drawable.bag)
-                .into(bagPhoto);
-
-
-        colorCombo.setOnItemSelectedListener(new AdapterView.OnItemSelectedListener() {
+               colorCombo.setOnItemSelectedListener(new AdapterView.OnItemSelectedListener() {
             @Override
             public void onItemSelected(AdapterView<?> parent, View view, int position, long id) {
                 Toast.makeText(getBaseContext(), colorCombo.getSelectedItem().toString(), Toast.LENGTH_SHORT).show();
@@ -121,17 +101,10 @@ public class StockUpdateActivity extends Activity {
             @Override
             public void onClick(View v) {
 
-                try {
-                    System.out.println("stockButton clicked");
-                    String response = new FunctionsThread(getBaseContext()).execute("UpdateStockInformation", bag_id,colorCombo.getSelectedItem().toString(), quantity.getText().toString()).get();
-                    System.out.println(response);
-                    populateTableLayout();
-                    Toast.makeText(getBaseContext(), "Stock has been updated", Toast.LENGTH_SHORT).show();
-                } catch (InterruptedException e) {
-                    e.printStackTrace();
-                } catch (ExecutionException e) {
-                    e.printStackTrace();
-                }
+                FunctionsThread tUp= new FunctionsThread(StockUpdateActivity.this);
+                tUp.execute("UpdateStockInformation", bag_id,colorCombo.getSelectedItem().toString(), quantity.getText().toString());
+                populateTableLayout();
+
 
 
             }
@@ -201,15 +174,11 @@ public class StockUpdateActivity extends Activity {
                         if(!noChange) {
                             Gson stockEdit = new Gson();
                             String stockEditJson = stockEdit.toJson(cqeArray);
-                            try {
-                                String response =new FunctionsThread(getBaseContext()).execute("EditStockInformation",bag_id,stockEditJson).get();
-                                populateTableLayout();
-                                Toast.makeText(getBaseContext(),response,Toast.LENGTH_SHORT).show();
-                            } catch (InterruptedException e) {
-                                e.printStackTrace();
-                            } catch (ExecutionException e) {
-                                e.printStackTrace();
-                            }
+                            FunctionsThread tEdt=new FunctionsThread(StockUpdateActivity.this);
+                            tEdt.execute("EditStockInformation",bag_id,stockEditJson);
+                            populateTableLayout();
+
+
 
                         }
 
@@ -234,10 +203,20 @@ public class StockUpdateActivity extends Activity {
 
     public void populateTableLayout() {
 
+        FunctionsThread t= new FunctionsThread(this);
+        t.execute("ViewStockInformation", bag_id);
+        t.trigAsyncResponse(StockUpdateActivity.this);
+
+
+    }
+
+    public void getData(String response)
+    {
         colorValues = new ArrayList<>();
 
         try {
-            String response = new FunctionsThread(this).execute("ViewStockInformation", bag_id).get();
+
+
             System.out.println(response);
             JSONObject stockJson = new JSONObject(response);
             JSONArray stockJsonArray = stockJson.getJSONArray("result");
@@ -262,10 +241,6 @@ public class StockUpdateActivity extends Activity {
 
 
 
-        } catch (InterruptedException e) {
-            e.printStackTrace();
-        } catch (ExecutionException e) {
-            e.printStackTrace();
         } catch (JSONException e) {
             e.printStackTrace();
         }
@@ -385,6 +360,35 @@ public class StockUpdateActivity extends Activity {
         lnbr2.gravity = Gravity.CENTER;
         linebreak2.setLayoutParams(lnbr2);
         trgap.addView(linebreak2);
+
+    }
+
+    @Override
+    public void onComplete(String output) {
+
+        if(output.contains("result")) {
+            getData(output);
+            nameEditText.setText(bagEntity.getName());
+            typeEditText.setText(bagEntity.getCategory());
+            priceEditText.setText(Integer.toString(bagEntity.getPrice()));
+            companyEditText.setText(bagEntity.getCompany());
+            quantityEditText.setText(Integer.toString(bagEntity.getQuantity()));
+
+            DbHelper dbh = new DbHelper(this);
+            String ip = dbh.getIP();
+            dbh.close();
+
+            Picasso
+                    .with(this)
+                    .load("http://" + ip + "/bagWebServices/uploads/" + bagEntity.getPhoto())
+                    .memoryPolicy(MemoryPolicy.NO_CACHE)
+                    .networkPolicy(NetworkPolicy.NO_CACHE)
+                    .resize(300, 300)
+                    .placeholder(R.drawable.bag)
+                    .into(bagPhoto);
+        }
+
+
 
     }
 }

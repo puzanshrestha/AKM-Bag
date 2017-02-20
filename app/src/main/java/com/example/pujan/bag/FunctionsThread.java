@@ -5,8 +5,21 @@ import android.content.Context;
 import android.os.AsyncTask;
 import android.os.Environment;
 import android.util.Log;
+import android.widget.Toast;
 
+import com.example.pujan.bag.bagDetails.AddBagActivity;
+import com.example.pujan.bag.bagDetails.BagListActivity;
+import com.example.pujan.bag.bagStock.StockListActivity;
+import com.example.pujan.bag.bagStock.StockUpdateActivity;
+import com.example.pujan.bag.customerDetails.AddCustomerActivity;
+import com.example.pujan.bag.customerDetails.CustomerListActivity;
 import com.example.pujan.bag.database.DbHelper;
+import com.example.pujan.bag.transactionalReports.BagReports;
+import com.example.pujan.bag.vendorDetails.AddVendorActivity;
+import com.example.pujan.bag.vendorDetails.VendorEntity;
+import com.example.pujan.bag.vendorDetails.VendorListActivity;
+
+import org.apache.http.params.HttpParams;
 
 import java.io.BufferedReader;
 import java.io.BufferedWriter;
@@ -24,8 +37,11 @@ import java.io.UnsupportedEncodingException;
 import java.net.HttpURLConnection;
 import java.net.MalformedURLException;
 import java.net.ProtocolException;
+import java.net.SocketTimeoutException;
 import java.net.URL;
 import java.net.URLEncoder;
+
+import javax.net.ssl.HttpsURLConnection;
 
 /**
  * Created by Pujan on 12/23/2016.
@@ -35,6 +51,53 @@ public class FunctionsThread extends AsyncTask<String, Void, String> {
     Context c;
 
     String ipMain;
+
+    ProgressDialog pd;
+
+    private AsyncResponse callback=null;
+
+    public interface AsyncResponse {
+        void onComplete(String output);
+    }
+
+    public void trigAsyncResponse(BagListActivity activity)
+    {
+        this.callback = activity;
+    }
+
+    public void trigAsyncResponse(CustomerListActivity activity)
+    {
+        this.callback=activity;
+    }
+
+    public void trigAsyncResponse(VendorListActivity activity)
+    {
+        this.callback=activity;
+    }
+    public void trigAsyncResponse(AddBagActivity activity)
+    {
+        this.callback=activity;
+    }
+    public void trigAsyncResponse(AddCustomerActivity activity)
+    {
+        this.callback=activity;
+    }
+    public void trigAsyncResponse(AddVendorActivity activity)
+    {
+        this.callback=activity;
+    }
+    public void trigAsyncResponse(BagReports activity)
+    {
+        this.callback=activity;
+    }
+    public void trigAsyncResponse(StockListActivity activity)
+    {
+        this.callback=activity;
+    }
+    public void trigAsyncResponse(StockUpdateActivity activity)
+    {
+        this.callback=activity;
+    }
 
 
 
@@ -59,7 +122,32 @@ public class FunctionsThread extends AsyncTask<String, Void, String> {
     @Override
     protected void onPreExecute() {
 
+        pd = new ProgressDialog(c);
+        pd.setIndeterminate(true);
+        pd.setTitle("Working");
+        pd.setMessage("loading...");
+        pd.show();
 
+
+    }
+
+
+
+    public  boolean isSessionServerOnline() {
+
+        try {
+
+            HttpsURLConnection connection = (HttpsURLConnection) new URL("http://" + ipMain + "/bagWebServices/").openConnection();
+            connection.setConnectTimeout(1500);
+            connection.setReadTimeout(1500);
+            connection.setRequestMethod("HEAD");
+            int responseCode = connection.getResponseCode();
+            connection.disconnect();
+            return (200 <= responseCode && responseCode <= 399);
+
+        } catch (IOException exception) {
+            return false;
+        }
     }
 
     @Override
@@ -68,6 +156,8 @@ public class FunctionsThread extends AsyncTask<String, Void, String> {
 
         final String ip = "http://" + ipMain + "/bagWebServices/";
         String method = params[0];
+
+
 
         if (method.equals("retrieve")) {
 
@@ -119,7 +209,6 @@ public class FunctionsThread extends AsyncTask<String, Void, String> {
                     response.append(line);
                 }
 
-                System.out.println("----------------------debuggg");
                 bufferedReader.close();
                 is.close();
                 httpURLConnection.disconnect();
@@ -129,7 +218,6 @@ public class FunctionsThread extends AsyncTask<String, Void, String> {
 
             } catch (Exception e) {
                 e.printStackTrace();
-                System.out.println("Error in ");
                 return "error";
 
             }
@@ -288,6 +376,7 @@ public class FunctionsThread extends AsyncTask<String, Void, String> {
                 URL url = new URL(ip + "addVendor.php");
                 HttpURLConnection conn = (HttpURLConnection) url.openConnection();
                 conn.setConnectTimeout(3000);
+                conn.setConnectTimeout(3000);
                 conn.setRequestMethod("POST");
                 conn.setDoInput(true);
                 conn.setDoOutput(true);
@@ -318,9 +407,14 @@ public class FunctionsThread extends AsyncTask<String, Void, String> {
             }
         } else if (method.equals("ViewBag")) {
             try {
+
                 URL url = new URL(ip + "viewBag.php");
                 HttpURLConnection conn = (HttpURLConnection) url.openConnection();
-                conn.setConnectTimeout(3000);
+
+
+                conn.setReadTimeout(2000);
+                conn.setConnectTimeout(2000);
+
                 InputStream is = conn.getInputStream();
                 BufferedReader bufferedReader = new BufferedReader(new InputStreamReader(is, "ISO-8859-1"));
                 StringBuilder response = new StringBuilder();
@@ -335,16 +429,26 @@ public class FunctionsThread extends AsyncTask<String, Void, String> {
                 return response.toString().trim();
 
 
-            } catch (Exception e) {
+            } catch(SocketTimeoutException e)
+            {
+                return "Error";
+            }
+            catch (java.net.ConnectException e)
+            {
+                System.out.println("error");
+            }
+            catch (Exception e) {
                 e.printStackTrace();
                 return "Error";
             }
+
 
         } else if (method.equals("ViewCustomer")) {
             try {
                 URL url = new URL(ip + "viewCustomer.php");
                 HttpURLConnection conn = (HttpURLConnection) url.openConnection();
-                conn.setConnectTimeout(3000);
+                conn.setConnectTimeout(2000);
+                conn.setReadTimeout(2000);
                 InputStream is = conn.getInputStream();
                 BufferedReader bufferedReader = new BufferedReader(new InputStreamReader(is, "ISO-8859-1"));
                 StringBuilder response = new StringBuilder();
@@ -638,146 +742,7 @@ public class FunctionsThread extends AsyncTask<String, Void, String> {
             }
         }
 
-        else if (method == "UploadFile") {
-
-            String sourceFileUri = params[1];
-            String upLoadServerUri = ip + "upload.php";
-            String typeid = params[2];
-            String type = params[3];
-
-
-            File folder = new File(Environment.getExternalStorageDirectory() + "/BagService");
-            if (!folder.exists())
-                folder.mkdir();
-
-            File src = new File(sourceFileUri);
-            File dest = new File(folder, type + "_" + typeid + "." + sourceFileUri.substring(sourceFileUri.lastIndexOf(".") + 1, sourceFileUri.length()));
-
-            InputStream in = null;
-            try {
-                in = new FileInputStream(src);
-                OutputStream out = new FileOutputStream(dest);
-                byte[] buf = new byte[1024];
-                int len;
-                while ((len = in.read(buf)) > 0) {
-                    out.write(buf, 0, len);
-                }
-                in.close();
-                out.close();
-            } catch (FileNotFoundException e) {
-                e.printStackTrace();
-            } catch (IOException e) {
-                e.printStackTrace();
-            }
-
-
-            // Copy the bits from instream to outstream
-
-
-            int serverResponseCode = 0;
-
-
-            HttpURLConnection conn = null;
-            DataOutputStream dos = null;
-            String lineEnd = "\r\n";
-            String twoHyphens = "--";
-            String boundary = "*****";
-            int bytesRead, bytesAvailable, bufferSize;
-            byte[] buffer;
-            int maxBufferSize = 1 * 1024 * 1024;
-            File sourceFile = new File(sourceFileUri);
-
-            if (!sourceFile.isFile()) {
-                Log.e("uploadFile", "Source File not exist :");
-
-
-                return null;
-
-            } else {
-                try {
-                    System.out.println("input stream");
-                    // open a URL connection to the Servlet
-                    FileInputStream fileInputStream = new FileInputStream(sourceFile);
-                    URL url = new URL(upLoadServerUri);
-                    // Open a HTTP  connection to  the URL
-                    conn = (HttpURLConnection) url.openConnection();
-                    conn.setDoInput(true); // Allow Inputs
-                    conn.setDoOutput(true); // Allow Outputs
-                    conn.setUseCaches(false); // Don't use a Cached Copy
-                    conn.setRequestMethod("POST");
-                    conn.setRequestProperty("Connection", "Keep-Alive");
-                    conn.setRequestProperty("ENCTYPE", "multipart/form-data");
-                    conn.setRequestProperty("Content-Type", "multipart/form-data;boundary=" + boundary);
-                    conn.setRequestProperty("uploaded_file", dest.getPath());
-
-                    dos = new DataOutputStream(conn.getOutputStream());
-
-                    dos.writeBytes(twoHyphens + boundary + lineEnd);
-                    dos.writeBytes("Content-Disposition: form-data; name=\"uploaded_file\";filename=" + dest.getPath() + lineEnd);
-
-                    dos.writeBytes(lineEnd);
-
-                    // create a buffer of  maximum size
-                    bytesAvailable = fileInputStream.available();
-
-                    bufferSize = Math.min(bytesAvailable, maxBufferSize);
-                    buffer = new byte[bufferSize];
-
-                    // read file and write it into form...
-                    bytesRead = fileInputStream.read(buffer, 0, bufferSize);
-
-                    while (bytesRead > 0) {
-
-                        dos.write(buffer, 0, bufferSize);
-                        bytesAvailable = fileInputStream.available();
-                        bufferSize = Math.min(bytesAvailable, maxBufferSize);
-                        bytesRead = fileInputStream.read(buffer, 0, bufferSize);
-
-                    }
-
-                    // send multipart form data necesssary after file data...
-                    dos.writeBytes(lineEnd);
-                    dos.writeBytes(twoHyphens + boundary + twoHyphens + lineEnd);
-
-                    // Responses from the server (code and message)
-                    serverResponseCode = conn.getResponseCode();
-                    String serverResponseMessage = conn.getResponseMessage();
-
-                    Log.i("uploadFile", "HTTP Response is : "
-                            + serverResponseMessage + ": " + serverResponseCode);
-
-                    System.out.println("response code is" + serverResponseCode);
-                    if (serverResponseCode == 200) {
-
-                        String msg = "File Upload Completed.\n\n See uploaded file here : \n\n"
-                                + " uploaded to servers PCPCPC";
-
-
-                        dest.delete();
-                        System.out.println(msg);
-
-
-                    }
-
-                    //close the streams //
-                    fileInputStream.close();
-                    dos.flush();
-                    dos.close();
-
-                } catch (MalformedURLException ex) {
-                    Log.e("Upload file to server", "error: " + ex.getMessage(), ex);
-                } catch (Exception e) {
-
-                    System.out.println("Upload file to server Exception" + "Exception : "
-                            + e.getMessage() + e);
-                }
-
-                return Integer.toString(serverResponseCode);
-
-            } // End else block
-
-
-        } else {
+       else {
 
             return "Error-- No method found";
         }
@@ -789,6 +754,12 @@ public class FunctionsThread extends AsyncTask<String, Void, String> {
     @Override
     protected void onPostExecute(String result) {
 
+
+
+        if(callback!=null)
+        callback.onComplete(result);
+
+        pd.dismiss();
 
     }
 }

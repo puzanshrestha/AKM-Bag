@@ -1,80 +1,109 @@
 <?xml version="1.0" encoding="utf-8"?>
-<LinearLayout xmlns:android="http://schemas.android.com/apk/res/android"
+<android.support.design.widget.CoordinatorLayout xmlns:android="http://schemas.android.com/apk/res/android"
     xmlns:tools="http://schemas.android.com/tools"
     android:layout_width="match_parent"
     android:layout_height="match_parent"
-    android:paddingBottom="@dimen/activity_vertical_margin"
-    android:paddingLeft="2dp"
-    android:paddingRight="2dp"
-    android:paddingTop="@dimen/activity_vertical_margin"
-    android:orientation="vertical"
     android:background="@drawable/gradient_main"
+    android:id="@+id/viewReports"
+    android:orientation="vertical"
     tools:context="com.example.pujan.bag.transactionalReports.BagReports">
 
     <LinearLayout
-        android:layout_width="wrap_content"
-        android:layout_height="wrap_content"
-        android:orientation="horizontal"
-        android:paddingTop="10dp"
-        android:paddingBottom="10dp">
-        <TextView
-            android:layout_width="75dp"
-            android:layout_height="wrap_content"
-            android:textSize="10pt"
-            android:text="From: "/>
-        <EditText
-            android:layout_width="wrap_content"
-            android:layout_height="wrap_content"
-            android:textSize="10pt"
-            android:id="@+id/editFrom"
-            android:inputType="none"
-            android:ems="14"
-            android:focusable="false"
-            />
-
-    </LinearLayout>
-
-    <LinearLayout
-        android:layout_width="wrap_content"
-        android:layout_height="wrap_content"
-        android:paddingTop="10dp"
-        android:paddingBottom="10dp"
-        >
-        <TextView
-            android:layout_width="75dp"
-            android:layout_height="wrap_content"
-            android:textSize="10pt"
-            android:text="To:     "
-            />
-
-        <EditText
-            android:layout_width="wrap_content"
-            android:layout_height="wrap_content"
-            android:textSize="10pt"
-            android:id="@+id/editTo"
-            android:focusable="false"
-            android:ems="14"/>
-
-    </LinearLayout>
-
-    <ScrollView
         android:layout_width="match_parent"
         android:layout_height="match_parent"
-        android:scrollbars="vertical"
-        android:scrollbarStyle="insideInset"
-        android:layout_weight="1"
-        android:background="#fff">
-        <TableLayout
-            android:layout_width="fill_parent"
+        android:orientation="vertical">
+
+    <LinearLayout
+        android:layout_width="match_parent"
+        android:layout_height="120dp"
+        android:orientation="horizontal"
+        android:padding="10dp">
+
+        <LinearLayout
+            android:layout_width="0dp"
             android:layout_height="wrap_content"
-            android:id="@+id/recordList">
+            android:layout_weight="0.8"
+            android:orientation="vertical">
+
+            <LinearLayout
+                android:layout_width="wrap_content"
+                android:layout_height="wrap_content"
+                android:orientation="horizontal">
+
+                <TextView
+                    android:layout_width="75dp"
+                    android:layout_height="wrap_content"
+                    android:text="From: "
+                    android:textSize="10pt" />
+
+                <EditText
+                    android:id="@+id/editFrom"
+                    android:layout_width="wrap_content"
+                    android:layout_height="wrap_content"
+                    android:ems="14"
+                    android:focusable="false"
+                    android:inputType="none"
+                    android:textSize="10pt" />
+
+            </LinearLayout>
+
+            <LinearLayout
+                android:layout_width="wrap_content"
+                android:layout_height="wrap_content"
+                android:orientation="horizontal">
+
+                <TextView
+                    android:layout_width="75dp"
+                    android:layout_height="wrap_content"
+                    android:text="To:     "
+                    android:textSize="10pt" />
+
+                <EditText
+                    android:id="@+id/editTo"
+                    android:layout_width="wrap_content"
+                    android:layout_height="wrap_content"
+                    android:ems="14"
+                    android:focusable="false"
+                    android:textSize="10pt" />
+
+            </LinearLayout>
+
+        </LinearLayout>
+
+        <LinearLayout
+            android:layout_width="0dp"
+            android:layout_height="wrap_content"
+            android:layout_weight="0.2"
+            >
+
+            <Button
+                android:layout_width="wrap_content"
+                android:layout_height="wrap_content"
+                android:text="View"
+                android:id="@+id/view"/>
+        </LinearLayout>
+
+    </LinearLayout>
+
+    <android.support.v4.widget.NestedScrollView
+
+        android:background="#fff"
+        android:scrollbarStyle="insideInset"
+        android:scrollbars="vertical"
+        android:layout_height="wrap_content"
+        android:layout_width="match_parent">
+
+        <TableLayout
+            android:id="@+id/recordList"
+            android:layout_width="match_parent"
+            android:layout_height="wrap_content"
+            >
 
         </TableLayout>
 
 
 
+    </android.support.v4.widget.NestedScrollView>
+    </LinearLayout>
 
-    </ScrollView>
-
-
-</LinearLayout>
+</android.support.design.widget.CoordinatorLayout>
