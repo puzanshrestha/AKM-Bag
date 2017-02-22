@@ -5,6 +5,7 @@ import android.os.Bundle;
 import android.support.v7.widget.LinearLayoutManager;
 import android.support.v7.widget.RecyclerView;
 import android.view.View;
+import android.widget.Toast;
 
 import com.example.pujan.bag.FunctionsThread;
 import com.example.pujan.bag.R;
@@ -55,6 +56,7 @@ public class StockListActivity extends Activity implements FunctionsThread.Async
 
     @Override
     public void onComplete(String response) {
+
         try {
 
             JSONObject bagJson = new JSONObject(response);
@@ -80,6 +82,7 @@ public class StockListActivity extends Activity implements FunctionsThread.Async
 
         } catch (JSONException e) {
             e.printStackTrace();
+            Toast.makeText(this,"Error connecting with the Server..!",Toast.LENGTH_SHORT).show();
         }
 
 

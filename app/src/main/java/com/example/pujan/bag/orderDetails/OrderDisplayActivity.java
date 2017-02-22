@@ -44,9 +44,9 @@ public class OrderDisplayActivity extends AppCompatActivity {
         }
         return true;
     }
+    String source;
 
     @Override
-
     protected void onCreate(Bundle savedInstanceState) {
         super.onCreate(savedInstanceState);
         setContentView(R.layout.activity_order_display);
@@ -60,8 +60,17 @@ public class OrderDisplayActivity extends AppCompatActivity {
 
         final ArrayList<PrintEntity> print = new ArrayList<>();
         final ArrayList<AddOrderEntity> addOrderValue = new ArrayList<>();
-        String customer_id = getIntent().getStringExtra("cid");
-        String customer_name = "";
+        source=getIntent().getStringExtra("source");
+
+        String customer_name;
+        String customer_id;
+        customer_name = getIntent().getStringExtra("customerName");
+        customer_id = getIntent().getStringExtra("customer_id");
+
+
+
+        if(source!="auto")
+            customer_id="0";
 
         SimpleDateFormat format = new SimpleDateFormat("yyyy-MM-dd");
 
@@ -83,15 +92,18 @@ public class OrderDisplayActivity extends AppCompatActivity {
 
         try {
 
-            String response = new FunctionsThread(this).execute("AddOrderTemp", customer_id, bag_id_code).get();
+
+            String response = new FunctionsThread(this).execute("AddOrderTemp", customer_id, bag_id_code,source).get();
             System.out.println(response);
 
 
             JSONObject bag_nameJson = new JSONObject(response);
             JSONArray bag_nameJsonArray = bag_nameJson.getJSONArray("result");
 
-            JSONObject customer_nameJson = new JSONObject(response);
-            customer_name = customer_nameJson.getString("customer_name");
+            if(source!="manual") {
+                JSONObject customer_nameJson = new JSONObject(response);
+                customer_name = customer_nameJson.getString("customer_name");
+            }
 
             for (int i = 0; i < bag_nameJsonArray.length(); i++) {
                 JSONObject jsonObject = bag_nameJsonArray.getJSONObject(i);
