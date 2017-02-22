@@ -65,7 +65,8 @@ public class PrintDemo extends Activity {
 		System.out.println(valueall);
 
 		try {
-			String response = new FunctionsThread(this).execute("UpdateStockInformation", valueall).get();
+			String response = new FunctionsThread(this).execute("UpdateStock", valueall).get();
+
 		} catch (InterruptedException e) {
 			e.printStackTrace();
 		} catch (ExecutionException e) {

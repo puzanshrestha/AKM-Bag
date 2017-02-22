@@ -28,18 +28,13 @@ import org.json.JSONArray;
 import org.json.JSONException;
 import org.json.JSONObject;
 
-import java.io.Serializable;
 import java.text.SimpleDateFormat;
 import java.util.ArrayList;
 import java.util.Calendar;
 import java.util.LinkedHashMap;
 import java.util.concurrent.ExecutionException;
 
-<<<<<<< HEAD
-public class OrderDisplayActivity extends Activity{
-=======
 public class OrderDisplayActivity extends AppCompatActivity {
->>>>>>> refs/remotes/origin/master
 
     @Override
     public boolean onOptionsItemSelected(MenuItem item) {
@@ -70,23 +65,19 @@ public class OrderDisplayActivity extends AppCompatActivity {
 
         SimpleDateFormat format = new SimpleDateFormat("yyyy-MM-dd");
 
+
         ArrayList<BagColorQuantity> getData = (ArrayList<BagColorQuantity>) getIntent().getSerializableExtra("recValue");
 
-        LinkedHashMap<String,Integer> colorQuantity=new LinkedHashMap<>();
+
         Button printBtn = (Button) findViewById(R.id.printBtn);
 
         int bag_ids[] = new int[getData.size()];
-        for (int i = 0; i < getData.size(); i++)
-        {
+        for (int i = 0; i < getData.size(); i++) {
             bag_ids[i] = getData.get(i).getBag_id();
-
-
         }
 
         Gson gson = new Gson();
         String bag_id_code = gson.toJson(bag_ids);
-
-
 
 
 
@@ -104,11 +95,13 @@ public class OrderDisplayActivity extends AppCompatActivity {
 
             for (int i = 0; i < bag_nameJsonArray.length(); i++) {
                 JSONObject jsonObject = bag_nameJsonArray.getJSONObject(i);
+
                 PrintEntity printentity = new PrintEntity();
                 printentity.setBag_id(bag_ids[i]);
                 printentity.setProduct(jsonObject.getString("bag_name"));
                 printentity.setPrice(Integer.parseInt(jsonObject.getString("bag_price")));
                 printentity.setColorQuantity(getData.get(i).getQuantityColor());
+
                 print.add(printentity);
 
             }
@@ -224,21 +217,14 @@ public class OrderDisplayActivity extends AppCompatActivity {
 
         tableLayout.addView(tableRow3,tableLayoutParams);
 
-        int GTotal=0;
+
         for (int i = 0; i < bag_ids.length; i++) {
 
             LinkedHashMap<String, Integer> finalColorMap = getData.get(i).getQuantityColor();
-            AddOrderEntity addOrderEntity=new AddOrderEntity();
-            addOrderEntity.setBag_id(bag_ids[i]);
-            addOrderEntity.setCustomer_id(Integer.valueOf(customer_id));
-            addOrderEntity.setColorQuantity(getData.get(i).getQuantityColor());
-            addOrderValue.add(addOrderEntity);
-            int Tprice=0;
 
             for (LinkedHashMap.Entry<String, Integer> entry : finalColorMap.entrySet()) {
                 sn += 1;
 
-                Tprice=print.get(i).getPrice()*entry.getValue();
 
                 TableRow tableRow = new TableRow(this);
                 tableRow.setBackgroundColor(Color.WHITE);
@@ -259,6 +245,8 @@ public class OrderDisplayActivity extends AppCompatActivity {
                 products.setGravity(Gravity.CENTER);
                 products.setText(print.get(i).getProduct());
                 tableRow.addView(products,tableRowParams);
+
+
 
                 TextView colors = new TextView(this);
                 colors.setBackgroundColor(Color.parseColor("#a9a7a5"));
@@ -289,14 +277,12 @@ public class OrderDisplayActivity extends AppCompatActivity {
                 totals.setTextColor(Color.parseColor("#FFFFFF"));
                 totals.setPadding(6,6,6,6);
                 totals.setGravity(Gravity.CENTER);
-                totals.setText(String.valueOf(Tprice));
+                totals.setText("Total");
                 tableRow.addView(totals,tableRowParams);
 
                 tableLayout.addView(tableRow,tableLayoutParams);
 
             }
-
-            GTotal=Tprice+GTotal;
 
 
         }
@@ -309,7 +295,7 @@ public class OrderDisplayActivity extends AppCompatActivity {
         gtotals.setTextColor(Color.parseColor("#FFFFFF"));
         gtotals.setPadding(6,6,6,6);
         gtotals.setGravity(Gravity.RIGHT);
-        gtotals.setText("Total: Rs "+String.valueOf(GTotal));
+        gtotals.setText("Total: Rs "+"542625");
         params.span=6;
         gtotals.setLayoutParams(params);
         tableRowlast.addView(gtotals);
@@ -321,17 +307,14 @@ public class OrderDisplayActivity extends AppCompatActivity {
             @Override
             public void onClick(View v) {
                 Intent i = new Intent(getBaseContext(), PrintDemo.class);
+                i.putExtra("PrintValue", print);
+
                 Gson gson = new Gson();
                 String test = gson.toJson(print);
-                i.putExtra("PrintValue", print);
                 System.out.println(test);
-                startActivity(i);
-                //  String reply = new FunctionsThread(getBaseContext()).execute("AddOrder", test).get();
-                // System.out.println(reply);
-
 
                 //TEMPORARY SOLUTION>....................................Function needs to be in printdemo activity
-                //startActivity(i);
+                startActivity(i);
 
 
             }
