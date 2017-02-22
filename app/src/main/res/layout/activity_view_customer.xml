@@ -3,6 +3,7 @@
     xmlns:tools="http://schemas.android.com/tools"
     android:layout_width="match_parent"
     android:layout_height="match_parent"
+    xmlns:app="http://schemas.android.com/apk/res-auto"
     android:background="@drawable/gradient_main"
     tools:context=".customerDetails.ViewCustomerActivity">
 
@@ -10,4 +11,15 @@
     android:layout_width="wrap_content"
     android:layout_height="wrap_content"
     android:id="@+id/recView"></android.support.v7.widget.RecyclerView>
+
+    <android.support.design.widget.FloatingActionButton
+        android:layout_width="wrap_content"
+        android:layout_height="wrap_content"
+        android:layout_alignParentBottom="true"
+        android:layout_alignParentRight="true"
+        android:layout_margin="16dp"
+        android:clickable="true"
+        app:backgroundTint="@color/colorCenter"
+        android:src="@drawable/addbag"
+        android:id="@+id/fab"/>
 </RelativeLayout>

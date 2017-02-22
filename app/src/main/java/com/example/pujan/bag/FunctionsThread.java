@@ -9,6 +9,7 @@ import android.widget.Toast;
 
 import com.example.pujan.bag.bagDetails.AddBagActivity;
 import com.example.pujan.bag.bagDetails.BagListActivity;
+import com.example.pujan.bag.bagDetails.BagViewAdapter;
 import com.example.pujan.bag.bagStock.StockListActivity;
 import com.example.pujan.bag.bagStock.StockUpdateActivity;
 import com.example.pujan.bag.customerDetails.AddCustomerActivity;
@@ -61,6 +62,10 @@ public class FunctionsThread extends AsyncTask<String, Void, String> {
     }
 
     public void trigAsyncResponse(BagListActivity activity)
+    {
+        this.callback = activity;
+    }
+    public void trigAsyncResponse(BagViewAdapter activity)
     {
         this.callback = activity;
     }
@@ -493,6 +498,7 @@ public class FunctionsThread extends AsyncTask<String, Void, String> {
         } else if (method.equals("AddOrderTemp")) {
             String customer_id = params[1];
             String bag_id_code = params[2];
+            String source = params[3];
 
             try {
                 URL url = new URL(ip + "addOrderTemp.php");
@@ -504,6 +510,7 @@ public class FunctionsThread extends AsyncTask<String, Void, String> {
                 OutputStream os = conn.getOutputStream();
                 BufferedWriter bufferedWriter = new BufferedWriter(new OutputStreamWriter(os, "UTF-8"));
                 String data = URLEncoder.encode("customer_id", "UTF-8") + "=" + URLEncoder.encode(customer_id, "UTF-8") + "&" +
+                        URLEncoder.encode("source", "UTF-8") + "=" + URLEncoder.encode(source, "UTF-8") + "&" +
                         URLEncoder.encode("bag_id", "UTF-8") + "=" + URLEncoder.encode(bag_id_code, "UTF-8");
                 bufferedWriter.write(data);
                 bufferedWriter.flush();
@@ -747,7 +754,7 @@ public class FunctionsThread extends AsyncTask<String, Void, String> {
             return "Error-- No method found";
         }
 
-        return null;
+        return "No Method Found";
     }
 
 

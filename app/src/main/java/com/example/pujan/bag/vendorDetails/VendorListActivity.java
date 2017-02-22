@@ -128,6 +128,7 @@ public class VendorListActivity extends AppCompatActivity implements FunctionsTh
             }
         } catch (JSONException e) {
             e.printStackTrace();
+            Toast.makeText(this,"Error connecting with the Server..!",Toast.LENGTH_SHORT).show();
         }
         recyclerView = (RecyclerView) findViewById(R.id.recView);
         recyclerView.setLayoutManager(new LinearLayoutManager(this, LinearLayoutManager.VERTICAL, false));
