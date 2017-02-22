@@ -26,13 +26,13 @@
 
             android:orientation="horizontal"
             android:gravity="center"
-            android:padding="0dp">
+            >
 
 
             <LinearLayout
                 android:layout_width="0dp"
                 android:layout_height="wrap_content"
-                android:layout_weight="0.15"
+                android:layout_weight="0.2"
                 android:layout_marginRight="2dp"
                 android:padding="3dp">
                 <ImageView
@@ -49,7 +49,7 @@
                 android:layout_width="0dp"
                 android:layout_height="wrap_content"
                 android:orientation="vertical"
-                android:layout_weight="0.7"
+                android:layout_weight="0.5"
 
                 >
                 <TextView
@@ -84,8 +84,37 @@
                     android:text="company"/>
 
             </LinearLayout>
+            <LinearLayout
+                android:layout_width="0dp"
+                android:layout_height="match_parent"
+                android:layout_weight="0.35"
+                android:background="@drawable/second_background"
 
-            <RelativeLayout
+                android:id="@+id/orderLayout"
+                android:orientation="vertical"
+                android:layout_gravity="center">
+                <TextView
+                    android:layout_width="match_parent"
+                    android:layout_height="wrap_content"
+                    android:text="Current Orders:"
+                    android:textStyle="bold"
+                    android:textSize="10dp"
+                    android:gravity="center"
+
+                    />
+                <TextView
+                    android:layout_width="match_parent"
+                    android:layout_height="match_parent"
+                    android:gravity="center"
+                    android:text="No Orders"
+                    android:textSize="9dp"
+                    android:id="@+id/currentOrders"
+
+
+                    />
+            </LinearLayout>
+
+            <LinearLayout
                 android:layout_width="0dp"
                 android:layout_height="wrap_content"
                 android:layout_weight="0.08"
@@ -108,7 +137,7 @@
                 android:layout_alignParentTop="true"
                 android:layout_alignParentEnd="true" />
 
-            </RelativeLayout>
+            </LinearLayout>
             <Button
                 android:layout_width="wrap_content"
                 android:layout_height="wrap_content"

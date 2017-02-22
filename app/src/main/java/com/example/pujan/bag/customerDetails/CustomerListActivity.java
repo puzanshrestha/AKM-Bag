@@ -1,10 +1,15 @@
 package com.example.pujan.bag.customerDetails;
 
+
 import android.app.SearchManager;
 import android.content.ClipData;
 import android.content.Context;
+import android.content.DialogInterface;
 import android.content.Intent;
+import android.graphics.Color;
+import android.support.design.widget.FloatingActionButton;
 import android.support.v4.view.MenuItemCompat;
+import android.support.v7.app.AlertDialog;
 import android.support.v7.app.AppCompatActivity;
 import android.os.Bundle;
 import android.support.v7.widget.LinearLayoutManager;
@@ -14,6 +19,12 @@ import android.view.Menu;
 import android.view.MenuInflater;
 import android.view.MenuItem;
 
+import android.view.View;
+import android.view.ViewGroup;
+import android.widget.EditText;
+import android.widget.LinearLayout;
+import android.widget.TableRow;
+import android.widget.TextView;
 import android.widget.Toast;
 
 import com.example.pujan.bag.FunctionsThread;
@@ -44,6 +55,9 @@ public class CustomerListActivity extends AppCompatActivity implements Functions
         actionBar.setLogo(R.drawable.customersmall);
         actionBar.setDisplayHomeAsUpEnabled(true);
 
+        FloatingActionButton fab = (FloatingActionButton)findViewById(R.id.fab);
+
+
         method = getIntent().getStringExtra("method");
          if (method.equals("orderView")){
 
@@ -60,6 +74,54 @@ public class CustomerListActivity extends AppCompatActivity implements Functions
         FunctionsThread t = new FunctionsThread(this);
         t.execute("ViewCustomer");
         t.trigAsyncResponse(this);
+
+        fab.setOnClickListener(new View.OnClickListener() {
+            @Override
+            public void onClick(View v) {
+                AlertDialog.Builder dialog = new AlertDialog.Builder(CustomerListActivity.this);
+                dialog.setMessage("Enter Customer Name:");
+
+                LinearLayout layout = new LinearLayout(CustomerListActivity.this);
+                layout.setOrientation(LinearLayout.VERTICAL);
+                TableRow.LayoutParams param = new TableRow.LayoutParams(ViewGroup.LayoutParams.WRAP_CONTENT, ViewGroup.LayoutParams.WRAP_CONTENT);
+                param.setMargins(6,6,6,6);
+                layout.setLayoutParams(param);
+                layout.setPadding(10,10,10,10);
+                layout.setBackgroundColor(Color.LTGRAY);
+
+
+                TextView txt = new TextView(getBaseContext());
+                txt.setTextColor(Color.parseColor("#000000"));
+                txt.setText("Customer Name");
+
+
+                final EditText eTxt = new EditText(getBaseContext());
+                eTxt.setTextColor(Color.parseColor("#000000"));
+                layout.addView(txt);
+                layout.addView(eTxt);
+
+                dialog.setView(layout);
+                dialog.setPositiveButton("Ok", new DialogInterface.OnClickListener() {
+                    @Override
+                    public void onClick(DialogInterface dialog, int which) {
+                        Intent i = new Intent(getBaseContext(),BagListActivity.class);
+                        i.putExtra("source","manual");
+                        i.putExtra("customerName",eTxt.getText().toString());
+                        startActivity(i);
+                    }
+                });
+                dialog.setNegativeButton("Cancel", new DialogInterface.OnClickListener() {
+                    @Override
+                    public void onClick(DialogInterface dialog, int which) {
+                        dialog.dismiss();
+                    }
+                });
+                dialog.show();
+
+
+
+            }
+        });
 
 
 
@@ -78,8 +140,7 @@ public class CustomerListActivity extends AppCompatActivity implements Functions
 
             Intent i = new Intent(getBaseContext(), BagListActivity.class);
             i.putExtra("customer_id", Integer.toString(customer_id));
-            i.putExtra("source", "customer");
-            i.putExtra("display", "n");
+            i.putExtra("source", "auto");
             startActivity(i);
         }
     }
