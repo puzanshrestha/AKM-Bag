@@ -24,7 +24,7 @@
         style="@android:style/Widget.Button"
         android:textColor="#FFFFFF"
         android:backgroundTint="#0087e2"
-        android:background="@drawable/rounded"
+
         android:text="sdlkfjsfdsd"/>
     <Button
         android:layout_width="wrap_content"

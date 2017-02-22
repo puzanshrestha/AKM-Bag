@@ -312,12 +312,9 @@ public class OrderDisplayActivity extends AppCompatActivity {
                 Gson gson = new Gson();
                 String test = gson.toJson(print);
                 System.out.println(test);
-                //  String reply = new FunctionsThread(getBaseContext()).execute("AddOrder", test).get();
-                // System.out.println(reply);
-
 
                 //TEMPORARY SOLUTION>....................................Function needs to be in printdemo activity
-                //startActivity(i);
+                startActivity(i);
 
 
             }

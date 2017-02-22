@@ -3,7 +3,10 @@ package com.example.pujan.bag.printPackage;
 
 import android.content.Intent;
 
+import com.example.pujan.bag.FunctionsThread;
 import com.example.pujan.bag.R;
+import com.example.pujan.bag.bagDetails.BagColorQuantity;
+import com.google.gson.Gson;
 import com.zj.btsdk.BluetoothService;
 import com.zj.btsdk.PrintPic;
 import android.annotation.SuppressLint;
@@ -23,6 +26,8 @@ import android.util.Log;
 import java.text.SimpleDateFormat;
 import java.util.ArrayList;
 import java.util.Date;
+import java.util.LinkedHashMap;
+import java.util.concurrent.ExecutionException;
 
 
 public class PrintDemo extends Activity {
@@ -41,8 +46,34 @@ public class PrintDemo extends Activity {
 		super.onCreate(savedInstanceState);
 		setContentView(R.layout.main);
 		getData = (ArrayList<PrintEntity>) getIntent().getSerializableExtra("PrintValue");
+		ArrayList<BagColorQuantity> all=new ArrayList<>();
+
+		int bag_ids[] = new int[getData.size()];
+		LinkedHashMap<String, Integer>[] finalColorMap=(LinkedHashMap<String, Integer>[]) new LinkedHashMap[getData.size()];;
+		for (int i = 0; i < getData.size(); i++)
+		{
+			BagColorQuantity newdata=new BagColorQuantity();
+			bag_ids[i] = getData.get(i).getBag_id();
+			finalColorMap[i]= getData.get(i).getColorQuantity();
+			newdata.setBag_id(bag_ids[i]);
+			newdata.setQuantityColor(finalColorMap[i]);
+			all.add(newdata);
+		}
+
+		Gson gson = new Gson();
+		String valueall = gson.toJson(all);
+		System.out.println(valueall);
+
+		try {
+			String response = new FunctionsThread(this).execute("UpdateStock", valueall).get();
+
+		} catch (InterruptedException e) {
+			e.printStackTrace();
+		} catch (ExecutionException e) {
+			e.printStackTrace();
+		}
+
 		mService = new BluetoothService(this, mHandler);
-		//�����������˳�����
 		if( mService.isAvailable() == false ){
             Toast.makeText(this, "Bluetooth is not available", Toast.LENGTH_LONG).show();
             finish();

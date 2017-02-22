@@ -1,20 +1,22 @@
 package com.example.pujan.bag.orderDetails;
 
+import java.util.LinkedHashMap;
+
 /**
  * Created by Pujan on 11-Feb-17.
  */
 public class AddOrderEntity {
     private int customer_id;
     private int bag_id;
-    private int quantity;
-    private String color;
+    private LinkedHashMap<String,Integer> colorQuantity;
 
-    public String getColor() {
-        return color;
+
+    public LinkedHashMap<String, Integer> getColorQuantity() {
+        return colorQuantity;
     }
 
-    public void setColor(String color) {
-        this.color = color;
+    public void setColorQuantity(LinkedHashMap<String, Integer> colorQuantity) {
+        this.colorQuantity = colorQuantity;
     }
 
     public int getCustomer_id() {
@@ -33,11 +35,5 @@ public class AddOrderEntity {
         this.bag_id = bag_id;
     }
 
-    public int getQuantity() {
-        return quantity;
-    }
 
-    public void setQuantity(int quantity) {
-        this.quantity = quantity;
-    }
 }

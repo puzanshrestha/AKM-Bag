@@ -274,7 +274,6 @@ public class BagViewAdapter extends RecyclerView.Adapter<BagViewAdapter.TestHold
                 colorCombo = (Spinner) mydialog.findViewById(R.id.colorCombo);
                 quantity = (EditText) mydialog.findViewById(R.id.cqty);
                 updateStockBtn = (Button) mydialog.findViewById(R.id.updateStockBtn);
-
                 nameEditText = (TextView) mydialog.findViewById(R.id.nameEditText);
                 typeEditText = (TextView) mydialog.findViewById(R.id.typeEditText);
                 priceEditText = (TextView) mydialog.findViewById(R.id.priceEditText);
@@ -288,7 +287,11 @@ public class BagViewAdapter extends RecyclerView.Adapter<BagViewAdapter.TestHold
                 clearBtn =(Button)mydialog.findViewById(R.id.clearBtn);
 
                 bid = listData.get(getAdapterPosition()).getId();
-
+                nameEditText.setText(listData.get(getAdapterPosition()).getName());
+                typeEditText.setText(listData.get(getAdapterPosition()).getCategory());
+                priceEditText.setText(String.valueOf(listData.get(getAdapterPosition()).getPrice()));
+                companyEditText.setText(listData.get(getAdapterPosition()).getCompany());
+                quantityEditText.setText(String.valueOf(listData.get(getAdapterPosition()).getQuantity()));
                 populateColor(colorCombo);
 
 
@@ -315,7 +318,6 @@ public class BagViewAdapter extends RecyclerView.Adapter<BagViewAdapter.TestHold
                     bagEntitynew.setCompany(jObject.getString("bag_company"));
                     bagEntitynew.setQuantity(Integer.valueOf(jObject.getString("bag_quantity")));
                     bagEntitynew.setPhoto(jObject.getString("bag_photo"));
-
 
                 } catch (InterruptedException e) {
                     e.printStackTrace();
