@@ -3,7 +3,9 @@ package com.example.pujan.bag.printPackage;
 
 import android.content.Intent;
 
+import com.example.pujan.bag.FunctionsThread;
 import com.example.pujan.bag.R;
+import com.google.gson.Gson;
 import com.zj.btsdk.BluetoothService;
 import com.zj.btsdk.PrintPic;
 import android.annotation.SuppressLint;
@@ -23,6 +25,8 @@ import android.util.Log;
 import java.text.SimpleDateFormat;
 import java.util.ArrayList;
 import java.util.Date;
+import java.util.LinkedHashMap;
+import java.util.concurrent.ExecutionException;
 
 
 public class PrintDemo extends Activity {
@@ -36,11 +40,30 @@ public class PrintDemo extends Activity {
 	ArrayList<PrintEntity> getData;
 
 	/** Called when the activity is first created. */
+	String customer_id="";
+	String customer_name="";
 	@Override
 	public void onCreate(Bundle savedInstanceState) {
 		super.onCreate(savedInstanceState);
 		setContentView(R.layout.main);
+
 		getData = (ArrayList<PrintEntity>) getIntent().getSerializableExtra("PrintValue");
+		customer_id=getIntent().getStringExtra("customer_id");
+		customer_name=getIntent().getStringExtra("customer_name");
+
+		try {
+			Gson test = new Gson();
+			String jsonData = test.toJson(getData);
+			String reply = new FunctionsThread(PrintDemo.this).execute("AddOrder", jsonData, customer_id, customer_name).get();
+
+		} catch (InterruptedException e) {
+			e.printStackTrace();
+		} catch (ExecutionException e) {
+			e.printStackTrace();
+		}
+
+
+
 		mService = new BluetoothService(this, mHandler);
 		//�����������˳�����
 		if( mService.isAvailable() == false ){
@@ -99,6 +122,10 @@ public class PrintDemo extends Activity {
 				Intent serverIntent = new Intent(PrintDemo.this,DeviceListActivity.class);
 				startActivityForResult(serverIntent,REQUEST_CONNECT_DEVICE);
 			} else if (v == btnSendDraw) {
+
+
+
+
                 String msg = "";
                 String lang = getString(R.string.strLang);
 
@@ -106,7 +133,9 @@ public class PrintDemo extends Activity {
             	byte[] cmd = new byte[3];
         	    cmd[0] = 0x1b;
         	    cmd[1] = 0x21;
-            	if((lang.compareTo("en")) == 0){	
+            	if((lang.compareTo("en")) == 0){
+
+
             		//cmd[2] |= 0x10;   //Bigger Text
 					cmd[2] &= 0xEF;
             		mService.write(cmd);
@@ -125,65 +154,80 @@ public class PrintDemo extends Activity {
             		cmd[2] &= 0xEF;
             		mService.write(cmd);
 
-					/*
 
-					msg+="Cus Name: "+getData.get(0).getCustomer_name()+"\n\n";
+					msg+="Cus Name: "+customer_name+"\n\n";
 					msg+="SN| Products| Rate| Qty| T.Price\n";
 					msg+="--------------------------------\n";
 					for(int i=0;i<getData.size();i++)
 					{
+
+						LinkedHashMap<String, Integer> finalColorMap = getData.get(i).getColorQuantity();
+
+						int subQty=0;
+						for (LinkedHashMap.Entry<String, Integer> entry : finalColorMap.entrySet()) {
+							subQty+=entry.getValue();
+						}
 						int Tprice;
-						Tprice=getData.get(i).getQuantity()*getData.get(i).getPrice();
+						Tprice=subQty*getData.get(i).getPrice();
 						String SNspace= new String();
 						String PROspace = new String();
 						String RATspace = new String();
 						String QTYspace = new String();
 						String TOTspace = new String();
-						         //Right Align Serial NO.
+						//Right Align Serial NO.
 						int SnColLenght=2;
-						int SnLength=String.valueOf(getData.get(i).getId()).length();
+						int SnLength=String.valueOf(i+1).length();
 						for(int k=1;k<=(SnColLenght-SnLength);k++)
 						{
 							SNspace+=" ";
 						}
-								//Right Align Products
+						//Right Align Products
 						int ProColLength=10;
-						int prolength=getData.get(i).getProducts().length();
+						int prolength=getData.get(i).getProduct().length();
 						for(int k=1;k<=(ProColLength-prolength);k++)
 						{
 							PROspace+=" ";
 						}
-								//Right Align Rate
+						//Right Align Rate
 						int RatColLength=6;
 						int RatLength=String.valueOf(getData.get(i).getPrice()).length();
 						for(int k=1;k<=(RatColLength-RatLength);k++)
 						{
 							RATspace+=" ";
 						}
-								//Right Align Qty
+						//Right Align Qty
 						int QtyColLength=5;
-						int QtyLength=String.valueOf(getData.get(i).getQuantity()).length();
+						int QtyLength=String.valueOf(subQty).length();
 						for(int k=1;k<=(QtyColLength-QtyLength);k++)
 						{
 							QTYspace+=" ";
 						}
-								//Right Align Total
+						//Right Align Total
 						int TotColLength=9;
 						int TotLength=String.valueOf(Tprice).length();
 						for(int k=1;k<=(TotColLength-TotLength);k++)
 						{
 							TOTspace+=" ";
 						}
-								//Stores above value in msg to print
-						msg += SNspace+getData.get(i).getId()+PROspace+getData.get(i).getProducts()+RATspace+getData.get(i).getPrice()+QTYspace+getData.get(i).getQuantity()
+						//Stores above value in msg to print
+						msg += SNspace+(i+1)+PROspace+getData.get(i).getProduct()+RATspace+getData.get(i).getPrice()+QTYspace+subQty
 								+TOTspace+Tprice+"\n";
+
+
+
 					}
 					msg+="--------------------------------\n";
 
 					double Total=0;
 					for(int i=0;i<getData.size();i++)
 					{
-						Total+=getData.get(i).getPrice()*getData.get(i).getQuantity();
+						LinkedHashMap<String, Integer> finalColorMap = getData.get(i).getColorQuantity();
+
+						for (LinkedHashMap.Entry<String, Integer> entry : finalColorMap.entrySet()) {
+
+							Total+=getData.get(i).getPrice()*entry.getValue();
+						}
+
 					}
 					int totlength = String.valueOf(Total).length();
 					for(int j=1;j<=(32-totlength-7);j++)
@@ -216,7 +260,7 @@ public class PrintDemo extends Activity {
 					{
 						msg+=" ";
 					}
-					msg+="G.Total"+": "+Gtotal+"\n\n";
+					msg+="G.Total"+": "+Gtotal+"\n";
 					msg+= alignMiddle("**Thank You**");
 
 					mService.sendMessage(msg,"GBK");
@@ -224,7 +268,7 @@ public class PrintDemo extends Activity {
 
 
 
-*/
+
             	}else if((lang.compareTo("ch")) == 0){
             		cmd[2] |= 0x10;
             		mService.write(cmd);           //��������ģʽ
@@ -234,8 +278,10 @@ public class PrintDemo extends Activity {
             		msg = "  ���Ѿ��ɹ��������������ǵ�������ӡ����\n\n"
             		+ "  ����˾��һ��רҵ�����з�����������������Ʊ�ݴ�ӡ��������ɨ���豸��һ��ĸ߿Ƽ���ҵ.\n\n";
             	    
-            		mService.sendMessage(msg,"GBK");	
-            	}
+            		mService.sendMessage(msg,"GBK");
+
+					System.out.println(msg);
+				}
 			}
 		}
 	}
@@ -308,4 +354,13 @@ public class PrintDemo extends Activity {
     	sendData = pg.printDraw();
     	mService.write(sendData);
     }
+
+	String getSpace(int colLen, int fieldLen) {
+		String space = "";
+
+		for (int k = 1; k <= (colLen - fieldLen); k++) {
+			space += " ";
+		}
+		return space;
+	}
 }

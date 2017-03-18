@@ -107,12 +107,14 @@ public class BagListActivity extends AppCompatActivity implements BagViewAdapter
         customer_id = getIntent().getStringExtra("customer_id");
 
 
+
+
         android.support.v7.app.ActionBar actionBar = getSupportActionBar();
         actionBar.setLogo(R.drawable.bagsmall);
         actionBar.setDisplayHomeAsUpEnabled(true);
         actionBar.setDisplayUseLogoEnabled(true);   // These two are for
         actionBar.setDisplayShowHomeEnabled(true);
-        if (source=="bag") {
+        if (source.equals("bag")) {
             actionBar.setTitle(" View Bag");
 
       // displaying logo in the action bar

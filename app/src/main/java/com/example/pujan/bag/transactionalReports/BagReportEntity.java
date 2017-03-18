@@ -11,6 +11,8 @@ public class BagReportEntity {
     private String customer_name;
     private int quantity;
     private Date date;
+    private int price;
+    private String color;
 
     public String getBag_name() {
         return bag_name;
@@ -45,4 +47,19 @@ public class BagReportEntity {
     }
 
 
+    public int getPrice() {
+        return price;
+    }
+
+    public void setPrice(int price) {
+        this.price = price;
+    }
+
+    public String getColor() {
+        return color;
+    }
+
+    public void setColor(String color) {
+        this.color = color;
+    }
 }

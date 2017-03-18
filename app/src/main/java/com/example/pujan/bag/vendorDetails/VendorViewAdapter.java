@@ -6,6 +6,7 @@ import android.content.Intent;
 import android.support.v7.app.AlertDialog;
 import android.support.v7.widget.PopupMenu;
 import android.support.v7.widget.RecyclerView;
+import android.text.Html;
 import android.view.LayoutInflater;
 import android.view.MenuItem;
 import android.view.View;
@@ -67,8 +68,11 @@ public class VendorViewAdapter extends RecyclerView.Adapter<VendorViewAdapter.Te
     public void onBindViewHolder(final TestHolder holder, final int position) {
         VendorEntity vendorEntity = listdata.get(position);
         holder.id.setText(Integer.toString(vendorEntity.getId()));
-        holder.name.setText(vendorEntity.getName());
-        holder.address.setText(vendorEntity.getAddress());
+        holder.id.setVisibility(View.GONE);
+        holder.phone.setVisibility(View.GONE);
+
+        holder.name.setText(Html.fromHtml("Name: "+vendorEntity.getName()));
+        holder.address.setText(Html.fromHtml("Address: "+vendorEntity.getAddress()));
 
 
         if (getway.equals("bagdetails")) {
@@ -104,6 +108,7 @@ public class VendorViewAdapter extends RecyclerView.Adapter<VendorViewAdapter.Te
             id = (TextView) itemView.findViewById(R.id.lbl_ven_id);
             name = (TextView) itemView.findViewById(R.id.lbl_ven_name);
             address = (TextView) itemView.findViewById(R.id.lbl_ven_address);
+            phone=(TextView)itemView.findViewById(R.id.lbl_ven_phone);
             optionsMenu = (TextView) itemView.findViewById(R.id.optionsMenu);
             container = itemView.findViewById(R.id.cont_ven_item);
 

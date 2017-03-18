@@ -12,9 +12,11 @@ import com.example.pujan.bag.bagDetails.BagListActivity;
 import com.example.pujan.bag.bagDetails.BagViewAdapter;
 import com.example.pujan.bag.bagStock.StockListActivity;
 import com.example.pujan.bag.bagStock.StockUpdateActivity;
+import com.example.pujan.bag.bagStock.StockViewActivity;
 import com.example.pujan.bag.customerDetails.AddCustomerActivity;
 import com.example.pujan.bag.customerDetails.CustomerListActivity;
 import com.example.pujan.bag.database.DbHelper;
+import com.example.pujan.bag.orderDetails.OrderDisplayActivity;
 import com.example.pujan.bag.transactionalReports.BagReports;
 import com.example.pujan.bag.vendorDetails.AddVendorActivity;
 import com.example.pujan.bag.vendorDetails.VendorEntity;
@@ -69,12 +71,10 @@ public class FunctionsThread extends AsyncTask<String, Void, String> {
     {
         this.callback = activity;
     }
-
     public void trigAsyncResponse(CustomerListActivity activity)
     {
         this.callback=activity;
     }
-
     public void trigAsyncResponse(VendorListActivity activity)
     {
         this.callback=activity;
@@ -103,8 +103,14 @@ public class FunctionsThread extends AsyncTask<String, Void, String> {
     {
         this.callback=activity;
     }
-
-
+    public void trigAsyncResponse(OrderDisplayActivity activity)
+    {
+        this.callback=activity;
+    }
+    public void trigAsyncResponse(StockViewActivity activity)
+    {
+        this.callback=activity;
+    }
 
     public FunctionsThread(Context c) {
         this.c = c;
@@ -189,7 +195,7 @@ public class FunctionsThread extends AsyncTask<String, Void, String> {
             String password = params[2];
 
             try {
-                URL url = new URL(ip + "login.php");
+                URL url = new URL(ip+ "login.php");
                 HttpURLConnection httpURLConnection = (HttpURLConnection) url.openConnection();
                 httpURLConnection.setConnectTimeout(3000);
                 httpURLConnection.setRequestMethod("POST");
@@ -528,14 +534,17 @@ public class FunctionsThread extends AsyncTask<String, Void, String> {
                 bufferedReader.close();
                 conn.disconnect();
                 return sb.toString().trim();
-            } catch (Exception e) {
-                return "Error Inserting new ordeData";
+            }
+            catch (Exception e) {
+                return "Error";
             }
 
 
         } else if (method == "AddOrder") {
 
             String orderJson = params[1];
+            String customer_id=params[2];
+            String customer_name=params[3];
 
             try {
                 URL url = new URL(ip + "addOrder.php");
@@ -546,7 +555,10 @@ public class FunctionsThread extends AsyncTask<String, Void, String> {
                 conn.setDoOutput(true);
                 OutputStream os = conn.getOutputStream();
                 BufferedWriter bufferedWriter = new BufferedWriter(new OutputStreamWriter(os, "UTF-8"));
-                String data = URLEncoder.encode("AddOrderJson", "UTF-8") + "=" + URLEncoder.encode(orderJson, "UTF-8");
+                String data = URLEncoder.encode("AddOrderJson", "UTF-8") + "=" + URLEncoder.encode(orderJson, "UTF-8")+"&"+
+                        URLEncoder.encode("customer_id", "UTF-8") + "=" + URLEncoder.encode(customer_id, "UTF-8")+"&"+
+                        URLEncoder.encode("customer_name", "UTF-8") + "=" + URLEncoder.encode(customer_name, "UTF-8");
+
                 bufferedWriter.write(data);
                 bufferedWriter.flush();
                 bufferedWriter.close();
@@ -563,14 +575,8 @@ public class FunctionsThread extends AsyncTask<String, Void, String> {
                 bufferedReader.close();
                 conn.disconnect();
                 return sb.toString().trim();
-            } catch (UnsupportedEncodingException e) {
-                e.printStackTrace();
-            } catch (ProtocolException e) {
-                e.printStackTrace();
-            } catch (MalformedURLException e) {
-                e.printStackTrace();
-            } catch (IOException e) {
-                e.printStackTrace();
+            } catch (Exception e){
+                return "Error";
             }
         } else if (method == "ViewRecords") {
 
@@ -715,13 +721,53 @@ public class FunctionsThread extends AsyncTask<String, Void, String> {
                 httpURLConnection.setConnectTimeout(3000);
                 httpURLConnection.setRequestMethod("POST");
 
-
                 httpURLConnection.setDoInput(true);
                 httpURLConnection.setDoOutput(true);
                 OutputStream os = httpURLConnection.getOutputStream();
                 BufferedWriter bufferedWriter = new BufferedWriter(new OutputStreamWriter(os, "UTF-8"));
                 String data = URLEncoder.encode("bag_id", "UTF-8") + "=" + URLEncoder.encode(bag_id, "UTF-8") + "&" +
                         URLEncoder.encode("stockEditJson", "UTF-8") + "=" + URLEncoder.encode(stockEditJson, "UTF-8");
+                bufferedWriter.write(data);
+                bufferedWriter.flush();
+                bufferedWriter.close();
+                os.close();
+
+                InputStream is = httpURLConnection.getInputStream();
+                BufferedReader bufferedReader = new BufferedReader(new InputStreamReader(is, "iso-8859-1"));
+                StringBuilder response = new StringBuilder();
+                String line;
+                while ((line = bufferedReader.readLine()) != null) {
+                    response.append(line);
+                }
+
+                bufferedReader.close();
+                is.close();
+                httpURLConnection.disconnect();
+                return response.toString().trim();
+
+
+            } catch (Exception e) {
+                e.printStackTrace();
+                System.out.println("Error in ");
+                return "error";
+
+            }
+        }
+        else if (method.equals("QueryQuantity")) {
+            String quantity = params[1];
+
+            try {
+                URL url = new URL(ip + "queryTable.php");
+                HttpURLConnection httpURLConnection = (HttpURLConnection) url.openConnection();
+                httpURLConnection.setConnectTimeout(3000);
+                httpURLConnection.setRequestMethod("POST");
+
+                httpURLConnection.setDoInput(true);
+                httpURLConnection.setDoOutput(true);
+                OutputStream os = httpURLConnection.getOutputStream();
+                BufferedWriter bufferedWriter = new BufferedWriter(new OutputStreamWriter(os, "UTF-8"));
+                String data = URLEncoder.encode("quantity", "UTF-8") + "=" + URLEncoder.encode(quantity, "UTF-8");
+
                 bufferedWriter.write(data);
                 bufferedWriter.flush();
                 bufferedWriter.close();

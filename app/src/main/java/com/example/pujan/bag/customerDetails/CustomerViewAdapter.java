@@ -12,6 +12,7 @@ import android.support.v4.app.ActivityCompat;
 import android.support.v7.app.AlertDialog;
 import android.support.v7.widget.PopupMenu;
 import android.support.v7.widget.RecyclerView;
+import android.text.Html;
 import android.view.LayoutInflater;
 import android.view.MenuItem;
 import android.view.View;
@@ -83,9 +84,11 @@ public class CustomerViewAdapter extends RecyclerView.Adapter<CustomerViewAdapte
 
         CustomerEntity item = listData.get(position);
         holder.id.setText(Integer.toString(item.getId()));
-        holder.name.setText(item.getName());
-        holder.address.setText(item.getAddress());
-        holder.phone.setText(item.getPhone());
+        holder.id.setVisibility(View.GONE);
+
+        holder.name.setText(Html.fromHtml("Name: "+item.getName()));
+        holder.address.setText(Html.fromHtml("Address: "+item.getAddress()));
+        holder.phone.setText(Html.fromHtml(item.getPhone()));
 
     }
 
@@ -106,6 +109,7 @@ public class CustomerViewAdapter extends RecyclerView.Adapter<CustomerViewAdapte
         public TestHolder(View itemView) {
             super(itemView);
             id = (TextView) itemView.findViewById(R.id.lbl_cust_id);
+
             name = (TextView) itemView.findViewById(R.id.lbl_cust_name);
             address = (TextView) itemView.findViewById(R.id.lbl_cust_address);
             phone = (TextView) itemView.findViewById(R.id.lbl_cust_phone);

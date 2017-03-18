@@ -6,6 +6,7 @@ import android.content.Intent;
 import android.net.Uri;
 import android.support.v7.app.AlertDialog;
 import android.support.v7.widget.RecyclerView;
+import android.text.Html;
 import android.text.TextUtils;
 import android.view.LayoutInflater;
 import android.view.View;
@@ -70,11 +71,11 @@ public class StockViewAdapter extends RecyclerView.Adapter<StockViewAdapter.Test
     @Override
     public void onBindViewHolder(final TestHolder holder, int position) {
         BagEntity item = listData.get(position);
-        holder.name.setText(item.getName());
-        holder.category.setText(item.getCategory());
-        holder.price.setText(Integer.toString(item.getPrice()));
-        holder.company.setText(item.getCompany());
-        holder.quantity.setText(Integer.toString(item.getQuantity()));
+        holder.name.setText(Html.fromHtml("<u><b>"+"Product: "+ item.getName()+"</b></u>"));
+        holder.category.setText("Category: "+item.getCategory());
+        holder.price.setText("Price: Rs. "+Integer.toString(item.getPrice()));
+        holder.company.setText("Company: "+item.getCompany());
+        holder.quantity.setText("Stock: "+Integer.toString(item.getQuantity()));
 
 
         try {

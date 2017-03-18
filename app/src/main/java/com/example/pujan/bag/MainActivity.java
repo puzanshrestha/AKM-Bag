@@ -149,9 +149,11 @@ public class MainActivity extends AppCompatActivity {
         String check;
         try{
 
+            System.out.println(username);
+            System.out.println(password);
             check = new FunctionsThread(this).execute("Login",username,password).get();
 
-
+            System.out.println("sldkjsd"+check);
             if(check.equals("correct"))
             {
                 Toast.makeText(getBaseContext(),"Correct Password",Toast.LENGTH_SHORT).show();

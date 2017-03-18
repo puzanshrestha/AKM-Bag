@@ -131,8 +131,6 @@ public class CustomerListActivity extends AppCompatActivity implements Functions
     @Override
     public void onItemClick(int p) {
         if (method.equals("orderView")) {
-            System.out.println("this is list activity");
-            Toast.makeText(this, "Item " + p + "has been clicked", Toast.LENGTH_SHORT).show();
 
             CustomerEntity customerEntity = new CustomerEntity();
             customerEntity = customerData.get(p);

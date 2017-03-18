@@ -9,6 +9,7 @@ import android.graphics.Color;
 import android.support.v7.app.AlertDialog;
 import android.support.v7.widget.PopupMenu;
 import android.support.v7.widget.RecyclerView;
+import android.text.Html;
 import android.text.InputType;
 import android.text.TextUtils;
 import android.view.Gravity;
@@ -129,11 +130,13 @@ public class BagViewAdapter extends RecyclerView.Adapter<BagViewAdapter.TestHold
     public void onBindViewHolder(final TestHolder holder, int position) {
         BagEntity item = listData.get(position);
         holder.id.setText((Integer.toString(item.getId())));
-        holder.name.setText(item.getName());
-        holder.category.setText(item.getCategory());
-        holder.price.setText(Integer.toString(item.getPrice()));
-        holder.company.setText(item.getCompany());
-        holder.quantity.setText(Integer.toString(item.getQuantity()));
+        holder.id.setVisibility(View.GONE);
+
+        holder.name.setText(Html.fromHtml("<b><u>Product: "+item.getName()+"</u></b>"));
+        holder.category.setText(Html.fromHtml("Category: "+item.getCategory()));
+        holder.price.setText(Html.fromHtml("Price: "+Integer.toString(item.getPrice())));
+        holder.company.setText(Html.fromHtml("Company: "+item.getCompany()));
+        holder.quantity.setText(Html.fromHtml("Stock: "+Integer.toString(item.getQuantity())));
 
 
         holder.optionsMenu.setVisibility(View.VISIBLE);
@@ -541,15 +544,33 @@ public class BagViewAdapter extends RecyclerView.Adapter<BagViewAdapter.TestHold
                     @Override
                     public void onClick(View v) {
 
-                        try {
-                            finalColorMap.put(colorCombo.getSelectedItem().toString(), Integer.valueOf(quantity.getText().toString()));
 
-                        } catch (Exception e) {
-                            Toast.makeText(context, "Invalid Quantity", Toast.LENGTH_SHORT).show();
-                        } finally {
-                            populateOrder(tableLayout1, finalColorMap);
+                        int position=-1;
+                        for(int i=0;i<colorValues.size();i++)
+                        {
+                            if(colorValues.get(i).getColor().equals(colorCombo.getSelectedItem().toString()))
+                            {
+                                position=i;
+
+                            }
                         }
+                        if(position==-1){
+                            Toast.makeText(mydialog.getContext(),"Items are not Available in the Stock",Toast.LENGTH_SHORT).show();
+                        }
+                        else {
+                            if (colorValues.get(position).getCquantity() >= Integer.valueOf(quantity.getText().toString())) {
+                                try {
+                                    finalColorMap.put(colorCombo.getSelectedItem().toString(), Integer.valueOf(quantity.getText().toString()));
 
+                                } catch (Exception e) {
+                                    Toast.makeText(context, "Invalid Quantity", Toast.LENGTH_SHORT).show();
+                                } finally {
+                                    populateOrder(tableLayout1, finalColorMap);
+                                }
+                            } else
+                                Toast.makeText(mydialog.getContext(), "Items are not Available in the Stock", Toast.LENGTH_SHORT).show();
+
+                        }
                     }
                 });
 
@@ -609,14 +630,14 @@ public class BagViewAdapter extends RecyclerView.Adapter<BagViewAdapter.TestHold
                             try {
                                 System.out.println("------------" + bagid + "  " + a);
                                 check = new FunctionsThread(context).execute("AddBag", a, a, a, a, "delete", bagid, a, a).get();
-                                System.out.println(check);
+                                //System.out.println(check);
                                 if (check.equals("delete")) {
                                     Intent i = new Intent(context, BagListActivity.class);
                                     i.putExtra("source", "bag");
                                     context.startActivity(i);
-                                    Toast.makeText(context, "deleted successfully :)", Toast.LENGTH_LONG).show();
+                                    Toast.makeText(context, "Deleted Successfully", Toast.LENGTH_LONG).show();
                                 } else {
-                                    Toast.makeText(context, "cannot delete :(", Toast.LENGTH_LONG).show();
+                                    Toast.makeText(context, "Failed to Delete", Toast.LENGTH_LONG).show();
                                 }
                             } catch (InterruptedException e) {
                                 e.printStackTrace();
