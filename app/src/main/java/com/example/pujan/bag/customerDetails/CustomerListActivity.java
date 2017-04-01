@@ -68,6 +68,7 @@ public class CustomerListActivity extends AppCompatActivity implements Functions
         else {
              actionBar.setTitle(" View Customer");
              actionBar.setDisplayUseLogoEnabled(true);
+             fab.setVisibility(View.GONE);
 
          }
 
@@ -159,10 +160,32 @@ public class CustomerListActivity extends AppCompatActivity implements Functions
         switch (item.getItemId())
         {
             case android.R.id.home:
-                this.finish();
-                return true;
+            if (method.equals("orderView")) {
+
+                    this.finish();
+                    return true;
+
+            }
+                else
+            {
+                Intent i = new Intent(getBaseContext(), CustomerDetailsActivity.class);
+                startActivity(i);
+            }
         }
         return true;
+    }
+
+    @Override
+    public void onBackPressed() {
+        if (method.equals("orderView")) {
+            this.finish();
+
+        }
+        else
+        {
+            Intent i = new Intent(getBaseContext(), CustomerDetailsActivity.class);
+            startActivity(i);
+        }
     }
 
     @Override
@@ -179,8 +202,8 @@ return false;
         ArrayList<CustomerEntity> newlist=new ArrayList<>();
         for(CustomerEntity customer:customerData)
         {
-            String name=customer.getName();
-            if(name.contains(newText)) {
+            String name=customer.getName().toLowerCase();
+            if(name.contains(newText.toLowerCase())) {
                 newlist.add(customer);
             }
         }

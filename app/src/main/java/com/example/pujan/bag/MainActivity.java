@@ -21,7 +21,7 @@ import android.widget.Toast;
 import com.example.pujan.bag.database.DbHelper;
 import com.example.pujan.bag.printPackage.PrintDemo;
 
-public class MainActivity extends AppCompatActivity {
+public class MainActivity extends AppCompatActivity implements FunctionsThread.AsyncResponse{
 
     Button loginBtn;
     EditText usernameEditText,passwordEditText;
@@ -30,7 +30,7 @@ public class MainActivity extends AppCompatActivity {
     public static String ip;
 
 
-
+    SharedPreferences sharedpreferences;
     DbHelper dbh;
 
     @Override
@@ -88,6 +88,8 @@ public class MainActivity extends AppCompatActivity {
         super.onCreate(savedInstanceState);
         setContentView(R.layout.activity_main);
 
+        sharedpreferences = getSharedPreferences("Login", Context.MODE_PRIVATE);
+
         dbh = new DbHelper(this);
 
         android.support.v7.app.ActionBar actionBar = getSupportActionBar();
@@ -97,14 +99,9 @@ public class MainActivity extends AppCompatActivity {
 
 
 
-
-
-
         loginBtn = (Button)findViewById(R.id.loginBtn);
         usernameEditText = (EditText)findViewById(R.id.username);
         passwordEditText = (EditText)findViewById(R.id.password);
-
-
 
         loginBtn.setOnClickListener(new View.OnClickListener() {
             @Override
@@ -116,8 +113,9 @@ public class MainActivity extends AppCompatActivity {
                 */
                 username = usernameEditText.getText().toString().trim();
                 password = passwordEditText.getText().toString().trim();
-                ip=dbh.getIP();
+                ip = dbh.getIP();
 
+                /*
                 final ProgressDialog pd = new ProgressDialog(MainActivity.this);
                 pd.setIndeterminate(true);
                 pd.setTitle("Working");
@@ -135,28 +133,42 @@ public class MainActivity extends AppCompatActivity {
 
                             }
                         }, 1000);
+            }
 
 
+
+                */
+                FunctionsThread t = new FunctionsThread(MainActivity.this);
+                t.execute("Login", username, password);
+                t.trigAsyncResponse(MainActivity.this);
 
             }
-        });
+                });
 
 
-    }
+        }
 
-    public void login()
+    public void login(String check)
     {
-        String check;
         try{
 
-            System.out.println(username);
-            System.out.println(password);
-            check = new FunctionsThread(this).execute("Login",username,password).get();
 
-            System.out.println("sldkjsd"+check);
-            if(check.equals("correct"))
+            if(check.equals("userType-1"))
             {
-                Toast.makeText(getBaseContext(),"Correct Password",Toast.LENGTH_SHORT).show();
+                SharedPreferences.Editor editor = sharedpreferences.edit();
+                editor.putString("userType","userType#1" );
+                editor.commit();
+                Toast.makeText(getBaseContext(),"Admin Logged in",Toast.LENGTH_SHORT).show();
+                Intent i = new Intent(getBaseContext(),ActionListActivity.class);
+                startActivity(i);
+
+            }
+            else if(check.equals("userType-0"))
+            {
+                SharedPreferences.Editor editor = sharedpreferences.edit();
+                editor.putString("userType","userType#0" );
+                editor.commit();
+                Toast.makeText(getBaseContext(),"User Logged in",Toast.LENGTH_SHORT).show();
                 Intent i = new Intent(getBaseContext(),ActionListActivity.class);
                 startActivity(i);
             }
@@ -168,9 +180,8 @@ public class MainActivity extends AppCompatActivity {
 
             else
             {
-                Toast.makeText(getBaseContext(),"Network Error",Toast.LENGTH_SHORT).show();
-                Intent i = new Intent(getBaseContext(),ActionListActivity.class);
-                startActivity(i);
+                Toast.makeText(getBaseContext(),"Network error, please check server's IP !",Toast.LENGTH_SHORT).show();
+
             }
         }
         catch (Exception e)
@@ -180,8 +191,18 @@ public class MainActivity extends AppCompatActivity {
     }
 
 
+    @Override
+    public void onComplete(String output) {
 
+        login(output);
+    }
 
+    @Override
+    public void onBackPressed()
+    {
 
+    }
 
 }
+
+

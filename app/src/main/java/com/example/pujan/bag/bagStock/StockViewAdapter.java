@@ -59,6 +59,13 @@ public class StockViewAdapter extends RecyclerView.Adapter<StockViewAdapter.Test
 
     }
 
+    public void setFilter(ArrayList<BagEntity> list) {
+        listData = new ArrayList<>();
+        listData.addAll(list);
+        notifyDataSetChanged();
+
+    }
+
 
     @Override
     public TestHolder onCreateViewHolder(ViewGroup parent, int viewType) {

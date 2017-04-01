@@ -116,7 +116,6 @@ public class CustomerViewAdapter extends RecyclerView.Adapter<CustomerViewAdapte
             container = itemView.findViewById(R.id.cont_cust_item);
             optionsMenu = (TextView) itemView.findViewById(R.id.optionsMenu);
 
-
             container.setOnClickListener(this);
 
             phone.setOnClickListener(new View.OnClickListener() {
@@ -217,6 +216,7 @@ public class CustomerViewAdapter extends RecyclerView.Adapter<CustomerViewAdapte
                                 Intent i = new Intent(context, CustomerListActivity.class);
                                 i.putExtra("method", "customerview");
                                 context.startActivity(i);
+
                             }
                             else
                             {

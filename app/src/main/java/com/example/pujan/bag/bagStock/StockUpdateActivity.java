@@ -2,12 +2,16 @@ package com.example.pujan.bag.bagStock;
 
 import android.app.Activity;
 import android.app.AlertDialog;
+import android.content.Context;
 import android.content.DialogInterface;
+import android.content.Intent;
+import android.content.SharedPreferences;
 import android.graphics.Color;
 import android.net.Uri;
 import android.os.Bundle;
 import android.text.InputType;
 import android.view.Gravity;
+import android.view.MenuItem;
 import android.view.View;
 import android.view.ViewGroup;
 import android.widget.AdapterView;
@@ -23,6 +27,7 @@ import android.widget.TableRow;
 import android.widget.TextView;
 import android.widget.Toast;
 
+import com.example.pujan.bag.ActionListActivity;
 import com.example.pujan.bag.FunctionsThread;
 import com.example.pujan.bag.MainActivity;
 import com.example.pujan.bag.NDSpinner;
@@ -58,6 +63,8 @@ public class StockUpdateActivity extends Activity implements FunctionsThread.Asy
     private  ImageView bagPhoto;
     BagEntity bagEntity;
 
+    SharedPreferences sharedPreferences;
+
 
 
     @Override
@@ -79,6 +86,25 @@ public class StockUpdateActivity extends Activity implements FunctionsThread.Asy
 
         bag_id = getIntent().getStringExtra("bag_id");
 
+        sharedPreferences = getSharedPreferences("Login", Context.MODE_PRIVATE);
+
+        String userType=sharedPreferences.getString("userType","");
+
+        if(userType.equals("userType#0"))
+        {
+                updateStockBtn.setVisibility(View.GONE);
+                updateStockBtn.setEnabled(false);
+            editStockBtn.setVisibility(View.GONE);
+            editStockBtn.setEnabled(false);
+        }
+        else
+        {
+            updateStockBtn.setVisibility(View.VISIBLE);
+            updateStockBtn.setEnabled(true);
+            editStockBtn.setVisibility(View.VISIBLE);
+            editStockBtn.setEnabled(true);
+        }
+
         populateColor();
 
         populateTableLayout();
@@ -86,8 +112,8 @@ public class StockUpdateActivity extends Activity implements FunctionsThread.Asy
                colorCombo.setOnItemSelectedListener(new AdapterView.OnItemSelectedListener() {
             @Override
             public void onItemSelected(AdapterView<?> parent, View view, int position, long id) {
-                Toast.makeText(getBaseContext(), colorCombo.getSelectedItem().toString(), Toast.LENGTH_SHORT).show();
-                array_spinner[0] = "VIOLET";
+                //Toast.makeText(getBaseContext(), colorCombo.getSelectedItem().toString(), Toast.LENGTH_SHORT).show();
+
             }
 
             @Override
@@ -197,6 +223,12 @@ public class StockUpdateActivity extends Activity implements FunctionsThread.Asy
 
 
 
+    }
+
+    @Override
+    public void onBackPressed() {
+        Intent i = new Intent(this,StockListActivity.class);
+        startActivity(i);
     }
 
 

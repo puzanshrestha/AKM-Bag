@@ -83,10 +83,19 @@ public class AddCustomerActivity extends AppCompatActivity implements FunctionsT
         switch (item.getItemId())
         {
             case android.R.id.home:
-                this.finish();
+                Intent i = new Intent(getBaseContext(),CustomerListActivity.class);
+                i.putExtra("method","customerview");
+                startActivity(i);
 
         }
         return true;
+    }
+
+    @Override
+    public void onBackPressed() {
+        Intent i = new Intent(getBaseContext(),CustomerListActivity.class);
+        i.putExtra("method","customerview");
+        startActivity(i);
     }
 
     @Override

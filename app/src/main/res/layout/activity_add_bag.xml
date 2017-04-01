@@ -16,6 +16,7 @@
         android:layout_width="150dp"
         android:layout_height="150dp"
         android:layout_gravity="center"
+        android:scaleType="fitCenter"
         android:padding="20dp"
         android:src="@drawable/bag"
         android:id="@+id/bag_photo"
@@ -82,27 +83,7 @@
             android:inputType="numberDecimal"
             />
     </LinearLayout>
-    <LinearLayout
-        android:layout_width="match_parent"
-        android:layout_height="wrap_content"
-        android:orientation="horizontal"
-        android:layout_gravity="center_horizontal"
-        >
 
-        <TextView
-            android:layout_width="80dp"
-            android:layout_height="wrap_content"
-            android:text="Quantity:"/>
-        <EditText
-
-            android:layout_width="match_parent"
-            android:layout_height="wrap_content"
-            android:id="@+id/quantityEditText"
-            android:inputType="numberDecimal"
-            />
-
-
-    </LinearLayout>
 
     <LinearLayout
         android:layout_width="match_parent"

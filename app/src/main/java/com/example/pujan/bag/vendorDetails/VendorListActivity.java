@@ -86,9 +86,24 @@ public class VendorListActivity extends AppCompatActivity implements FunctionsTh
     public boolean onOptionsItemSelected(MenuItem item) {
         switch (item.getItemId()){
             case android.R.id.home:
-                this.finish();
+                if (getway.equals("bagdetails"))
+                    this.finish();
+                else {
+                    Intent i = new Intent(this, VendorDetailsActivity.class);
+                    startActivity(i);
+                }
         }
         return true;
+    }
+
+    @Override
+    public void onBackPressed() {
+        if (getway.equals("bagdetails"))
+            this.finish();
+        else {
+            Intent i = new Intent(this, VendorDetailsActivity.class);
+            startActivity(i);
+        }
     }
 
 
@@ -102,7 +117,7 @@ public class VendorListActivity extends AppCompatActivity implements FunctionsTh
         ArrayList<VendorEntity> newVendor = new ArrayList<>();
         for (VendorEntity vendorEntity : vendorData) {
             String name = vendorEntity.getName().toLowerCase();
-            if (name.contains(newText)) {
+            if (name.contains(newText.toLowerCase())) {
                 newVendor.add(vendorEntity);
             }
         }

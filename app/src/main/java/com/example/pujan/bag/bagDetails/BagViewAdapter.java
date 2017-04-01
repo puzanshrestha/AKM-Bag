@@ -5,6 +5,7 @@ import android.app.ProgressDialog;
 import android.content.Context;
 import android.content.DialogInterface;
 import android.content.Intent;
+import android.content.SharedPreferences;
 import android.graphics.Color;
 import android.support.v7.app.AlertDialog;
 import android.support.v7.widget.PopupMenu;
@@ -54,6 +55,8 @@ import java.util.concurrent.ExecutionException;
  */
 public class BagViewAdapter extends RecyclerView.Adapter<BagViewAdapter.TestHolder> implements FunctionsThread.AsyncResponse {
 
+
+
     private ArrayList<BagEntity> listData;
     private LayoutInflater inflater;
 
@@ -78,7 +81,13 @@ public class BagViewAdapter extends RecyclerView.Adapter<BagViewAdapter.TestHold
 
     @Override
     public void onComplete(String output) {
-        
+
+        System.out.println(output);
+
+
+
+
+        notifyDataSetChanged();
     }
 
     public interface ItemClickCallback {
@@ -90,11 +99,27 @@ public class BagViewAdapter extends RecyclerView.Adapter<BagViewAdapter.TestHold
 
     }
 
+
+    public BagViewAdapter(ArrayList<BagEntity> listData, String viewsource, Context c,ArrayList<BagColorQuantity> pending) {
+        this.listData = listData;
+        this.inflater = LayoutInflater.from(c);
+        this.bag = viewsource;
+        this.context = c;
+        this.colorQuantities = pending;
+
+    }
     public BagViewAdapter(ArrayList<BagEntity> listData, String viewsource, Context c) {
         this.listData = listData;
         this.inflater = LayoutInflater.from(c);
         this.bag = viewsource;
         this.context = c;
+        if(viewsource.equals("pending"))
+        {
+
+
+        }
+
+
 
 
         DbHelper db = new DbHelper(context);
@@ -216,8 +241,13 @@ public class BagViewAdapter extends RecyclerView.Adapter<BagViewAdapter.TestHold
         private LinearLayout orderLayout;
 
 
+
+
+
         public TestHolder(View itemView) {
             super(itemView);
+
+
 
             id = (TextView) itemView.findViewById(R.id.lbl_bag_id);
             name = (TextView) itemView.findViewById(R.id.lbl_bag_name);
@@ -287,6 +317,7 @@ public class BagViewAdapter extends RecyclerView.Adapter<BagViewAdapter.TestHold
         public void onClick(View v) {
             itemClickCallback.onItemClick(getAdapterPosition());
 
+
             if (v.getId() == R.id.dialogWindow) {
                 mydialog = new Dialog(context);
                 mydialog.setTitle("Select Your Order");
@@ -310,6 +341,8 @@ public class BagViewAdapter extends RecyclerView.Adapter<BagViewAdapter.TestHold
                 Button addDoneBtn;
                 Button addColorBtn;
                 Button clearBtn;
+
+
 
 
                 colorCombo = (Spinner) mydialog.findViewById(R.id.colorCombo);

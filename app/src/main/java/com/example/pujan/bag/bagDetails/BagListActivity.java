@@ -1,7 +1,9 @@
 package com.example.pujan.bag.bagDetails;
 
 import android.app.ProgressDialog;
+import android.content.Context;
 import android.content.Intent;
+
 import android.support.v4.view.MenuItemCompat;
 import android.support.v7.app.AppCompatActivity;
 import android.os.Bundle;
@@ -17,6 +19,7 @@ import android.view.View;
 import android.widget.Toast;
 
 
+import com.example.pujan.bag.ActionListActivity;
 import com.example.pujan.bag.FunctionsThread;
 import com.example.pujan.bag.R;
 
@@ -27,18 +30,22 @@ import org.json.JSONException;
 import org.json.JSONObject;
 
 import java.util.ArrayList;
+import java.util.LinkedHashMap;
 import java.util.concurrent.ExecutionException;
 
-public class BagListActivity extends AppCompatActivity implements BagViewAdapter.ItemClickCallback, SearchView.OnQueryTextListener,FunctionsThread.AsyncResponse {
+public class BagListActivity extends AppCompatActivity implements BagViewAdapter.ItemClickCallback, SearchView.OnQueryTextListener, FunctionsThread.AsyncResponse {
 
     RecyclerView recView;
     BagViewAdapter bagViewAdapter;
-    String customer_id="0";
-    String source="";
-    String customerName="";
+    String customer_id = "0";
+    String source = "";
+    String customerName = "";
+    String pending = "";
+    String pId = "";
     ArrayList<BagEntity> bagData = new ArrayList<>();
 
     ArrayList<BagColorQuantity> colorQuantities = new ArrayList<>();
+    ArrayList<BagColorQuantity> pendingList = new ArrayList<>();
 
 
     @Override
@@ -67,28 +74,29 @@ public class BagListActivity extends AppCompatActivity implements BagViewAdapter
                 case R.id.searchh:
                     return true;
                 case android.R.id.home:
-                    this.finish();
+                    Intent i = new Intent(getBaseContext(), BagDetailsActivity.class);
+                    startActivity(i);
                     return true;
             }
         } else {
 
-                switch (item.getItemId()) {
-                    case R.id.searchh:
-                        return true;
-                    case R.id.action_cart:
-                        Intent i = new Intent(this, OrderDisplayActivity.class);
+            switch (item.getItemId()) {
+                case R.id.searchh:
+                    return true;
+                case R.id.action_cart:
+                    Intent i = new Intent(this, OrderDisplayActivity.class);
 
-                        if(source=="manual")
-                            customer_id="0";
-                        i.putExtra("customer_id", customer_id);
-                        i.putExtra("customerName",customerName);
-                        i.putExtra("source",source);
-                        i.putExtra("recValue", colorQuantities);
-                        startActivity(i);
-                        return true;
-                    case android.R.id.home:
-                        this.finish();
-                        return true;
+                    if (source == "manual")
+                        customer_id = "0";
+                    i.putExtra("customer_id", customer_id);
+                    i.putExtra("customerName", customerName);
+                    i.putExtra("source", source);
+                    i.putExtra("recValue", colorQuantities);
+                    startActivity(i);
+                    return true;
+                case android.R.id.home:
+                    this.finish();
+                    return true;
 
             }
         }
@@ -97,16 +105,31 @@ public class BagListActivity extends AppCompatActivity implements BagViewAdapter
         return super.onOptionsItemSelected(item);
     }
 
+    @Override
+    public void onBackPressed() {
+
+        if (source.equals("pending"))
+            this.finish();
+        else {
+            Intent i = new Intent(getBaseContext(), BagDetailsActivity.class);
+            startActivity(i);
+        }
+
+
+    }
 
     @Override
     protected void onCreate(Bundle savedInstanceState) {
         super.onCreate(savedInstanceState);
         setContentView(R.layout.activity_view_bag);
         source = getIntent().getStringExtra("source");
-        customerName =getIntent().getStringExtra("customerName");
+        customerName = getIntent().getStringExtra("customerName");
         customer_id = getIntent().getStringExtra("customer_id");
+        pending = getIntent().getStringExtra("pending");
+        pId = getIntent().getStringExtra("pId");
 
 
+        System.out.println("source is" + source);
 
 
         android.support.v7.app.ActionBar actionBar = getSupportActionBar();
@@ -117,7 +140,7 @@ public class BagListActivity extends AppCompatActivity implements BagViewAdapter
         if (source.equals("bag")) {
             actionBar.setTitle(" View Bag");
 
-      // displaying logo in the action bar
+            // displaying logo in the action bar
         } else {
             actionBar.setTitle(" Order Menu");
 
@@ -143,8 +166,6 @@ public class BagListActivity extends AppCompatActivity implements BagViewAdapter
         t.trigAsyncResponse(this);
 
 
-
-
     }
 
     @Override
@@ -166,7 +187,7 @@ public class BagListActivity extends AppCompatActivity implements BagViewAdapter
         ArrayList<BagEntity> newbag = new ArrayList<>();
         for (BagEntity bagEntity : bagData) {
             String name = bagEntity.getName().toLowerCase();
-            if (name.contains(newText)) {
+            if (name.contains(newText.toLowerCase())) {
                 newbag.add(bagEntity);
             }
         }
@@ -174,15 +195,14 @@ public class BagListActivity extends AppCompatActivity implements BagViewAdapter
         return false;
     }
 
-    public void getData(String response){
+    public void getData(String response) {
         try {
 
-            if(response=="Error"){
-                Toast.makeText(this,"Connection Error... Please check your connection !",Toast.LENGTH_SHORT).show();
+            if (response == "Error") {
+                Toast.makeText(this, "Connection Error... Please check your connection !", Toast.LENGTH_SHORT).show();
             }
             JSONObject bagJson = new JSONObject(response);
             JSONArray bagJsonArray = bagJson.getJSONArray("result");
-
 
 
             for (int i = 0; i < bagJsonArray.length(); i++) {
@@ -203,7 +223,7 @@ public class BagListActivity extends AppCompatActivity implements BagViewAdapter
 
         } catch (Exception e) {
             e.printStackTrace();
-            Toast.makeText(this,"Error With Database Connection..!!",Toast.LENGTH_SHORT).show();
+            Toast.makeText(this, "Error With Database Connection..!!", Toast.LENGTH_SHORT).show();
         }
     }
 
@@ -212,11 +232,68 @@ public class BagListActivity extends AppCompatActivity implements BagViewAdapter
     public void onComplete(String output) {
 
         getData(output);
-        bagViewAdapter = new BagViewAdapter(bagData, getIntent().getStringExtra("source"), getBaseContext());
+        if (source.equals("pending")) {
+            convert(pending);
+            bagViewAdapter = new BagViewAdapter(bagData, getIntent().getStringExtra("source"), getBaseContext(), colorQuantities);
 
+        } else
+            bagViewAdapter = new BagViewAdapter(bagData, getIntent().getStringExtra("source"), getBaseContext());
         recView.setAdapter(bagViewAdapter);
         bagViewAdapter.onItemClickCallback(BagListActivity.this);
 
         bagViewAdapter.notifyDataSetChanged();
+
+    }
+
+    void convert(String pending) {
+
+        try {
+            JSONObject bagQuantityColor = new JSONObject(pending);
+            JSONArray bag = bagQuantityColor.getJSONArray("result");
+
+            String bagTemp = "";
+            LinkedHashMap<String, Integer> cqe = new LinkedHashMap<>();
+
+            BagColorQuantity bcqEntity = new BagColorQuantity();
+            JSONObject jObject2 = null;
+            for (int i = 0; i < bag.length(); i++) {
+                JSONObject jObject = bag.getJSONObject(i);
+                bcqEntity.setBag_id(Integer.valueOf(jObject.getString("bag_id")));
+
+
+                if (i + 1 < bag.length()) {
+                    jObject2 = bag.getJSONObject(i + 1);
+
+                }
+                else
+                jObject2=jObject;
+                if ((jObject2.getString("bag_id")).equals(jObject.getString("bag_id"))) {
+
+                    //bcqEntity.setQuantityColor(cqe);
+                    cqe.put(jObject.getString("color"), Integer.valueOf(jObject.getString("quantityColor")));
+
+                } else {
+
+                    cqe.put(jObject.getString("color"), Integer.valueOf(jObject.getString("quantityColor")));
+                    bcqEntity.setQuantityColor(cqe);
+                    colorQuantities.add(bcqEntity);
+                    bcqEntity = new BagColorQuantity();
+                    cqe = new LinkedHashMap<>();
+
+                }
+
+
+                bagTemp = jObject.getString("bag_name");
+
+            }
+
+
+            bcqEntity.setQuantityColor(cqe);
+            colorQuantities.add(bcqEntity);
+
+
+        } catch (JSONException e) {
+            e.printStackTrace();
+        }
     }
 }

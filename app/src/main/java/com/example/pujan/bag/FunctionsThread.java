@@ -3,9 +3,6 @@ package com.example.pujan.bag;
 import android.app.ProgressDialog;
 import android.content.Context;
 import android.os.AsyncTask;
-import android.os.Environment;
-import android.util.Log;
-import android.widget.Toast;
 
 import com.example.pujan.bag.bagDetails.AddBagActivity;
 import com.example.pujan.bag.bagDetails.BagListActivity;
@@ -17,20 +14,15 @@ import com.example.pujan.bag.customerDetails.AddCustomerActivity;
 import com.example.pujan.bag.customerDetails.CustomerListActivity;
 import com.example.pujan.bag.database.DbHelper;
 import com.example.pujan.bag.orderDetails.OrderDisplayActivity;
+import com.example.pujan.bag.pendingBill.PendingBillList;
+import com.example.pujan.bag.printPackage.PrintDemo;
 import com.example.pujan.bag.transactionalReports.BagReports;
+import com.example.pujan.bag.transactionalReports.RePrintBill;
 import com.example.pujan.bag.vendorDetails.AddVendorActivity;
-import com.example.pujan.bag.vendorDetails.VendorEntity;
 import com.example.pujan.bag.vendorDetails.VendorListActivity;
-
-import org.apache.http.params.HttpParams;
 
 import java.io.BufferedReader;
 import java.io.BufferedWriter;
-import java.io.DataOutputStream;
-import java.io.File;
-import java.io.FileInputStream;
-import java.io.FileNotFoundException;
-import java.io.FileOutputStream;
 import java.io.IOException;
 import java.io.InputStream;
 import java.io.InputStreamReader;
@@ -57,60 +49,64 @@ public class FunctionsThread extends AsyncTask<String, Void, String> {
 
     ProgressDialog pd;
 
-    private AsyncResponse callback=null;
+    private AsyncResponse callback = null;
+
 
     public interface AsyncResponse {
         void onComplete(String output);
     }
 
-    public void trigAsyncResponse(BagListActivity activity)
-    {
+    public void trigAsyncResponse(BagListActivity activity) {this.callback = activity;}
+
+    public void trigAsyncResponse(BagViewAdapter activity) {
         this.callback = activity;
     }
-    public void trigAsyncResponse(BagViewAdapter activity)
-    {
+
+    public void trigAsyncResponse(CustomerListActivity activity) {
         this.callback = activity;
     }
-    public void trigAsyncResponse(CustomerListActivity activity)
-    {
-        this.callback=activity;
+
+    public void trigAsyncResponse(VendorListActivity activity) {
+        this.callback = activity;
     }
-    public void trigAsyncResponse(VendorListActivity activity)
-    {
-        this.callback=activity;
+
+    public void trigAsyncResponse(AddBagActivity activity) {
+        this.callback = activity;
     }
-    public void trigAsyncResponse(AddBagActivity activity)
-    {
-        this.callback=activity;
+
+    public void trigAsyncResponse(AddCustomerActivity activity) {
+        this.callback = activity;
     }
-    public void trigAsyncResponse(AddCustomerActivity activity)
-    {
-        this.callback=activity;
+
+    public void trigAsyncResponse(AddVendorActivity activity) {
+        this.callback = activity;
     }
-    public void trigAsyncResponse(AddVendorActivity activity)
-    {
-        this.callback=activity;
+
+    public void trigAsyncResponse(BagReports activity) {
+        this.callback = activity;
     }
-    public void trigAsyncResponse(BagReports activity)
-    {
-        this.callback=activity;
+
+    public void trigAsyncResponse(StockListActivity activity) {
+        this.callback = activity;
     }
-    public void trigAsyncResponse(StockListActivity activity)
-    {
-        this.callback=activity;
+
+    public void trigAsyncResponse(StockUpdateActivity activity) {
+        this.callback = activity;
     }
-    public void trigAsyncResponse(StockUpdateActivity activity)
-    {
-        this.callback=activity;
+
+    public void trigAsyncResponse(OrderDisplayActivity activity) {
+        this.callback = activity;
     }
-    public void trigAsyncResponse(OrderDisplayActivity activity)
-    {
-        this.callback=activity;
+
+    public void trigAsyncResponse(StockViewActivity activity) {
+        this.callback = activity;
     }
-    public void trigAsyncResponse(StockViewActivity activity)
-    {
-        this.callback=activity;
-    }
+
+    public void trigAsyncResponse(MainActivity activity) {this.callback = activity; }
+    public void trigAsyncResponse(PrintDemo activity) {this.callback = activity;}
+
+    public void trigAsyncResponse(PendingBillList activity) {this.callback = activity;}
+    public void trigAsyncResponse(RePrintBill activity) {this.callback = activity;}
 
     public FunctionsThread(Context c) {
         this.c = c;
@@ -143,14 +139,13 @@ public class FunctionsThread extends AsyncTask<String, Void, String> {
     }
 
 
-
-    public  boolean isSessionServerOnline() {
+    public boolean isSessionServerOnline() {
 
         try {
 
             HttpsURLConnection connection = (HttpsURLConnection) new URL("http://" + ipMain + "/bagWebServices/").openConnection();
-            connection.setConnectTimeout(1500);
-            connection.setReadTimeout(1500);
+            connection.setConnectTimeout(5000);
+            connection.setReadTimeout(5000);
             connection.setRequestMethod("HEAD");
             int responseCode = connection.getResponseCode();
             connection.disconnect();
@@ -169,13 +164,12 @@ public class FunctionsThread extends AsyncTask<String, Void, String> {
         String method = params[0];
 
 
-
         if (method.equals("retrieve")) {
 
             try {
                 URL url = new URL(ip + "/");
                 HttpURLConnection con = (HttpURLConnection) url.openConnection();
-                con.setConnectTimeout(3000);
+                con.setConnectTimeout(5000);
                 StringBuilder sb = new StringBuilder();
                 BufferedReader bufferedReader = new BufferedReader(new InputStreamReader(con.getInputStream()));
 
@@ -195,11 +189,13 @@ public class FunctionsThread extends AsyncTask<String, Void, String> {
             String password = params[2];
 
             try {
-                URL url = new URL(ip+ "login.php");
+                URL url = new URL(ip + "login.php");
                 HttpURLConnection httpURLConnection = (HttpURLConnection) url.openConnection();
-                httpURLConnection.setConnectTimeout(3000);
+                httpURLConnection.setConnectTimeout(5000);
                 httpURLConnection.setRequestMethod("POST");
 
+                httpURLConnection.setUseCaches(false);
+                httpURLConnection.setDefaultUseCaches(false);
 
                 httpURLConnection.setDoInput(true);
                 httpURLConnection.setDoOutput(true);
@@ -223,7 +219,6 @@ public class FunctionsThread extends AsyncTask<String, Void, String> {
                 bufferedReader.close();
                 is.close();
                 httpURLConnection.disconnect();
-                System.out.println(response.toString().trim());
                 return response.toString().trim();
 
 
@@ -248,7 +243,7 @@ public class FunctionsThread extends AsyncTask<String, Void, String> {
             try {
                 URL url = new URL(ip + "addBag.php");
                 HttpURLConnection con = (HttpURLConnection) url.openConnection();
-                con.setConnectTimeout(3000);
+                con.setConnectTimeout(5000);
                 con.setRequestMethod("POST");
                 con.setDoOutput(true);
                 con.setDoInput(true);
@@ -300,7 +295,7 @@ public class FunctionsThread extends AsyncTask<String, Void, String> {
             try {
                 URL url = new URL(ip + "addRelation.php");
                 HttpURLConnection conn = (HttpURLConnection) url.openConnection();
-                conn.setConnectTimeout(3000);
+                conn.setConnectTimeout(5000);
                 conn.setRequestMethod("POST");
                 conn.setDoInput(true);
                 conn.setDoOutput(true);
@@ -340,7 +335,7 @@ public class FunctionsThread extends AsyncTask<String, Void, String> {
 
                 URL url = new URL(ip + "addCustomer.php");
                 HttpURLConnection conn = (HttpURLConnection) url.openConnection();
-                conn.setConnectTimeout(3000);
+                conn.setConnectTimeout(5000);
                 conn.setRequestMethod("POST");
                 conn.setDoInput(true);
                 conn.setDoOutput(true);
@@ -386,8 +381,7 @@ public class FunctionsThread extends AsyncTask<String, Void, String> {
             try {
                 URL url = new URL(ip + "addVendor.php");
                 HttpURLConnection conn = (HttpURLConnection) url.openConnection();
-                conn.setConnectTimeout(3000);
-                conn.setConnectTimeout(3000);
+                conn.setConnectTimeout(5000);
                 conn.setRequestMethod("POST");
                 conn.setDoInput(true);
                 conn.setDoOutput(true);
@@ -423,8 +417,8 @@ public class FunctionsThread extends AsyncTask<String, Void, String> {
                 HttpURLConnection conn = (HttpURLConnection) url.openConnection();
 
 
-                conn.setReadTimeout(2000);
-                conn.setConnectTimeout(2000);
+                conn.setReadTimeout(5000);
+                conn.setConnectTimeout(5000);
 
                 InputStream is = conn.getInputStream();
                 BufferedReader bufferedReader = new BufferedReader(new InputStreamReader(is, "ISO-8859-1"));
@@ -440,15 +434,11 @@ public class FunctionsThread extends AsyncTask<String, Void, String> {
                 return response.toString().trim();
 
 
-            } catch(SocketTimeoutException e)
-            {
+            } catch (SocketTimeoutException e) {
                 return "Error";
-            }
-            catch (java.net.ConnectException e)
-            {
+            } catch (java.net.ConnectException e) {
                 System.out.println("error");
-            }
-            catch (Exception e) {
+            } catch (Exception e) {
                 e.printStackTrace();
                 return "Error";
             }
@@ -458,8 +448,8 @@ public class FunctionsThread extends AsyncTask<String, Void, String> {
             try {
                 URL url = new URL(ip + "viewCustomer.php");
                 HttpURLConnection conn = (HttpURLConnection) url.openConnection();
-                conn.setConnectTimeout(2000);
-                conn.setReadTimeout(2000);
+                conn.setConnectTimeout(5000);
+                conn.setReadTimeout(5000);
                 InputStream is = conn.getInputStream();
                 BufferedReader bufferedReader = new BufferedReader(new InputStreamReader(is, "ISO-8859-1"));
                 StringBuilder response = new StringBuilder();
@@ -482,7 +472,7 @@ public class FunctionsThread extends AsyncTask<String, Void, String> {
             try {
                 URL url = new URL(ip + "viewVendor.php");
                 HttpURLConnection conn = (HttpURLConnection) url.openConnection();
-                conn.setConnectTimeout(3000);
+                conn.setConnectTimeout(5000);
                 InputStream is = conn.getInputStream();
                 BufferedReader bufferedReader = new BufferedReader(new InputStreamReader(is, "ISO-8859-1"));
                 StringBuilder response = new StringBuilder();
@@ -509,7 +499,7 @@ public class FunctionsThread extends AsyncTask<String, Void, String> {
             try {
                 URL url = new URL(ip + "addOrderTemp.php");
                 HttpURLConnection conn = (HttpURLConnection) url.openConnection();
-                conn.setConnectTimeout(3000);
+                conn.setConnectTimeout(5000);
                 conn.setRequestMethod("POST");
                 conn.setDoInput(true);
                 conn.setDoOutput(true);
@@ -534,8 +524,7 @@ public class FunctionsThread extends AsyncTask<String, Void, String> {
                 bufferedReader.close();
                 conn.disconnect();
                 return sb.toString().trim();
-            }
-            catch (Exception e) {
+            } catch (Exception e) {
                 return "Error";
             }
 
@@ -543,21 +532,25 @@ public class FunctionsThread extends AsyncTask<String, Void, String> {
         } else if (method == "AddOrder") {
 
             String orderJson = params[1];
-            String customer_id=params[2];
-            String customer_name=params[3];
+            String customer_id = params[2];
+            String customer_name = params[3];
+            String discount=params[4];
+            String source=params[5];
 
             try {
                 URL url = new URL(ip + "addOrder.php");
                 HttpURLConnection conn = (HttpURLConnection) url.openConnection();
-                conn.setConnectTimeout(3000);
+                conn.setConnectTimeout(5000);
                 conn.setRequestMethod("POST");
                 conn.setDoInput(true);
                 conn.setDoOutput(true);
                 OutputStream os = conn.getOutputStream();
                 BufferedWriter bufferedWriter = new BufferedWriter(new OutputStreamWriter(os, "UTF-8"));
-                String data = URLEncoder.encode("AddOrderJson", "UTF-8") + "=" + URLEncoder.encode(orderJson, "UTF-8")+"&"+
-                        URLEncoder.encode("customer_id", "UTF-8") + "=" + URLEncoder.encode(customer_id, "UTF-8")+"&"+
-                        URLEncoder.encode("customer_name", "UTF-8") + "=" + URLEncoder.encode(customer_name, "UTF-8");
+                String data = URLEncoder.encode("AddOrderJson", "UTF-8") + "=" + URLEncoder.encode(orderJson, "UTF-8") + "&" +
+                        URLEncoder.encode("customer_id", "UTF-8") + "=" + URLEncoder.encode(customer_id, "UTF-8") + "&" +
+                        URLEncoder.encode("customer_name", "UTF-8") + "=" + URLEncoder.encode(customer_name, "UTF-8")+ "&" +
+                        URLEncoder.encode("source", "UTF-8") + "=" + URLEncoder.encode(source, "UTF-8")+ "&" +
+                        URLEncoder.encode("discount", "UTF-8") + "=" + URLEncoder.encode(discount, "UTF-8");
 
                 bufferedWriter.write(data);
                 bufferedWriter.flush();
@@ -575,10 +568,176 @@ public class FunctionsThread extends AsyncTask<String, Void, String> {
                 bufferedReader.close();
                 conn.disconnect();
                 return sb.toString().trim();
-            } catch (Exception e){
+            } catch (Exception e) {
                 return "Error";
             }
-        } else if (method == "ViewRecords") {
+        }
+        else if (method == "RePrintBill") {
+
+            String order_id = params[1];
+
+
+            try {
+                URL url = new URL(ip + "rePrintBill.php");
+                HttpURLConnection conn = (HttpURLConnection) url.openConnection();
+                conn.setConnectTimeout(5000);
+                conn.setRequestMethod("POST");
+                conn.setDoInput(true);
+                conn.setDoOutput(true);
+                OutputStream os = conn.getOutputStream();
+                BufferedWriter bufferedWriter = new BufferedWriter(new OutputStreamWriter(os, "UTF-8"));
+                String data = URLEncoder.encode("order_id", "UTF-8") + "=" + URLEncoder.encode(order_id, "UTF-8");
+                bufferedWriter.write(data);
+                bufferedWriter.flush();
+                bufferedWriter.close();
+
+                InputStream is = conn.getInputStream();
+                BufferedReader bufferedReader = new BufferedReader(new InputStreamReader(is, "ISO-8859-1"));
+                StringBuilder sb = new StringBuilder();
+                String line;
+                while ((line = bufferedReader.readLine()) != null) {
+                    sb.append(line);
+                }
+
+                is.close();
+                bufferedReader.close();
+                conn.disconnect();
+                return sb.toString().trim();
+            } catch (UnsupportedEncodingException e) {
+                e.printStackTrace();
+            } catch (ProtocolException e) {
+                e.printStackTrace();
+            } catch (MalformedURLException e) {
+                e.printStackTrace();
+            } catch (IOException e) {
+                e.printStackTrace();
+            }
+        }
+        else if (method == "AddPendingBill") {
+
+            String orderJson = params[1];
+            String customer_id = params[2];
+            String customer_name = params[3];
+            String discount=params[4];
+
+
+            try {
+                URL url = new URL(ip + "addPendingBill.php");
+                HttpURLConnection conn = (HttpURLConnection) url.openConnection();
+                conn.setConnectTimeout(5000);
+                conn.setRequestMethod("POST");
+                conn.setDoInput(true);
+                conn.setDoOutput(true);
+                OutputStream os = conn.getOutputStream();
+                BufferedWriter bufferedWriter = new BufferedWriter(new OutputStreamWriter(os, "UTF-8"));
+                String data = URLEncoder.encode("AddOrderJson", "UTF-8") + "=" + URLEncoder.encode(orderJson, "UTF-8") + "&" +
+                        URLEncoder.encode("customer_id", "UTF-8") + "=" + URLEncoder.encode(customer_id, "UTF-8") + "&" +
+                        URLEncoder.encode("customer_name", "UTF-8") + "=" + URLEncoder.encode(customer_name, "UTF-8")+ "&" +
+                        URLEncoder.encode("discount", "UTF-8") + "=" + URLEncoder.encode(discount, "UTF-8");
+
+
+                bufferedWriter.write(data);
+                bufferedWriter.flush();
+                bufferedWriter.close();
+
+                InputStream is = conn.getInputStream();
+                BufferedReader bufferedReader = new BufferedReader(new InputStreamReader(is, "ISO-8859-1"));
+                StringBuilder sb = new StringBuilder();
+                String line;
+                while ((line = bufferedReader.readLine()) != null) {
+                    sb.append(line);
+                }
+
+                is.close();
+                bufferedReader.close();
+                conn.disconnect();
+                return sb.toString().trim();
+            } catch (Exception e) {
+                return "Error";
+            }
+        }else if (method == "QueryPendingBill") {
+
+            String pId = params[1];
+
+
+            try {
+                URL url = new URL(ip + "queryPendingBill.php");
+                HttpURLConnection conn = (HttpURLConnection) url.openConnection();
+                conn.setConnectTimeout(5000);
+                conn.setRequestMethod("POST");
+                conn.setDoInput(true);
+                conn.setDoOutput(true);
+                OutputStream os = conn.getOutputStream();
+                BufferedWriter bufferedWriter = new BufferedWriter(new OutputStreamWriter(os, "UTF-8"));
+                String data = URLEncoder.encode("pId", "UTF-8") + "=" + URLEncoder.encode(pId, "UTF-8");
+
+                bufferedWriter.write(data);
+                bufferedWriter.flush();
+                bufferedWriter.close();
+
+                InputStream is = conn.getInputStream();
+                BufferedReader bufferedReader = new BufferedReader(new InputStreamReader(is, "ISO-8859-1"));
+                StringBuilder sb = new StringBuilder();
+                String line="";
+                while ((line = bufferedReader.readLine()) != null) {
+                    sb.append(line);
+                }
+
+                is.close();
+                bufferedReader.close();
+                conn.disconnect();
+                return sb.toString().trim();
+            } catch (UnsupportedEncodingException e) {
+                e.printStackTrace();
+            } catch (ProtocolException e) {
+                e.printStackTrace();
+            } catch (MalformedURLException e) {
+                e.printStackTrace();
+            } catch (IOException e) {
+                e.printStackTrace();
+            }
+        }
+        else if (method == "QueryPendingBillList") {
+
+
+            try {
+                URL url = new URL(ip + "queryPendingBillList.php");
+                HttpURLConnection conn = (HttpURLConnection) url.openConnection();
+                conn.setConnectTimeout(5000);
+                conn.setRequestMethod("POST");
+                conn.setDoInput(true);
+                conn.setDoOutput(true);
+                OutputStream os = conn.getOutputStream();
+                BufferedWriter bufferedWriter = new BufferedWriter(new OutputStreamWriter(os, "UTF-8"));
+                //String data = URLEncoder.encode("pId", "UTF-8") + "=" + URLEncoder.encode(pId, "UTF-8");
+
+             //   bufferedWriter.write(data);
+                bufferedWriter.flush();
+                bufferedWriter.close();
+
+                InputStream is = conn.getInputStream();
+                BufferedReader bufferedReader = new BufferedReader(new InputStreamReader(is, "ISO-8859-1"));
+                StringBuilder sb = new StringBuilder();
+                String line="";
+                while ((line = bufferedReader.readLine()) != null) {
+                    sb.append(line);
+                }
+
+                is.close();
+                bufferedReader.close();
+                conn.disconnect();
+                return sb.toString().trim();
+            } catch (UnsupportedEncodingException e) {
+                e.printStackTrace();
+            } catch (ProtocolException e) {
+                e.printStackTrace();
+            } catch (MalformedURLException e) {
+                e.printStackTrace();
+            } catch (IOException e) {
+                e.printStackTrace();
+            }
+        }
+        else if (method == "ViewRecords") {
 
             String dateTo = params[1];
             String dateFrom = params[2];
@@ -586,7 +745,7 @@ public class FunctionsThread extends AsyncTask<String, Void, String> {
             try {
                 URL url = new URL(ip + "viewRecords.php");
                 HttpURLConnection conn = (HttpURLConnection) url.openConnection();
-                conn.setConnectTimeout(3000);
+                conn.setConnectTimeout(5000);
                 conn.setRequestMethod("POST");
                 conn.setDoInput(true);
                 conn.setDoOutput(true);
@@ -626,7 +785,7 @@ public class FunctionsThread extends AsyncTask<String, Void, String> {
             try {
                 URL url = new URL(ip + "viewStockInformation.php");
                 HttpURLConnection httpURLConnection = (HttpURLConnection) url.openConnection();
-                httpURLConnection.setConnectTimeout(3000);
+                httpURLConnection.setConnectTimeout(5000);
                 httpURLConnection.setRequestMethod("POST");
 
 
@@ -670,7 +829,7 @@ public class FunctionsThread extends AsyncTask<String, Void, String> {
             try {
                 URL url = new URL(ip + "updateStockInformation.php");
                 HttpURLConnection httpURLConnection = (HttpURLConnection) url.openConnection();
-                httpURLConnection.setConnectTimeout(3000);
+                httpURLConnection.setConnectTimeout(5000);
                 httpURLConnection.setRequestMethod("POST");
 
 
@@ -707,18 +866,15 @@ public class FunctionsThread extends AsyncTask<String, Void, String> {
                 return "error";
 
             }
-        }
-
-        else if (method.equals("EditStockInformation")) {
+        } else if (method.equals("EditStockInformation")) {
             String bag_id = params[1];
             String stockEditJson = params[2];
-
 
 
             try {
                 URL url = new URL(ip + "editStockInformation.php");
                 HttpURLConnection httpURLConnection = (HttpURLConnection) url.openConnection();
-                httpURLConnection.setConnectTimeout(3000);
+                httpURLConnection.setConnectTimeout(5000);
                 httpURLConnection.setRequestMethod("POST");
 
                 httpURLConnection.setDoInput(true);
@@ -752,14 +908,13 @@ public class FunctionsThread extends AsyncTask<String, Void, String> {
                 return "error";
 
             }
-        }
-        else if (method.equals("QueryQuantity")) {
+        } else if (method.equals("QueryQuantity")) {
             String quantity = params[1];
 
             try {
                 URL url = new URL(ip + "queryTable.php");
                 HttpURLConnection httpURLConnection = (HttpURLConnection) url.openConnection();
-                httpURLConnection.setConnectTimeout(3000);
+                httpURLConnection.setConnectTimeout(5000);
                 httpURLConnection.setRequestMethod("POST");
 
                 httpURLConnection.setDoInput(true);
@@ -793,9 +948,7 @@ public class FunctionsThread extends AsyncTask<String, Void, String> {
                 return "error";
 
             }
-        }
-
-       else {
+        } else {
 
             return "Error-- No method found";
         }
@@ -808,9 +961,8 @@ public class FunctionsThread extends AsyncTask<String, Void, String> {
     protected void onPostExecute(String result) {
 
 
-
-        if(callback!=null)
-        callback.onComplete(result);
+        if (callback != null)
+            callback.onComplete(result);
 
         pd.dismiss();
 

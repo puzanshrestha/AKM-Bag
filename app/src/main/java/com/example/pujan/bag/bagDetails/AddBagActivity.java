@@ -14,6 +14,7 @@ import android.widget.EditText;
 import android.widget.ImageView;
 import android.widget.Toast;
 
+import com.example.pujan.bag.ActionListActivity;
 import com.example.pujan.bag.FileUpload;
 import com.example.pujan.bag.FunctionsThread;
 import com.example.pujan.bag.MainActivity;
@@ -43,6 +44,8 @@ public class AddBagActivity extends AppCompatActivity implements FunctionsThread
     protected void onCreate(Bundle savedInstanceState) {
         super.onCreate(savedInstanceState);
 
+      //  quantityEditText.setVisibility(View.GONE);
+
         setContentView(R.layout.activity_add_bag);
         android.support.v7.app.ActionBar actionBar = getSupportActionBar();
         actionBar.setLogo(R.drawable.bagsmall);
@@ -62,7 +65,7 @@ public class AddBagActivity extends AppCompatActivity implements FunctionsThread
         typeEditText = (EditText) findViewById(R.id.typeEditText);
         priceEditText = (EditText) findViewById(R.id.priceEditText);
         companyEditText = (EditText) findViewById(R.id.companyEditText);
-        quantityEditText = (EditText) findViewById(R.id.quantityEditText);
+      //  quantityEditText = (EditText) findViewById(R.id.quantityEditText);
         bagPhoto = (ImageView) findViewById(R.id.bag_photo);
 
         if (source.equals("source")) {
@@ -70,7 +73,7 @@ public class AddBagActivity extends AppCompatActivity implements FunctionsThread
             typeEditText.setText(getIntent().getStringExtra("category"));
             priceEditText.setText(getIntent().getStringExtra("price"));
             companyEditText.setText(getIntent().getStringExtra("company"));
-            quantityEditText.setText(getIntent().getStringExtra("quantity"));
+           // quantityEditText.setText(getIntent().getStringExtra("quantity"));
             String photoUri = getIntent().getStringExtra("photo");
             addBagBtn.setText("Update");
             Picasso.Builder builder = new Picasso.Builder(this);
@@ -112,10 +115,10 @@ public class AddBagActivity extends AppCompatActivity implements FunctionsThread
                 bagCategory = typeEditText.getText().toString();
                 bagPrice = priceEditText.getText().toString();
                 bagCompany = companyEditText.getText().toString();
-                bagQuantity = quantityEditText.getText().toString();
+                //bagQuantity = quantityEditText.getText().toString();
 
                 FunctionsThread t = new FunctionsThread(AddBagActivity.this);
-                t.execute("AddBag", bagName, bagCategory, bagPrice, bagCompany, source, bid, ext, bagQuantity);
+                t.execute("AddBag", bagName, bagCategory, bagPrice, bagCompany, source, bid, ext, "0");
                 t.trigAsyncResponse(AddBagActivity.this);
 
                 FunctionsThread check = new FunctionsThread(AddBagActivity.this);
@@ -135,8 +138,18 @@ public class AddBagActivity extends AppCompatActivity implements FunctionsThread
         switch (item.getItemId()) {
             case android.R.id.home:
                 this.finish();
+                Intent i = new Intent(getBaseContext(),BagListActivity.class);
+                i.putExtra("source","bag");
+                startActivity(i);
         }
         return true;
+    }
+
+    @Override
+    public void onBackPressed() {
+        Intent i = new Intent(getBaseContext(),BagListActivity.class);
+        i.putExtra("source","bag");
+        startActivity(i);
     }
 
     @Override
@@ -151,6 +164,7 @@ public class AddBagActivity extends AppCompatActivity implements FunctionsThread
                 int columnIndex = cursor.getColumnIndex(projection[0]);
                 mediaSelect = cursor.getString(columnIndex);
                 bagPhoto.setImageURI(uri);
+
                 ext = mediaSelect.substring(mediaSelect.lastIndexOf(".") + 1, mediaSelect.length());
             }
 
@@ -162,8 +176,6 @@ public class AddBagActivity extends AppCompatActivity implements FunctionsThread
     @Override
     public void onComplete(String check) {
         try {
-
-
 
 
 

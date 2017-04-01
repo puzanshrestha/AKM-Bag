@@ -62,9 +62,18 @@ public class AddVendorActivity extends AppCompatActivity implements FunctionsThr
     public boolean onOptionsItemSelected(MenuItem item) {
         switch (item.getItemId()){
             case android.R.id.home:
-                this.finish();
+                Intent i = new Intent(getBaseContext(), VendorListActivity.class);
+                i.putExtra("getway", "actionlist");
+                startActivity(i);
         }
         return true;
+    }
+
+    @Override
+    public void onBackPressed() {
+        Intent i = new Intent(getBaseContext(), VendorListActivity.class);
+        i.putExtra("getway", "actionlist");
+        startActivity(i);
     }
 
     @Override

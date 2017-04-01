@@ -12,24 +12,81 @@
     tools:context="com.example.pujan.bag.orderDetails.OrderDisplayActivity">
 
     <LinearLayout
-        android:layout_width="match_parent"
-        android:layout_height="wrap_content">
+        android:layout_width="wrap_content"
+        android:layout_height="wrap_content"
+        android:orientation="horizontal"
+        android:layout_marginBottom="15dp">
+        <TextView
+            android:layout_width="wrap_content"
+            android:layout_height="wrap_content"
+            android:text="Enable Discount Percent "
+            android:textSize="20dp"
+            android:textColor="#ffffff"
+            />
+        <android.support.v7.widget.AppCompatCheckBox
+            android:layout_width="wrap_content"
+            android:layout_height="wrap_content"
+            android:id="@+id/discountTypeCheck"
+            />
 
+    </LinearLayout>
+    <LinearLayout
+        android:layout_width="wrap_content"
+        android:layout_height="wrap_content"
+        android:orientation="horizontal"
+        android:layout_marginBottom="15dp">
+    <TextView
+        android:layout_width="148dp"
+        android:layout_height="wrap_content"
+        android:text="Discount Value "
+        android:textSize="20dp"
+        android:textColor="#ffffff"
+        android:id="@+id/discountTypeTxt"
+        />
+    <EditText
+        android:layout_width="match_parent"
+        android:layout_height="wrap_content"
+        android:ems="10"
+        android:background="@color/colorPrimary"
+        android:elevation="8dp"
+        android:id="@+id/discountEdit"
+        android:textColor="#FFFFFF"
+        android:inputType="number"
+        android:layout_marginBottom="5dp"/>
+    </LinearLayout>
+    <Button
+        android:layout_width="wrap_content"
+        android:layout_height="wrap_content"
+        android:text="Calculate"
+        android:id="@+id/calculateBtn"
+        android:elevation="10dp"/>
+
+    <Button
+        android:id="@+id/printBtn"
+        android:layout_width="wrap_content"
+        android:layout_height="wrap_content"
+        android:text="Done"
+        android:elevation="10dp"/>
+
+    <LinearLayout
+        android:layout_width="match_parent"
+        android:layout_height="wrap_content"
+        android:gravity="center_horizontal">
 
         <HorizontalScrollView
-            android:layout_width="wrap_content"
+            android:layout_width="match_parent"
             android:layout_height="wrap_content"
             android:scrollbarStyle="insideOverlay">
 
             <ScrollView
-                android:layout_width="wrap_content"
+                android:layout_width="match_parent"
                 android:layout_height="wrap_content"
                 android:paddingBottom="20dp"
                 >
 
                 <TableLayout
                     android:id="@+id/tableLayout"
-                    android:layout_width="wrap_content"
+                    android:layout_width="match_parent"
                     android:layout_height="wrap_content">
 
                 </TableLayout>
@@ -40,11 +97,6 @@
 
     </LinearLayout>
 
-    <Button
-        android:id="@+id/printBtn"
-        android:layout_width="wrap_content"
-        android:layout_height="wrap_content"
-        android:text="Done" />
 
 
 </LinearLayout>
