@@ -14,6 +14,7 @@ import com.example.pujan.bag.customerDetails.AddCustomerActivity;
 import com.example.pujan.bag.customerDetails.CustomerListActivity;
 import com.example.pujan.bag.database.DbHelper;
 import com.example.pujan.bag.orderDetails.OrderDisplayActivity;
+import com.example.pujan.bag.orderDetailsFragment.BagListFragment;
 import com.example.pujan.bag.pendingBill.PendingBillList;
 import com.example.pujan.bag.printPackage.PrintDemo;
 import com.example.pujan.bag.transactionalReports.BagReports;
@@ -107,7 +108,7 @@ public class FunctionsThread extends AsyncTask<String, Void, String> {
 
     public void trigAsyncResponse(PendingBillList activity) {this.callback = activity;}
     public void trigAsyncResponse(RePrintBill activity) {this.callback = activity;}
-
+    public void trigAsyncResponse(BagListFragment activity) {this.callback = activity;}
     public FunctionsThread(Context c) {
         this.c = c;
         DbHelper db = new DbHelper(c);

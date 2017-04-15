@@ -52,9 +52,10 @@
         <activity android:name=".bagStock.StockListActivity" />
         <activity android:name=".bagStock.StockUpdateActivity" />
         <activity android:name=".bagStock.StockDetailsActivity" />
-        <activity android:name=".bagStock.StockViewActivity"/>
-        <activity android:name=".pendingBill.PendingBillList"/>
-        <activity android:name=".transactionalReports.RePrintBill"/>
+        <activity android:name=".bagStock.StockViewActivity" />
+        <activity android:name=".pendingBill.PendingBillList" />
+        <activity android:name=".transactionalReports.RePrintBill" />
+        <activity android:name=".orderDetailsFragment.OrderActivity"></activity>
     </application>
 
 </manifest>

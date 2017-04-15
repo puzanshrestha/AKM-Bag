@@ -34,6 +34,7 @@ import com.example.pujan.bag.FunctionsThread;
 import com.example.pujan.bag.R;
 import com.example.pujan.bag.bagStock.ColorQuantityEntity;
 import com.example.pujan.bag.database.DbHelper;
+import com.example.pujan.bag.orderDetailsFragment.BagListFragment;
 import com.squareup.picasso.MemoryPolicy;
 import com.squareup.picasso.NetworkPolicy;
 import com.squareup.picasso.Picasso;
@@ -98,6 +99,7 @@ public class BagViewAdapter extends RecyclerView.Adapter<BagViewAdapter.TestHold
         this.itemClickCallback = itemClickCallback;
 
     }
+
 
 
     public BagViewAdapter(ArrayList<BagEntity> listData, String viewsource, Context c,ArrayList<BagColorQuantity> pending) {

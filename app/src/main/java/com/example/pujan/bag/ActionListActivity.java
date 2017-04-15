@@ -14,7 +14,7 @@ import android.widget.LinearLayout;
 import com.example.pujan.bag.bagDetails.BagDetailsActivity;
 import com.example.pujan.bag.bagStock.StockDetailsActivity;
 import com.example.pujan.bag.customerDetails.CustomerDetailsActivity;
-import com.example.pujan.bag.customerDetails.CustomerListActivity;
+import com.example.pujan.bag.orderDetailsFragment.OrderActivity;
 import com.example.pujan.bag.pendingBill.PendingBillList;
 import com.example.pujan.bag.transactionalReports.BagReports;
 import com.example.pujan.bag.vendorDetails.VendorDetailsActivity;
@@ -70,6 +70,29 @@ public class ActionListActivity extends AppCompatActivity {
             }
         });
 
+
+
+        orderDetailsBtn.setOnClickListener(new View.OnClickListener() {
+            @Override
+            public void onClick(View v) {
+
+                Intent i = new Intent(getBaseContext(), OrderActivity.class);
+                startActivity(i);
+
+            }
+        });
+
+/*
+        orderDetailsBtn.setOnClickListener(new View.OnClickListener() {
+            @Override
+            public void onClick(View v) {
+
+            }
+        });
+
+*/
+
+        /*
         orderDetailsBtn.setOnClickListener(new View.OnClickListener() {
             @Override
             public void onClick(View v) {
@@ -78,6 +101,8 @@ public class ActionListActivity extends AppCompatActivity {
                 startActivity(i);
             }
         });
+
+        */
 
         vendorDetailsBtn.setOnClickListener(new View.OnClickListener() {
             @Override
