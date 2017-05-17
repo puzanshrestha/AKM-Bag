@@ -7,6 +7,7 @@ import android.content.Context;
 import android.content.DialogInterface;
 import android.content.Intent;
 import android.content.SharedPreferences;
+import android.graphics.drawable.GradientDrawable;
 import android.support.v7.app.AppCompatActivity;
 import android.os.Bundle;
 import android.text.InputType;
@@ -14,16 +15,23 @@ import android.view.Menu;
 import android.view.MenuInflater;
 import android.view.MenuItem;
 import android.view.View;
+import android.view.ViewGroup;
+import android.view.Window;
+import android.view.WindowManager;
 import android.widget.Button;
 import android.widget.EditText;
+import android.widget.ImageView;
+import android.widget.LinearLayout;
 import android.widget.Toast;
 
 import com.example.pujan.bag.database.DbHelper;
 import com.example.pujan.bag.printPackage.PrintDemo;
+import com.larvalabs.svgandroid.SVG;
+import com.larvalabs.svgandroid.SVGParser;
 
 public class MainActivity extends AppCompatActivity implements FunctionsThread.AsyncResponse{
 
-    Button loginBtn;
+    Button loginBtn,setIp;
     EditText usernameEditText,passwordEditText;
 
     String username,password;
@@ -33,6 +41,9 @@ public class MainActivity extends AppCompatActivity implements FunctionsThread.A
     SharedPreferences sharedpreferences;
     DbHelper dbh;
 
+    ProgressDialog pd;
+
+    /*
     @Override
     public boolean onCreateOptionsMenu(Menu menu) {
 
@@ -52,30 +63,7 @@ public class MainActivity extends AppCompatActivity implements FunctionsThread.A
 
         if (id == R.id.ippool) {
 
-                AlertDialog.Builder ad = new AlertDialog.Builder(this);
-                ad.setTitle("Set IP Address");
-                ad.setCancelable(false);
-                final EditText editText = new EditText(this);
-                editText.setHint("192.168.1.234");
-                editText.setInputType(InputType.TYPE_CLASS_TEXT);
-
-                editText.setText(dbh.getIP());
-                ad.setPositiveButton("Ok", new DialogInterface.OnClickListener() {
-                    public void onClick(DialogInterface dialog, int id) {
-                        //code if yes
-                        ip = editText.getText().toString();
-                        dbh.setIP(ip);
-
-
-
-
-                        Toast.makeText(getBaseContext(), dbh.getIP(), Toast.LENGTH_SHORT).show();
-
-                    }
-                });
-                ad.setNegativeButton("Cancel", null);
-                ad.setView(editText);
-                ad.show();
+               setIP();
 
 
             return true;
@@ -83,25 +71,40 @@ public class MainActivity extends AppCompatActivity implements FunctionsThread.A
         return super.onOptionsItemSelected(item);
     }
 
+
+*/
     @Override
     protected void onCreate(Bundle savedInstanceState) {
         super.onCreate(savedInstanceState);
+       // requestWindowFeature(Window.FEATURE_NO_TITLE);
+        /*getWindow().setFlags(WindowManager.LayoutParams.FLAG_FULLSCREEN,
+                WindowManager.LayoutParams.FLAG_FULLSCREEN);
+                */
         setContentView(R.layout.activity_main);
+
+
+
+        pd = new ProgressDialog(this);
 
         sharedpreferences = getSharedPreferences("Login", Context.MODE_PRIVATE);
 
         dbh = new DbHelper(this);
 
-        android.support.v7.app.ActionBar actionBar = getSupportActionBar();
-        actionBar.setLogo(R.mipmap.ic_launcher);
-        actionBar.setDisplayUseLogoEnabled(true);   // These two are for
-        actionBar.setDisplayShowHomeEnabled(true);  // displaying logo in the action bar
 
 
 
         loginBtn = (Button)findViewById(R.id.loginBtn);
+        setIp = (Button)findViewById(R.id.setIp);
         usernameEditText = (EditText)findViewById(R.id.username);
         passwordEditText = (EditText)findViewById(R.id.password);
+
+        setIp.setOnClickListener(new View.OnClickListener() {
+            @Override
+            public void onClick(View v) {
+                setIp();
+            }
+        });
+
 
         loginBtn.setOnClickListener(new View.OnClickListener() {
             @Override
@@ -114,9 +117,14 @@ public class MainActivity extends AppCompatActivity implements FunctionsThread.A
                 username = usernameEditText.getText().toString().trim();
                 password = passwordEditText.getText().toString().trim();
                 ip = dbh.getIP();
+                pd.setIndeterminate(true);
+                pd.setTitle("Working");
+                pd.setMessage("loading...");
+                pd.show();
+
 
                 /*
-                final ProgressDialog pd = new ProgressDialog(MainActivity.this);
+                final ProgressDialog pd = new ProgressDialog(ExpandableListActivity.this);
                 pd.setIndeterminate(true);
                 pd.setTitle("Working");
                 pd.setMessage("loading...");
@@ -138,9 +146,23 @@ public class MainActivity extends AppCompatActivity implements FunctionsThread.A
 
 
                 */
-                FunctionsThread t = new FunctionsThread(MainActivity.this);
-                t.execute("Login", username, password);
-                t.trigAsyncResponse(MainActivity.this);
+                new android.os.Handler().postDelayed(
+                        new Runnable() {
+
+                            public void run() {
+
+                                FunctionsThread t = new FunctionsThread(MainActivity.this);
+                                t.execute("Login", username, password);
+                                t.trigAsyncResponse(MainActivity.this);
+
+
+                            }
+                        }, 1000);
+
+
+
+
+
 
             }
                 });
@@ -194,13 +216,47 @@ public class MainActivity extends AppCompatActivity implements FunctionsThread.A
     @Override
     public void onComplete(String output) {
 
+
+        pd.dismiss();
         login(output);
+
     }
 
     @Override
     public void onBackPressed()
     {
 
+    }
+
+    public void setIp()
+    {
+        AlertDialog.Builder ad = new AlertDialog.Builder(this);
+        ad.setTitle("Set IP Address");
+        ad.setCancelable(false);
+        final EditText editText = new EditText(this);
+        editText.setHint("192.168.1.234");
+        editText.setInputType(InputType.TYPE_CLASS_TEXT);
+        editText.setText(dbh.getIP());
+        LinearLayout parent = new LinearLayout(this);
+        LinearLayout.LayoutParams child = new LinearLayout.LayoutParams(LinearLayout.LayoutParams.MATCH_PARENT, LinearLayout.LayoutParams.WRAP_CONTENT);
+        parent.setOrientation(LinearLayout.VERTICAL);
+        parent.setPadding(40,0,40,0);
+        parent.setLayoutParams(child);
+        parent.addView(editText);
+
+        ad.setPositiveButton("Ok", new DialogInterface.OnClickListener() {
+            public void onClick(DialogInterface dialog, int id) {
+                //code if yes
+                ip = editText.getText().toString();
+                dbh.setIP(ip);
+
+                Toast.makeText(getBaseContext(), dbh.getIP(), Toast.LENGTH_SHORT).show();
+
+            }
+        });
+        ad.setNegativeButton("Cancel", null);
+        ad.setView(parent);
+        ad.show();
     }
 
 }

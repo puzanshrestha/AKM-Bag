@@ -75,10 +75,6 @@ public class VendorViewAdapter extends RecyclerView.Adapter<VendorViewAdapter.Te
         holder.address.setText(Html.fromHtml("Address: "+vendorEntity.getAddress()));
 
 
-        if (getway.equals("bagdetails")) {
-            holder.optionsMenu.setVisibility(View.GONE);
-
-        }
 
 
     }
@@ -117,27 +113,12 @@ public class VendorViewAdapter extends RecyclerView.Adapter<VendorViewAdapter.Te
             optionsMenu.setOnClickListener(new View.OnClickListener() {
                 @Override
                 public void onClick(View v) {
-                    PopupMenu popup = new PopupMenu(context, v);
-                    //inflating menu from xml resource
-                    popup.inflate(R.menu.bag_option_menu);
-                    //adding click listener
-                    popup.setOnMenuItemClickListener(new PopupMenu.OnMenuItemClickListener() {
-                        @Override
-                        public boolean onMenuItemClick(MenuItem item) {
-                            switch (item.getItemId()) {
-                                case R.id.editMenu:
-                                    editVendor(getAdapterPosition());
-                                    break;
-                                case R.id.deleteMenu:
-                                    deleteVendor(getAdapterPosition());
-                                    break;
 
-                            }
-                            return false;
-                        }
-                    });
-                    //displaying the popup
-                    popup.show();
+                    Intent i = new Intent(context,VendorDetailsActivity.class);
+                    i.putExtra("vendor_id",String.valueOf(listdata.get(getAdapterPosition()).getId()));
+                    i.putExtra("name",listdata.get(getAdapterPosition()).getName());
+                    i.putExtra("address",listdata.get(getAdapterPosition()).getAddress());
+                    context.startActivity(i);
 
 
                 }
@@ -150,68 +131,13 @@ public class VendorViewAdapter extends RecyclerView.Adapter<VendorViewAdapter.Te
 
         @Override
         public void onClick(View v) {
-            itemClickCallback.onItemClick(getAdapterPosition());
+
         }
     }
 
-    public void editVendor(int position)
-    {
-        VendorEntity vendorEntity;
-        vendorEntity = listdata.get(position);
-        Intent i = new Intent(context, AddVendorActivity.class);
-        i.putExtra("source", "update");
-        i.putExtra("name", vendorEntity.getName());
-        i.putExtra("id", Integer.toString(vendorEntity.getId()));
-        i.putExtra("address", vendorEntity.getAddress());
-        context.startActivity(i);
-    }
-
-    public void deleteVendor(final int position){
 
 
-        final AlertDialog.Builder alertDialogBuilder = new AlertDialog.Builder(context);
-        alertDialogBuilder.setMessage("Are you sure,You wanted to Delete");
-        final String a = "";
-        final VendorEntity vendorEntity = listdata.get(position);
-        alertDialogBuilder.setPositiveButton("yes",
-                new DialogInterface.OnClickListener() {
-                    @Override
-                    public void onClick(DialogInterface arg0, int arg1) {
 
-                        String id = Integer.toString(vendorEntity.getId());
-                        final String check;
-                        try {
-                            check = new FunctionsThread(context).execute("AddVendor", a, a, "delete", id).get();
-                            System.out.println(check);
-                            if (check.equals("Deleted")) {
-                                Intent i = new Intent(context, VendorListActivity.class);
-                                i.putExtra("getway","actionlist");
-                                Toast.makeText(context, "Deleted Successfully", Toast.LENGTH_LONG).show();
-                                context.startActivity(i);
-                            } else
-                                Toast.makeText(context, "error in delete", Toast.LENGTH_LONG).show();
-                        } catch (InterruptedException e) {
-                            e.printStackTrace();
-                        } catch (ExecutionException e) {
-                            e.printStackTrace();
-                        }
-
-
-                    }
-                });
-
-        alertDialogBuilder.setNegativeButton("No", new DialogInterface.OnClickListener() {
-            @Override
-
-            public void onClick(DialogInterface dialog, int which) {
-
-            }
-        });
-
-        AlertDialog alertDialog = alertDialogBuilder.create();
-        alertDialog.show();
-
-    }
 
 
 

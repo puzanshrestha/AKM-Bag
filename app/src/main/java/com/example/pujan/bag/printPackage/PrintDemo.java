@@ -42,7 +42,7 @@ public class PrintDemo extends Activity implements FunctionsThread.AsyncResponse
     private static final int REQUEST_CONNECT_DEVICE = 1;  //��ȡ�豸��Ϣ
 
 
-    ArrayList<PrintEntity> getData;
+    ArrayList<PrintEntity> getData ;
 
     /**
      * Called when the activity is first created.

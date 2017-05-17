@@ -70,8 +70,6 @@ public class BagViewAdapter extends RecyclerView.Adapter<BagViewAdapter.TestHold
     ArrayList<BagColorQuantity> colorQuantities = new ArrayList<>();
 
 
-    private ItemClickCallback itemClickCallback;
-    Dialog mydialog;
 
     public void setFilter(ArrayList<BagEntity> list) {
         listData = new ArrayList<>();
@@ -91,14 +89,7 @@ public class BagViewAdapter extends RecyclerView.Adapter<BagViewAdapter.TestHold
         notifyDataSetChanged();
     }
 
-    public interface ItemClickCallback {
-        void onItemClick(int p);
-    }
 
-    void onItemClickCallback(BagListActivity itemClickCallback) {
-        this.itemClickCallback = itemClickCallback;
-
-    }
 
 
 
@@ -115,12 +106,6 @@ public class BagViewAdapter extends RecyclerView.Adapter<BagViewAdapter.TestHold
         this.inflater = LayoutInflater.from(c);
         this.bag = viewsource;
         this.context = c;
-        if(viewsource.equals("pending"))
-        {
-
-
-        }
-
 
 
 
@@ -166,25 +151,6 @@ public class BagViewAdapter extends RecyclerView.Adapter<BagViewAdapter.TestHold
         holder.quantity.setText(Html.fromHtml("Stock: "+Integer.toString(item.getQuantity())));
 
 
-        holder.optionsMenu.setVisibility(View.VISIBLE);
-
-
-        String currentData = "No orders";
-        for (int i = 0; i < colorQuantities.size(); i++) {
-
-            if (listData.get(position).getId() == colorQuantities.get(i).getBag_id())
-            {
-                currentData="";
-                for (LinkedHashMap.Entry<String, Integer> entry : colorQuantities.get(i).getQuantityColor().entrySet()) {
-                    currentData += entry.getKey().toString() + ": " + entry.getValue().toString() + "\n";
-                }
-
-            }
-
-        }
-        holder.currentOrders.setText(currentData);
-
-
 
 
 
@@ -195,7 +161,7 @@ public class BagViewAdapter extends RecyclerView.Adapter<BagViewAdapter.TestHold
                     .memoryPolicy(MemoryPolicy.NO_CACHE)
                     .networkPolicy(NetworkPolicy.NO_CACHE)
                     .resize(300, 300)
-                    .placeholder(R.drawable.bag)
+                    .placeholder(R.mipmap.ic_launcher)
                     .into(holder.photoBox);
 
         } catch (Exception e) {
@@ -203,17 +169,7 @@ public class BagViewAdapter extends RecyclerView.Adapter<BagViewAdapter.TestHold
         }
 
 
-        if (bag.equals("bag")) {
 
-            holder.bagDialog.setVisibility(View.GONE);
-            holder.orderLayout.setVisibility(View.GONE);
-
-
-        } else {
-            holder.bagDialog.setVisibility(View.VISIBLE);
-            holder.optionsMenu.setVisibility(View.GONE);
-
-        }
 
     }
 
@@ -223,7 +179,7 @@ public class BagViewAdapter extends RecyclerView.Adapter<BagViewAdapter.TestHold
     }
 
 
-    class TestHolder extends RecyclerView.ViewHolder implements View.OnClickListener {
+    class TestHolder extends RecyclerView.ViewHolder  {
 
         private TextView id;
         private TextView name;
@@ -232,15 +188,13 @@ public class BagViewAdapter extends RecyclerView.Adapter<BagViewAdapter.TestHold
         private TextView quantity;
         private TextView company;
 
-        private TextView currentOrders;
 
-        private View container;
+
+
 
         private ImageView photoBox;
         private TextView optionsMenu;
-        private Button bagDialog;
 
-        private LinearLayout orderLayout;
 
 
 
@@ -257,21 +211,17 @@ public class BagViewAdapter extends RecyclerView.Adapter<BagViewAdapter.TestHold
             category = (TextView) itemView.findViewById(R.id.lbl_bag_category);
             company = (TextView) itemView.findViewById(R.id.lbl_bag_company);
             quantity = (TextView) itemView.findViewById(R.id.lbl_bag_quantity);
-            container = itemView.findViewById(R.id.cont_root_item);
+          //  container = itemView.findViewById(R.id.cont_root_item);
             photoBox = (ImageView) itemView.findViewById(R.id.photo_box);
 
-            currentOrders = (TextView) itemView.findViewById(R.id.currentOrders);
-            orderLayout =(LinearLayout)itemView.findViewById(R.id.orderLayout);
 
-            bagDialog = (Button) itemView.findViewById(R.id.dialogWindow);
 
             optionsMenu = (TextView) itemView.findViewById(R.id.optionsMenu);
 
-            context = itemView.getContext();
+
+            context=itemView.getContext();
 
 
-            container.setOnClickListener(this);
-            bagDialog.setOnClickListener(this);
 
 
             optionsMenu.setOnClickListener(new View.OnClickListener() {
@@ -279,6 +229,8 @@ public class BagViewAdapter extends RecyclerView.Adapter<BagViewAdapter.TestHold
                 public void onClick(View v) {
 
 
+                    edit(getAdapterPosition());
+                    /*
                     PopupMenu popup = new PopupMenu(context, v);
                     //inflating menu from xml resource
                     popup.inflate(R.menu.bag_option_menu);
@@ -301,6 +253,8 @@ public class BagViewAdapter extends RecyclerView.Adapter<BagViewAdapter.TestHold
                     //displaying the popup
                     popup.show();
 
+                    */
+
 
                 }
             });
@@ -310,310 +264,7 @@ public class BagViewAdapter extends RecyclerView.Adapter<BagViewAdapter.TestHold
         }
 
 
-        LinkedHashMap<String, Integer> colorMap;
-        LinkedHashMap<String, Integer> finalColorMap;
-        TableLayout tableLayout1;
-        BagColorQuantity bcq;
 
-        @Override
-        public void onClick(View v) {
-            itemClickCallback.onItemClick(getAdapterPosition());
-
-
-            if (v.getId() == R.id.dialogWindow) {
-                mydialog = new Dialog(context);
-                mydialog.setTitle("Select Your Order");
-                mydialog.setContentView(R.layout.add_bag_dialog);
-
-
-                String array_spinner[];
-                final Spinner colorCombo;
-                final TableLayout tableLayout;
-                final ArrayList<ColorQuantityEntity> colorValues = new ArrayList<>();
-                final int bid;
-                final EditText quantity;
-                Button updateStockBtn;
-                TextView nameEditText;
-                TextView typeEditText;
-                TextView priceEditText;
-                TextView companyEditText;
-                TextView quantityEditText;
-                ImageView bagPhoto;
-                BagEntity bagEntity;
-                Button addDoneBtn;
-                Button addColorBtn;
-                Button clearBtn;
-
-
-
-
-                colorCombo = (Spinner) mydialog.findViewById(R.id.colorCombo);
-                quantity = (EditText) mydialog.findViewById(R.id.cqty);
-                updateStockBtn = (Button) mydialog.findViewById(R.id.updateStockBtn);
-
-                nameEditText = (TextView) mydialog.findViewById(R.id.nameEditText);
-                typeEditText = (TextView) mydialog.findViewById(R.id.typeEditText);
-                priceEditText = (TextView) mydialog.findViewById(R.id.priceEditText);
-                companyEditText = (TextView) mydialog.findViewById(R.id.companyEditText);
-                quantityEditText = (TextView) mydialog.findViewById(R.id.quantityEditText);
-                bagPhoto = (ImageView) mydialog.findViewById(R.id.bag_photo);
-                tableLayout = (TableLayout) mydialog.findViewById(R.id.tableLayout);
-
-                addDoneBtn = (Button) mydialog.findViewById(R.id.addDoneBtn);
-                addColorBtn = (Button) mydialog.findViewById(R.id.addColorBtn);
-                clearBtn = (Button) mydialog.findViewById(R.id.clearBtn);
-
-                bid = listData.get(getAdapterPosition()).getId();
-
-                populateColor(colorCombo);
-
-
-                final ProgressDialog pd = new ProgressDialog(context);
-                pd.setIndeterminate(true);
-                pd.setTitle("Working");
-                pd.setMessage("loading...");
-                pd.show();
-
-
-
-                new android.os.Handler().postDelayed(
-                        new Runnable() {
-
-                            public void run() {
-
-                                try {
-                                    String response = new FunctionsThread(context).execute("ViewStockInformation", String.valueOf(bid)).get();
-                                    System.out.println(response);
-                                    JSONObject stockJson = new JSONObject(response);
-                                    JSONArray stockJsonArray = stockJson.getJSONArray("result");
-                                    for (int i = 0; i < stockJsonArray.length(); i++) {
-                                        JSONObject jObject = stockJsonArray.getJSONObject(i);
-                                        ColorQuantityEntity cqe = new ColorQuantityEntity();
-                                        cqe.setColor(jObject.getString("color"));
-                                        cqe.setCquantity(Integer.valueOf(jObject.getString("quantityColor")));
-                                        colorValues.add(cqe);
-                                    }
-
-                                    JSONArray bagInfoJsonArray = stockJson.getJSONArray("bagInfo");
-                                    JSONObject jObject = bagInfoJsonArray.getJSONObject(0);
-                                    BagEntity bagEntitynew = new BagEntity();
-                                    bagEntitynew.setId(Integer.valueOf(jObject.getString("bag_id")));
-                                    bagEntitynew.setName(jObject.getString("bag_name"));
-                                    bagEntitynew.setCategory(jObject.getString("bag_category"));
-                                    bagEntitynew.setPrice(Integer.valueOf(jObject.getString("bag_price")));
-                                    bagEntitynew.setCompany(jObject.getString("bag_company"));
-                                    bagEntitynew.setQuantity(Integer.valueOf(jObject.getString("bag_quantity")));
-                                    bagEntitynew.setPhoto(jObject.getString("bag_photo"));
-
-
-                                } catch (InterruptedException e) {
-                                    e.printStackTrace();
-                                } catch (ExecutionException e) {
-                                    e.printStackTrace();
-                                } catch (JSONException e) {
-                                    e.printStackTrace();
-                                }
-
-                                int bigText = 14;
-
-
-                                tableLayout.removeAllViews();
-                                TableLayout.LayoutParams tableLayoutParams = new TableLayout.LayoutParams();
-                                tableLayout.setBackgroundColor(Color.WHITE);
-
-
-                                TableRow.LayoutParams tableRowParams = new TableRow.LayoutParams();
-                                tableRowParams.setMargins(3, 3, 3, 3);
-                                tableRowParams.weight = 1;
-
-                                TableRow tableRow1 = new TableRow(context);
-                                tableRow1.setBackgroundColor(Color.parseColor("#0087e2"));
-
-
-                                TextView color = new TextView(context);
-                                color.setBackgroundColor(Color.parseColor("#ff6600"));
-                                color.setTextColor(Color.parseColor("#FFFFFF"));
-                                color.setPadding(16, 6, 16, 6);
-                                color.setGravity(Gravity.CENTER);
-                                color.setText("Color");
-                                tableRow1.addView(color, tableRowParams);
-
-                                TextView quantityV = new TextView(context);
-                                quantityV.setBackgroundColor(Color.parseColor("#ff6600"));
-                                quantityV.setTextColor(Color.parseColor("#FFFFFF"));
-                                quantityV.setPadding(16, 6, 16, 6);
-                                quantityV.setGravity(Gravity.CENTER);
-                                quantityV.setText("QTY");
-                                tableRow1.addView(quantityV, tableRowParams);
-
-                                tableLayout.addView(tableRow1, tableLayoutParams);
-
-
-                                int total = 0;
-                                for (int i = 0; i < colorValues.size(); i++) {
-                                    TableRow tableRow = new TableRow(context);
-                                    tableRow.setBackgroundColor(Color.WHITE);
-
-                                    TextView colors = new TextView(context);
-                                    colors.setBackgroundColor(Color.parseColor("#a9a7a5"));
-                                    colors.setTextColor(Color.parseColor("#FFFFFF"));
-                                    colors.setPadding(6, 6, 6, 6);
-                                    colors.setGravity(Gravity.CENTER);
-                                    colors.setText(colorValues.get(i).getColor());
-                                    tableRow.addView(colors, tableRowParams);
-
-                                    TextView quantitys = new TextView(context);
-                                    quantitys.setBackgroundColor(Color.parseColor("#a9a7a5"));
-                                    quantitys.setTextColor(Color.parseColor("#FFFFFF"));
-                                    quantitys.setPadding(6, 6, 6, 6);
-                                    quantitys.setGravity(Gravity.CENTER);
-                                    quantitys.setText(String.valueOf(colorValues.get(i).getCquantity()));
-                                    tableRow.addView(quantitys, tableRowParams);
-
-                                    total += colorValues.get(i).getCquantity();
-
-                                    tableLayout.addView(tableRow, tableLayoutParams);
-                                }
-
-                                TableRow tableRowlast = new TableRow(context);
-                                tableRowlast.setBackgroundColor(Color.parseColor("#FFFFFF"));
-
-                                TextView totals = new TextView(context);
-                                totals.setBackgroundColor(Color.parseColor("#00d857"));
-                                totals.setTextColor(Color.parseColor("#FFFFFF"));
-                                totals.setPadding(6, 6, 6, 6);
-                                totals.setGravity(Gravity.RIGHT);
-                                totals.setText("Total: " + total);
-                                TableRow.LayoutParams params = new TableRow.LayoutParams();
-                                params.span = 2; //amount of columns you will span
-                                totals.setLayoutParams(params);
-                                tableRowlast.addView(totals, tableRowParams);
-
-                                tableLayout.addView(tableRowlast, tableLayoutParams);
-
-                                //Table for Stock
-
-
-                                //This is for Current Order
-
-
-                                tableLayout1 = (TableLayout) mydialog.findViewById(R.id.tableLayout2);
-
-
-                                bcq = new BagColorQuantity();
-                                bcq.setBag_id(bid);
-
-                                colorMap = new LinkedHashMap<String, Integer>();
-
-
-                                for (int j = 0; j < colorQuantities.size(); j++) {
-                                    if (bid == colorQuantities.get(j).getBag_id()) {
-                                        colorMap = colorQuantities.get(j).getQuantityColor();
-                                    }
-                                }
-
-
-                                finalColorMap = colorMap;
-
-
-                                populateOrder(tableLayout1, finalColorMap);
-
-
-                                mydialog.show();
-
-                                pd.dismiss();
-
-                            }
-                        }, 1000);
-
-
-
-
-                clearBtn.setOnClickListener(new View.OnClickListener() {
-                    @Override
-                    public void onClick(View v) {
-
-
-                        android.app.AlertDialog.Builder ad = new android.app.AlertDialog.Builder(context);
-                        ad.setTitle("This will Clear Your all of the Current Orders");
-                        ad.setCancelable(false);
-                        ad.setPositiveButton("OK", new DialogInterface.OnClickListener() {
-                            @Override
-                            public void onClick(DialogInterface dialog, int which) {
-                                finalColorMap.clear();
-                                populateOrder(tableLayout1, finalColorMap);
-                            }
-                        });
-
-                        ad.setNegativeButton("Cancel", new DialogInterface.OnClickListener() {
-                            @Override
-                            public void onClick(DialogInterface dialog, int which) {
-                                dialog.dismiss();
-                            }
-                        });
-
-                        ad.show();
-
-                    }
-                });
-
-                addDoneBtn.setOnClickListener(new View.OnClickListener() {
-                    @Override
-                    public void onClick(View v) {
-                        bcq.setQuantityColor(finalColorMap);
-                        for (int i = 0; i < colorQuantities.size(); i++) {
-                            if (bid == colorQuantities.get(i).getBag_id()) {
-                                colorQuantities.remove(i);
-
-
-                            }
-                        }
-                        colorQuantities.add(bcq);
-                        notifyDataSetChanged();
-                        mydialog.dismiss();
-                    }
-                });
-
-
-                addColorBtn.setOnClickListener(new View.OnClickListener() {
-                    @Override
-                    public void onClick(View v) {
-
-
-                        int position=-1;
-                        for(int i=0;i<colorValues.size();i++)
-                        {
-                            if(colorValues.get(i).getColor().equals(colorCombo.getSelectedItem().toString()))
-                            {
-                                position=i;
-
-                            }
-                        }
-                        if(position==-1){
-                            Toast.makeText(mydialog.getContext(),"Items are not Available in the Stock",Toast.LENGTH_SHORT).show();
-                        }
-                        else {
-                            if (colorValues.get(position).getCquantity() >= Integer.valueOf(quantity.getText().toString())) {
-                                try {
-                                    finalColorMap.put(colorCombo.getSelectedItem().toString(), Integer.valueOf(quantity.getText().toString()));
-
-                                } catch (Exception e) {
-                                    Toast.makeText(context, "Invalid Quantity", Toast.LENGTH_SHORT).show();
-                                } finally {
-                                    populateOrder(tableLayout1, finalColorMap);
-                                }
-                            } else
-                                Toast.makeText(mydialog.getContext(), "Items are not Available in the Stock", Toast.LENGTH_SHORT).show();
-
-                        }
-                    }
-                });
-
-
-            }
-
-
-        }
     }
 
     public ArrayList<BagColorQuantity> getRecValues() {
@@ -624,7 +275,7 @@ public class BagViewAdapter extends RecyclerView.Adapter<BagViewAdapter.TestHold
     public void edit(int position) {
         Intent i;
 
-            i = new Intent(context, AddBagActivity.class);
+            i = new Intent(context, BagDetailsActivity.class);
 
             BagEntity item = listData.get(position);
             String bagid = Integer.toString(item.getId());
@@ -639,7 +290,6 @@ public class BagViewAdapter extends RecyclerView.Adapter<BagViewAdapter.TestHold
             i.putExtra("price", price);
             i.putExtra("company", company);
             i.putExtra("quantity", quantity);
-            i.putExtra("source", "source");
             i.putExtra("photo", item.getPhoto());
             context.startActivity(i);
 
@@ -656,7 +306,7 @@ public class BagViewAdapter extends RecyclerView.Adapter<BagViewAdapter.TestHold
             final String bagid = Integer.toString(item.getId());
 
             final AlertDialog.Builder alertDialogBuilder = new AlertDialog.Builder(context);
-            alertDialogBuilder.setMessage("Are you sure,You wanted to Delete?");
+            alertDialogBuilder.setMessage("Are you sure,You want to Delete?");
             alertDialogBuilder.setPositiveButton("Yes",
                     new DialogInterface.OnClickListener() {
                         @Override

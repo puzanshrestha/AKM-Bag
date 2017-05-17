@@ -2,16 +2,21 @@ package com.example.pujan.bag.vendorDetails;
 
 import android.content.Intent;
 import android.os.Bundle;
+import android.support.design.widget.FloatingActionButton;
 import android.support.v4.view.MenuItemCompat;
 
 import android.support.v7.app.AppCompatActivity;
 import android.support.v7.widget.LinearLayoutManager;
 import android.support.v7.widget.RecyclerView;
 import android.support.v7.widget.SearchView;
+import android.support.v7.widget.Toolbar;
+import android.text.Html;
 import android.view.Menu;
 import android.view.MenuItem;
+import android.view.View;
 import android.widget.Toast;
 
+import com.example.pujan.bag.ActionListActivity;
 import com.example.pujan.bag.FunctionsThread;
 import com.example.pujan.bag.R;
 import com.example.pujan.bag.bagDetails.AddBagActivity;
@@ -23,13 +28,14 @@ import org.json.JSONObject;
 import java.util.ArrayList;
 import java.util.concurrent.ExecutionException;
 
-public class VendorListActivity extends AppCompatActivity implements FunctionsThread.AsyncResponse,SearchView.OnQueryTextListener, VendorViewAdapter.ItemClickCallback {
+public class VendorListActivity extends AppCompatActivity implements FunctionsThread.AsyncResponse, SearchView.OnQueryTextListener{
     RecyclerView recyclerView;
     VendorViewAdapter viewAdapter;
     ArrayList<VendorEntity> vendorData;
 
     String getway;
 
+    FloatingActionButton fab;
 
     @Override
 
@@ -37,14 +43,11 @@ public class VendorListActivity extends AppCompatActivity implements FunctionsTh
         super.onCreate(savedInstanceState);
         setContentView(R.layout.activity_view_vendor);
 
-        android.support.v7.app.ActionBar actionBar = getSupportActionBar();
-        actionBar.setLogo(R.drawable.vendorsmall);
-        actionBar.setTitle(" Vendors List");
-        actionBar.setDisplayUseLogoEnabled(true);   // These two are for
-        actionBar.setDisplayShowHomeEnabled(true);
-        actionBar.setDisplayHomeAsUpEnabled(true);
 
-        getway = getIntent().getStringExtra("getway");
+        Toolbar actionBar = (Toolbar) findViewById(R.id.actionBar);
+        setSupportActionBar(actionBar);
+        getSupportActionBar().setTitle(Html.fromHtml("<font color=\"#ffffff\">"+"Vendor"+"</font>"));
+        getSupportActionBar().setDisplayHomeAsUpEnabled(true);
 
 
         FunctionsThread t = new FunctionsThread(this);
@@ -52,25 +55,11 @@ public class VendorListActivity extends AppCompatActivity implements FunctionsTh
         t.trigAsyncResponse(this);
 
 
-
+        fab = (FloatingActionButton) findViewById(R.id.fab);
 
     }
 
-    @Override
-    public void onItemClick(int p) {
-        if (getway.equals("bagdetails")) {
 
-            VendorEntity vendorEntity;
-            vendorEntity = vendorData.get(p);
-            int ven_id = vendorEntity.getId();
-            Toast.makeText(getBaseContext(), ven_id + " selected", Toast.LENGTH_LONG).show();
-            Intent i = new Intent(getBaseContext(), AddBagActivity.class);
-            i.putExtra("ven_id", Integer.toString(ven_id));
-            i.putExtra("bagid", "1");
-            i.putExtra("source", "insert");
-            startActivity(i);
-        }
-    }
 
     @Override
     public boolean onCreateOptionsMenu(Menu menu) {
@@ -84,26 +73,21 @@ public class VendorListActivity extends AppCompatActivity implements FunctionsTh
 
     @Override
     public boolean onOptionsItemSelected(MenuItem item) {
-        switch (item.getItemId()){
+        switch (item.getItemId()) {
             case android.R.id.home:
-                if (getway.equals("bagdetails"))
-                    this.finish();
-                else {
-                    Intent i = new Intent(this, VendorDetailsActivity.class);
-                    startActivity(i);
-                }
+                this.finish();
+                Intent i = new Intent(getBaseContext(),ActionListActivity.class);
+                startActivity(i);
         }
         return true;
     }
 
     @Override
     public void onBackPressed() {
-        if (getway.equals("bagdetails"))
-            this.finish();
-        else {
-            Intent i = new Intent(this, VendorDetailsActivity.class);
-            startActivity(i);
-        }
+
+        Intent i = new Intent(this, ActionListActivity.class);
+        startActivity(i);
+
     }
 
 
@@ -143,13 +127,20 @@ public class VendorListActivity extends AppCompatActivity implements FunctionsTh
             }
         } catch (JSONException e) {
             e.printStackTrace();
-            Toast.makeText(this,"Error connecting with the Server..!",Toast.LENGTH_SHORT).show();
+            Toast.makeText(this, "Error connecting with the Server..!", Toast.LENGTH_SHORT).show();
         }
         recyclerView = (RecyclerView) findViewById(R.id.recView);
         recyclerView.setLayoutManager(new LinearLayoutManager(this, LinearLayoutManager.VERTICAL, false));
         viewAdapter = new VendorViewAdapter(vendorData, this, getway);
         recyclerView.setAdapter(viewAdapter);
-        viewAdapter.notifyDataSetChanged();
-        viewAdapter.onItemClickCallback(this);
+
+        fab.setOnClickListener(new View.OnClickListener() {
+            @Override
+            public void onClick(View v) {
+                Intent i = new Intent(getBaseContext(), AddVendorActivity.class);
+                startActivity(i);
+            }
+        });
+
     }
 }

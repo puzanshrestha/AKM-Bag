@@ -1,15 +1,21 @@
 package com.example.pujan.bag.pendingBill;
 
+import android.content.Intent;
 import android.os.Bundle;
+import android.support.design.widget.FloatingActionButton;
+import android.support.v7.app.ActionBar;
 import android.support.v7.app.AppCompatActivity;
 import android.support.v7.widget.LinearLayoutManager;
 import android.support.v7.widget.RecyclerView;
+import android.support.v7.widget.Toolbar;
+import android.text.Html;
 import android.view.MenuItem;
 import android.view.View;
 import android.widget.Toast;
 
 import com.example.pujan.bag.FunctionsThread;
 import com.example.pujan.bag.R;
+import com.example.pujan.bag.orderDetailsFragment.OrderActivity;
 
 import org.json.JSONArray;
 import org.json.JSONException;
@@ -17,6 +23,7 @@ import org.json.JSONObject;
 
 import java.sql.Date;
 import java.util.ArrayList;
+import java.util.concurrent.ExecutionException;
 
 /**
  * Created by puzan on 26-Mar-17.
@@ -35,22 +42,23 @@ public class PendingBillList extends AppCompatActivity implements FunctionsThrea
     }
 
     RecyclerView recView;
+    FloatingActionButton addOrderFab;
     PendingBillAdapter pendingBillAdapter;
     ArrayList<PendingBillListEntity> pBillList;
     @Override
     protected void onCreate(Bundle savedInstanceState) {
         super.onCreate(savedInstanceState);
-        setContentView(R.layout.activity_view_bag);
+        setContentView(R.layout.fragment_order_list_activity);
 
 
-        android.support.v7.app.ActionBar actionBar = getSupportActionBar();
-        actionBar.setLogo(R.drawable.bagsmall);
+        Toolbar toolbar = (Toolbar) findViewById(R.id.actionBar);
+        setSupportActionBar(toolbar);
+        ActionBar actionBar = getSupportActionBar();
         actionBar.setDisplayHomeAsUpEnabled(true);
-        actionBar.setDisplayUseLogoEnabled(true);   // These two are for
-        actionBar.setDisplayShowHomeEnabled(true);
-        actionBar.setTitle("Pending Bill List");
+        actionBar.setTitle(Html.fromHtml("<font color=\"#FFFFFF\">" + "Pending Order" + "</font>"));
 
         recView = (RecyclerView) findViewById(R.id.recView);
+        addOrderFab=(FloatingActionButton)findViewById(R.id.addOrderFab);
 
         recView.setHasFixedSize(true);
         recView.setItemViewCacheSize(10);
@@ -66,6 +74,34 @@ public class PendingBillList extends AppCompatActivity implements FunctionsThrea
         FunctionsThread thread = new FunctionsThread(this);
         thread.execute("QueryPendingBillList");
         thread.trigAsyncResponse(this);
+
+        addOrderFab.setOnClickListener(new View.OnClickListener() {
+            @Override
+            public void onClick(View v) {
+                Intent i = new Intent(getBaseContext(),OrderActivity.class);
+                i.putExtra("source","Order");
+                i.putExtra("pendingData","Null");
+                startActivity(i);
+
+
+            }
+        });
+
+        recView.addOnScrollListener(new RecyclerView.OnScrollListener() {
+            @Override
+            public void onScrolled(RecyclerView recyclerView, int dx, int dy) {
+                if(dy>0|dy<0)
+                    addOrderFab.hide();
+
+
+            }
+
+            @Override
+            public void onScrollStateChanged(RecyclerView recyclerView, int newState) {
+                addOrderFab.show();
+            }
+        });
+
 
 
     }
@@ -88,8 +124,8 @@ public class PendingBillList extends AppCompatActivity implements FunctionsThrea
                 pBillEntity.setCustomerName(jObject.getString("customer_name"));
                 pBillEntity.setpId(Integer.valueOf(jObject.getString("pId")));
                 pBillEntity.setCustomerId(Integer.parseInt(jObject.getString("customer_id")));
-
-
+                pBillEntity.setAddress(jObject.getString("address"));
+                pBillEntity.setTotal(Integer.parseInt(jObject.getString("total")));
                 pBillList.add(pBillEntity);
 
             }
@@ -108,4 +144,6 @@ public class PendingBillList extends AppCompatActivity implements FunctionsThrea
     public void onBackPressed() {
         this.finish();
     }
+
+
 }

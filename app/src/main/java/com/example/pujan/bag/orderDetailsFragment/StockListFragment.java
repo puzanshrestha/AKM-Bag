@@ -24,7 +24,7 @@ import com.example.pujan.bag.R;
 import com.example.pujan.bag.bagDetails.BagColorQuantity;
 import com.example.pujan.bag.bagDetails.BagEntity;
 import com.example.pujan.bag.bagStock.ColorQuantityEntity;
-import com.example.pujan.bag.orderDetailsFragment.BagListFragment.ItemSelect;
+
 
 import org.json.JSONArray;
 import org.json.JSONException;
@@ -37,7 +37,7 @@ import java.util.concurrent.ExecutionException;
 /**
  * Created by puzan on 08-Apr-17.
  */
-public class StockListFragment extends Fragment implements ItemSelect{
+public class StockListFragment extends Fragment{
 
 
     Context context;
@@ -195,8 +195,5 @@ public class StockListFragment extends Fragment implements ItemSelect{
 
     }
 
-    @Override
-    public void onItemClick(int p) {
 
-    }
 }

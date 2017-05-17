@@ -3,8 +3,8 @@
     xmlns:card_view="http://schemas.android.com/apk/res-auto"
     android:orientation="vertical"
     android:layout_width="match_parent"
-    android:layout_height="match_parent"
-    android:background="@color/colorPrimary"
+    android:layout_height="wrap_content"
+    android:background="#f1f1f1"
     android:id="@+id/cont_cust_item">
 
     <android.support.v7.widget.CardView
@@ -15,7 +15,7 @@
         card_view:contentPadding="5dp"
         android:layout_height="wrap_content"
         android:layout_width="match_parent"
-        android:background="@color/colorPrimaryDark"
+        android:background="#ffffff"
 
         >
 
@@ -29,19 +29,24 @@
 
 
         <LinearLayout
+            android:layout_margin="8dp"
             android:layout_width="0dp"
             android:layout_height="wrap_content"
-            android:layout_weight="0.2"
-            android:layout_margin="2dp"
-            android:orientation="vertical">
+            android:layout_weight="0.23"
+           android:padding="12dp"
+            android:background="@drawable/order_rounded_back">
+
             <ImageView
 
+                android:id="@+id/photo_box"
                 android:layout_width="wrap_content"
                 android:layout_height="wrap_content"
-                android:src="@drawable/icon_user_default"
-                android:id="@+id/imageView"
-                />
+                android:src="@drawable/vector_drawable_customer"
 
+
+
+
+                />
 
         </LinearLayout>
 
@@ -73,8 +78,8 @@
                 android:layout_width="wrap_content"
                 android:layout_height="wrap_content"
                 android:id="@+id/lbl_cust_phone"
-                android:drawableLeft="@drawable/call"
-                android:drawablePadding="5dp"
+                android:drawableLeft="@drawable/ic_call_black_24dp"
+                android:drawablePadding="3dp"
                 android:gravity="center_vertical"
                 android:text="phone"/>
 
@@ -99,9 +104,10 @@
                 android:id="@+id/optionsMenu"
                 android:layout_width="wrap_content"
                 android:layout_height="wrap_content"
-                android:textSize="20dp"
+                android:textSize="15dp"
                 android:padding="10dp"
-                android:text="&#8942;"
+                android:text="       "
+                android:background="@drawable/ic_keyboard_arrow_right_black_24dp"
                 android:textAppearance="?android:textAppearanceLarge"
                 android:layout_alignParentTop="true"
                 android:layout_alignParentEnd="true" />

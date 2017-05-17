@@ -11,15 +11,23 @@ import com.example.pujan.bag.bagStock.StockListActivity;
 import com.example.pujan.bag.bagStock.StockUpdateActivity;
 import com.example.pujan.bag.bagStock.StockViewActivity;
 import com.example.pujan.bag.customerDetails.AddCustomerActivity;
+import com.example.pujan.bag.customerDetails.CustomerDetailsActivity;
 import com.example.pujan.bag.customerDetails.CustomerListActivity;
 import com.example.pujan.bag.database.DbHelper;
 import com.example.pujan.bag.orderDetails.OrderDisplayActivity;
 import com.example.pujan.bag.orderDetailsFragment.BagListFragment;
+
+import com.example.pujan.bag.orderDetailsFragment.OrderActivity;
+import com.example.pujan.bag.orderDetailsFragment.customerSelectFragment.SelectCustomerFragment;
+import com.example.pujan.bag.orderDetailsFragment.printPackageFragment.FragmentPrintDemo;
+import com.example.pujan.bag.pendingBill.PendingBillAdapter;
+import com.example.pujan.bag.pendingBill.PendingBillListFragment;
 import com.example.pujan.bag.pendingBill.PendingBillList;
 import com.example.pujan.bag.printPackage.PrintDemo;
 import com.example.pujan.bag.transactionalReports.BagReports;
 import com.example.pujan.bag.transactionalReports.RePrintBill;
 import com.example.pujan.bag.vendorDetails.AddVendorActivity;
+import com.example.pujan.bag.vendorDetails.VendorDetailsActivity;
 import com.example.pujan.bag.vendorDetails.VendorListActivity;
 
 import java.io.BufferedReader;
@@ -48,9 +56,12 @@ public class FunctionsThread extends AsyncTask<String, Void, String> {
 
     String ipMain;
 
-    ProgressDialog pd;
+    public ProgressDialog pd;
 
     private AsyncResponse callback = null;
+
+
+    private int flagPd=1;
 
 
     public interface AsyncResponse {
@@ -109,6 +120,14 @@ public class FunctionsThread extends AsyncTask<String, Void, String> {
     public void trigAsyncResponse(PendingBillList activity) {this.callback = activity;}
     public void trigAsyncResponse(RePrintBill activity) {this.callback = activity;}
     public void trigAsyncResponse(BagListFragment activity) {this.callback = activity;}
+    public void trigAsyncResponse(PendingBillListFragment activity) {this.callback = activity;}
+    public void trigAsyncResponse(FragmentPrintDemo activity) {this.callback = activity;}
+    public void trigAsyncResponse(OrderActivity activity) {this.callback = activity;}
+    public void trigAsyncResponse(PendingBillAdapter activity) {this.callback = activity;}
+    public void trigAsyncResponse(SelectCustomerFragment activity) {this.callback = activity;}
+
+    public void trigAsyncResponse(CustomerDetailsActivity activity) {this.callback = activity;}
+    public void trigAsyncResponse(VendorDetailsActivity activity) {this.callback = activity;}
     public FunctionsThread(Context c) {
         this.c = c;
         DbHelper db = new DbHelper(c);
@@ -134,7 +153,8 @@ public class FunctionsThread extends AsyncTask<String, Void, String> {
         pd.setIndeterminate(true);
         pd.setTitle("Working");
         pd.setMessage("loading...");
-        pd.show();
+        //if(flagPd==1)
+       // pd.show();
 
 
     }
@@ -278,7 +298,7 @@ public class FunctionsThread extends AsyncTask<String, Void, String> {
                 bufferedReader.close();
                 is.close();
                 con.disconnect();
-                System.out.println(sb.toString().trim());
+
                 return sb.toString().trim();
             } catch (Exception e) {
 
@@ -331,8 +351,6 @@ public class FunctionsThread extends AsyncTask<String, Void, String> {
             String cid = params[5];
 
             try {
-                System.out.println(customerSource);
-                System.out.println();
 
                 URL url = new URL(ip + "addCustomer.php");
                 HttpURLConnection conn = (HttpURLConnection) url.openConnection();
@@ -377,7 +395,7 @@ public class FunctionsThread extends AsyncTask<String, Void, String> {
             String vendorAddress = params[2];
             String source = params[3];
             String id = params[4];
-            System.out.println(source);
+
 
             try {
                 URL url = new URL(ip + "addVendor.php");
@@ -414,7 +432,7 @@ public class FunctionsThread extends AsyncTask<String, Void, String> {
         } else if (method.equals("ViewBag")) {
             try {
 
-                URL url = new URL(ip + "viewBag.php");
+                URL url = new URL(ip + "viewBagWithStock.php");
                 HttpURLConnection conn = (HttpURLConnection) url.openConnection();
 
 
@@ -619,7 +637,8 @@ public class FunctionsThread extends AsyncTask<String, Void, String> {
             String orderJson = params[1];
             String customer_id = params[2];
             String customer_name = params[3];
-            String discount=params[4];
+            String total=params[4];
+            String address=params[5];
 
 
             try {
@@ -634,7 +653,8 @@ public class FunctionsThread extends AsyncTask<String, Void, String> {
                 String data = URLEncoder.encode("AddOrderJson", "UTF-8") + "=" + URLEncoder.encode(orderJson, "UTF-8") + "&" +
                         URLEncoder.encode("customer_id", "UTF-8") + "=" + URLEncoder.encode(customer_id, "UTF-8") + "&" +
                         URLEncoder.encode("customer_name", "UTF-8") + "=" + URLEncoder.encode(customer_name, "UTF-8")+ "&" +
-                        URLEncoder.encode("discount", "UTF-8") + "=" + URLEncoder.encode(discount, "UTF-8");
+                        URLEncoder.encode("address", "UTF-8") + "=" + URLEncoder.encode(address, "UTF-8")+ "&" +
+                        URLEncoder.encode("total", "UTF-8") + "=" + URLEncoder.encode(total, "UTF-8");
 
 
                 bufferedWriter.write(data);
@@ -965,7 +985,14 @@ public class FunctionsThread extends AsyncTask<String, Void, String> {
         if (callback != null)
             callback.onComplete(result);
 
-        pd.dismiss();
+     //   if(flagPd==1)
+       // pd.dismiss();
 
+
+    }
+
+    public void setPdFlag()
+    {
+        flagPd=0;
     }
 }

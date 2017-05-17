@@ -1,64 +1,47 @@
 package com.example.pujan.bag.bagDetails;
 
-import android.app.ProgressDialog;
-import android.content.Context;
 import android.content.Intent;
-
-import android.support.v4.view.MenuItemCompat;
-import android.support.v7.app.AppCompatActivity;
+import android.graphics.Color;
+import android.graphics.drawable.ColorDrawable;
 import android.os.Bundle;
+import android.support.design.widget.FloatingActionButton;
+import android.support.v4.view.MenuItemCompat;
+import android.support.v7.app.ActionBar;
+import android.support.v7.app.AppCompatActivity;
 import android.support.v7.widget.LinearLayoutManager;
 import android.support.v7.widget.RecyclerView;
-
 import android.support.v7.widget.SearchView;
+import android.support.v7.widget.Toolbar;
+import android.text.Html;
 import android.view.Menu;
-import android.view.MenuInflater;
 import android.view.MenuItem;
 import android.view.View;
-
 import android.widget.Toast;
-
 
 import com.example.pujan.bag.ActionListActivity;
 import com.example.pujan.bag.FunctionsThread;
 import com.example.pujan.bag.R;
 
-import com.example.pujan.bag.orderDetails.OrderDisplayActivity;
-
 import org.json.JSONArray;
-import org.json.JSONException;
 import org.json.JSONObject;
 
 import java.util.ArrayList;
-import java.util.LinkedHashMap;
-import java.util.concurrent.ExecutionException;
 
-public class BagListActivity extends AppCompatActivity implements BagViewAdapter.ItemClickCallback, SearchView.OnQueryTextListener, FunctionsThread.AsyncResponse {
+public class BagListActivity extends AppCompatActivity implements SearchView.OnQueryTextListener, FunctionsThread.AsyncResponse {
 
     RecyclerView recView;
     BagViewAdapter bagViewAdapter;
-    String customer_id = "0";
-    String source = "";
-    String customerName = "";
-    String pending = "";
-    String pId = "";
+
     ArrayList<BagEntity> bagData = new ArrayList<>();
 
-    ArrayList<BagColorQuantity> colorQuantities = new ArrayList<>();
-    ArrayList<BagColorQuantity> pendingList = new ArrayList<>();
+    FloatingActionButton addNewBag;
+
+
 
 
     @Override
     public boolean onCreateOptionsMenu(Menu menu) {
-
-
-        if (source.equals("bag")) {
-            getMenuInflater().inflate(R.menu.search_action_bar, menu);
-        } else {
-            getMenuInflater().inflate(R.menu.order_menu_actionbar, menu);
-            getMenuInflater().inflate(R.menu.search_action_bar, menu);
-        }
-
+        getMenuInflater().inflate(R.menu.search_action_bar, menu);
         MenuItem menuItem = menu.findItem(R.id.searchh);
         SearchView searchView = (SearchView) MenuItemCompat.getActionView(menuItem);
         searchView.setOnQueryTextListener(this);
@@ -69,36 +52,13 @@ public class BagListActivity extends AppCompatActivity implements BagViewAdapter
 
     @Override
     public boolean onOptionsItemSelected(final MenuItem item) {
-        if (source.equals("bag")) {
-            switch (item.getItemId()) {
-                case R.id.searchh:
-                    return true;
-                case android.R.id.home:
-                    Intent i = new Intent(getBaseContext(), BagDetailsActivity.class);
-                    startActivity(i);
-                    return true;
-            }
-        } else {
-
-            switch (item.getItemId()) {
-                case R.id.searchh:
-                    return true;
-                case R.id.action_cart:
-                    Intent i = new Intent(this, OrderDisplayActivity.class);
-
-                    if (source == "manual")
-                        customer_id = "0";
-                    i.putExtra("customer_id", customer_id);
-                    i.putExtra("customerName", customerName);
-                    i.putExtra("source", source);
-                    i.putExtra("recValue", colorQuantities);
-                    startActivity(i);
-                    return true;
-                case android.R.id.home:
-                    this.finish();
-                    return true;
-
-            }
+        switch (item.getItemId()) {
+            case R.id.searchh:
+                return true;
+            case android.R.id.home:
+                Intent i = new Intent(getBaseContext(), ActionListActivity.class);
+                startActivity(i);
+                return true;
         }
 
 
@@ -107,13 +67,8 @@ public class BagListActivity extends AppCompatActivity implements BagViewAdapter
 
     @Override
     public void onBackPressed() {
-
-        if (source.equals("pending"))
-            this.finish();
-        else {
-            Intent i = new Intent(getBaseContext(), BagDetailsActivity.class);
-            startActivity(i);
-        }
+        Intent i = new Intent(getBaseContext(), ActionListActivity.class);
+        startActivity(i);
 
 
     }
@@ -122,30 +77,13 @@ public class BagListActivity extends AppCompatActivity implements BagViewAdapter
     protected void onCreate(Bundle savedInstanceState) {
         super.onCreate(savedInstanceState);
         setContentView(R.layout.activity_view_bag);
-        source = getIntent().getStringExtra("source");
-        customerName = getIntent().getStringExtra("customerName");
-        customer_id = getIntent().getStringExtra("customer_id");
-        pending = getIntent().getStringExtra("pending");
-        pId = getIntent().getStringExtra("pId");
 
 
-        System.out.println("source is" + source);
 
-
-        android.support.v7.app.ActionBar actionBar = getSupportActionBar();
-        actionBar.setLogo(R.drawable.bagsmall);
-        actionBar.setDisplayHomeAsUpEnabled(true);
-        actionBar.setDisplayUseLogoEnabled(true);   // These two are for
-        actionBar.setDisplayShowHomeEnabled(true);
-        if (source.equals("bag")) {
-            actionBar.setTitle(" View Bag");
-
-            // displaying logo in the action bar
-        } else {
-            actionBar.setTitle(" Order Menu");
-
-
-        }
+        Toolbar actionBar = (Toolbar) findViewById(R.id.actionBar);
+        setSupportActionBar(actionBar);
+        getSupportActionBar().setTitle("Bag");
+        getSupportActionBar().setDisplayHomeAsUpEnabled(true);
 
         recView = (RecyclerView) findViewById(R.id.recView);
 
@@ -160,18 +98,35 @@ public class BagListActivity extends AppCompatActivity implements BagViewAdapter
         recView.setLayoutManager(lm);
         //recView.setLayoutManager(new ScrollingLinearLayoutManager(this, LinearLayoutManager.VERTICAL, false, duration));
 
+        addNewBag = (FloatingActionButton)findViewById(R.id.addNewBagBtn);
+
+        addNewBag.setOnClickListener(new View.OnClickListener() {
+            @Override
+            public void onClick(View v) {
+                Intent i = new Intent(getBaseContext(),AddBagActivity.class);
+                startActivity(i);
+            }
+        });
+
+        recView.addOnScrollListener(new RecyclerView.OnScrollListener() {
+            @Override
+            public void onScrolled(RecyclerView recyclerView, int dx, int dy) {
+                if(dy>0|dy<0)
+                    addNewBag.hide();
+
+
+            }
+
+            @Override
+            public void onScrollStateChanged(RecyclerView recyclerView, int newState) {
+                addNewBag.show();
+            }
+        });
+
 
         FunctionsThread t = new FunctionsThread(this);
         t.execute("ViewBag");
         t.trigAsyncResponse(this);
-
-
-    }
-
-    @Override
-    public void onItemClick(int p) {
-
-        colorQuantities = bagViewAdapter.getRecValues();
 
 
     }
@@ -230,70 +185,12 @@ public class BagListActivity extends AppCompatActivity implements BagViewAdapter
 
     @Override
     public void onComplete(String output) {
-
         getData(output);
-        if (source.equals("pending")) {
-            convert(pending);
-            bagViewAdapter = new BagViewAdapter(bagData, getIntent().getStringExtra("source"), getBaseContext(), colorQuantities);
-
-        } else
-            bagViewAdapter = new BagViewAdapter(bagData, getIntent().getStringExtra("source"), getBaseContext());
+        bagViewAdapter = new BagViewAdapter(bagData, "bag", getBaseContext());
         recView.setAdapter(bagViewAdapter);
-        bagViewAdapter.onItemClickCallback(BagListActivity.this);
 
-        bagViewAdapter.notifyDataSetChanged();
 
     }
 
-    void convert(String pending) {
 
-        try {
-            JSONObject bagQuantityColor = new JSONObject(pending);
-            JSONArray bag = bagQuantityColor.getJSONArray("result");
-
-            String bagTemp = "";
-            LinkedHashMap<String, Integer> cqe = new LinkedHashMap<>();
-
-            BagColorQuantity bcqEntity = new BagColorQuantity();
-            JSONObject jObject2 = null;
-            for (int i = 0; i < bag.length(); i++) {
-                JSONObject jObject = bag.getJSONObject(i);
-                bcqEntity.setBag_id(Integer.valueOf(jObject.getString("bag_id")));
-
-
-                if (i + 1 < bag.length()) {
-                    jObject2 = bag.getJSONObject(i + 1);
-
-                }
-                else
-                jObject2=jObject;
-                if ((jObject2.getString("bag_id")).equals(jObject.getString("bag_id"))) {
-
-                    //bcqEntity.setQuantityColor(cqe);
-                    cqe.put(jObject.getString("color"), Integer.valueOf(jObject.getString("quantityColor")));
-
-                } else {
-
-                    cqe.put(jObject.getString("color"), Integer.valueOf(jObject.getString("quantityColor")));
-                    bcqEntity.setQuantityColor(cqe);
-                    colorQuantities.add(bcqEntity);
-                    bcqEntity = new BagColorQuantity();
-                    cqe = new LinkedHashMap<>();
-
-                }
-
-
-                bagTemp = jObject.getString("bag_name");
-
-            }
-
-
-            bcqEntity.setQuantityColor(cqe);
-            colorQuantities.add(bcqEntity);
-
-
-        } catch (JSONException e) {
-            e.printStackTrace();
-        }
-    }
 }

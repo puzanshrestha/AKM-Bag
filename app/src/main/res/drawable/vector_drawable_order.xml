@@ -1,0 +1,8 @@
+<?xml version="1.0" encoding="utf-8"?>
+<vector xmlns:android="http://schemas.android.com/apk/res/android" android:viewportWidth="505"
+    android:viewportHeight="446" android:width="150dp" android:height="160dp">
+    <group android:name="Order">
+        <path android:name="cls-1" android:fillColor="#41A7EB"
+            android:pathData="M359.16,331.68,423.48,84.52l81.81-60.38L487.47,0,404.05,61.57H0l119.33,228.5H354.49l-10.16,39.06c-.81,0-1.63-.06-2.45-.06a58.58,58.58,0,0,0-58,51h-133a58.5,58.5,0,1,0,0,15h133a58.49,58.49,0,1,0,75.29-63.39ZM410,76.57l-19.13,73.5H63.14L24.76,76.57ZM128.42,275.07,71,165.07H387l-28.62,110Zm-35.54,156a43.5,43.5,0,1,1,43.5-43.5A43.55,43.55,0,0,1,92.88,431.07Zm249,0a43.5,43.5,0,1,1,43.5-43.5A43.55,43.55,0,0,1,341.88,431.07Z" />
+    </group>
+</vector>

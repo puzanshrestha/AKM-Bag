@@ -10,6 +10,24 @@ public class PendingBillListEntity {
     Date date;
     String customerName;
     int customerId;
+    String Address;
+    int total;
+
+    public String getAddress() {
+        return Address;
+    }
+
+    public void setAddress(String address) {
+        Address = address;
+    }
+
+    public int getTotal() {
+        return total;
+    }
+
+    public void setTotal(int total) {
+        this.total = total;
+    }
 
     public int getCustomerId() {
         return customerId;

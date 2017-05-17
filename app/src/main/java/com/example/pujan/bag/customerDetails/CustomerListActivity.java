@@ -15,6 +15,8 @@ import android.os.Bundle;
 import android.support.v7.widget.LinearLayoutManager;
 import android.support.v7.widget.RecyclerView;
 import android.support.v7.widget.SearchView;
+import android.support.v7.widget.Toolbar;
+import android.text.Html;
 import android.view.Menu;
 import android.view.MenuInflater;
 import android.view.MenuItem;
@@ -27,6 +29,7 @@ import android.widget.TableRow;
 import android.widget.TextView;
 import android.widget.Toast;
 
+import com.example.pujan.bag.ActionListActivity;
 import com.example.pujan.bag.FunctionsThread;
 import com.example.pujan.bag.R;
 import com.example.pujan.bag.bagDetails.BagListActivity;
@@ -36,95 +39,32 @@ import org.json.JSONObject;
 
 import java.util.ArrayList;
 
-public class CustomerListActivity extends AppCompatActivity implements FunctionsThread.AsyncResponse, CustomerViewAdapter.ItemClickCallback,SearchView.OnQueryTextListener{
+public class CustomerListActivity extends AppCompatActivity implements FunctionsThread.AsyncResponse, CustomerViewAdapter.ItemClickCallback, SearchView.OnQueryTextListener {
 
     RecyclerView recView;
     CustomerViewAdapter customerViewAdapter;
-    String method;
+    String method = "customer";
     ArrayList<CustomerEntity> customerData;
-
-
-
-
+    FloatingActionButton fab;
 
     @Override
     protected void onCreate(Bundle savedInstanceState) {
         super.onCreate(savedInstanceState);
         setContentView(R.layout.activity_view_customer);
+
+
+        Toolbar toolbar = (Toolbar) findViewById(R.id.actionBar);
+        setSupportActionBar(toolbar);
         android.support.v7.app.ActionBar actionBar = getSupportActionBar();
-        actionBar.setLogo(R.drawable.customersmall);
+        actionBar.setTitle(Html.fromHtml("<font color=\"#ffffff\">" + "Customer" + "</font>"));
         actionBar.setDisplayHomeAsUpEnabled(true);
 
-        FloatingActionButton fab = (FloatingActionButton)findViewById(R.id.fab);
+        fab = (FloatingActionButton) findViewById(R.id.fab);
 
-
-        method = getIntent().getStringExtra("method");
-         if (method.equals("orderView")){
-
-             actionBar.setTitle(" Select Customer");
-             actionBar.setDisplayUseLogoEnabled(true);
-
-         }
-        else {
-             actionBar.setTitle(" View Customer");
-             actionBar.setDisplayUseLogoEnabled(true);
-             fab.setVisibility(View.GONE);
-
-         }
 
         FunctionsThread t = new FunctionsThread(this);
         t.execute("ViewCustomer");
         t.trigAsyncResponse(this);
-
-        fab.setOnClickListener(new View.OnClickListener() {
-            @Override
-            public void onClick(View v) {
-                AlertDialog.Builder dialog = new AlertDialog.Builder(CustomerListActivity.this);
-                dialog.setMessage("Enter Customer Name:");
-
-                LinearLayout layout = new LinearLayout(CustomerListActivity.this);
-                layout.setOrientation(LinearLayout.VERTICAL);
-                TableRow.LayoutParams param = new TableRow.LayoutParams(ViewGroup.LayoutParams.WRAP_CONTENT, ViewGroup.LayoutParams.WRAP_CONTENT);
-                param.setMargins(6,6,6,6);
-                layout.setLayoutParams(param);
-                layout.setPadding(10,10,10,10);
-                layout.setBackgroundColor(Color.LTGRAY);
-
-
-                TextView txt = new TextView(getBaseContext());
-                txt.setTextColor(Color.parseColor("#000000"));
-                txt.setText("Customer Name");
-
-
-                final EditText eTxt = new EditText(getBaseContext());
-                eTxt.setTextColor(Color.parseColor("#000000"));
-                layout.addView(txt);
-                layout.addView(eTxt);
-
-                dialog.setView(layout);
-                dialog.setPositiveButton("Ok", new DialogInterface.OnClickListener() {
-                    @Override
-                    public void onClick(DialogInterface dialog, int which) {
-                        Intent i = new Intent(getBaseContext(),BagListActivity.class);
-                        i.putExtra("source","manual");
-                        i.putExtra("customerName",eTxt.getText().toString());
-                        startActivity(i);
-                    }
-                });
-                dialog.setNegativeButton("Cancel", new DialogInterface.OnClickListener() {
-                    @Override
-                    public void onClick(DialogInterface dialog, int which) {
-                        dialog.dismiss();
-                    }
-                });
-                dialog.show();
-
-
-
-            }
-        });
-
-
 
 
     }
@@ -143,13 +83,13 @@ public class CustomerListActivity extends AppCompatActivity implements Functions
             startActivity(i);
         }
     }
+
     @Override
-    public boolean onCreateOptionsMenu(Menu search)
-    {
-        MenuInflater inflater=getMenuInflater();
+    public boolean onCreateOptionsMenu(Menu search) {
+        MenuInflater inflater = getMenuInflater();
         inflater.inflate(R.menu.search_action_bar, search);
-        MenuItem menuItem=search.findItem(R.id.searchh);
-        SearchView searchView=(SearchView) MenuItemCompat.getActionView(menuItem);
+        MenuItem menuItem = search.findItem(R.id.searchh);
+        SearchView searchView = (SearchView) MenuItemCompat.getActionView(menuItem);
         searchView.setOnQueryTextListener(this);
         return true;
 
@@ -157,53 +97,36 @@ public class CustomerListActivity extends AppCompatActivity implements Functions
 
     @Override
     public boolean onOptionsItemSelected(MenuItem item) {
-        switch (item.getItemId())
-        {
+        switch (item.getItemId()) {
             case android.R.id.home:
-            if (method.equals("orderView")) {
-
-                    this.finish();
-                    return true;
-
-            }
-                else
-            {
-                Intent i = new Intent(getBaseContext(), CustomerDetailsActivity.class);
+                this.finish();
+                Intent i = new Intent(getBaseContext(),ActionListActivity.class);
                 startActivity(i);
-            }
         }
         return true;
     }
 
     @Override
     public void onBackPressed() {
-        if (method.equals("orderView")) {
-            this.finish();
 
-        }
-        else
-        {
-            Intent i = new Intent(getBaseContext(), CustomerDetailsActivity.class);
-            startActivity(i);
-        }
+        Intent i = new Intent(getBaseContext(), ActionListActivity.class);
+        startActivity(i);
+
     }
 
     @Override
 
-    public boolean onQueryTextSubmit(String query)
-    {
-return false;
+    public boolean onQueryTextSubmit(String query) {
+        return false;
     }
 
     @Override
 
-    public boolean onQueryTextChange(String newText)
-    {
-        ArrayList<CustomerEntity> newlist=new ArrayList<>();
-        for(CustomerEntity customer:customerData)
-        {
-            String name=customer.getName().toLowerCase();
-            if(name.contains(newText.toLowerCase())) {
+    public boolean onQueryTextChange(String newText) {
+        ArrayList<CustomerEntity> newlist = new ArrayList<>();
+        for (CustomerEntity customer : customerData) {
+            String name = customer.getName().toLowerCase();
+            if (name.contains(newText.toLowerCase())) {
                 newlist.add(customer);
             }
         }
@@ -215,11 +138,9 @@ return false;
     public void onComplete(String output) {
 
         customerData = new ArrayList<>();
-        if(output.equals("Error"))
-        {
-            Toast.makeText(this,"Error in Connection",Toast.LENGTH_SHORT).show();
-        }
-        else {
+        if (output.equals("Error")) {
+            Toast.makeText(this, "Error in Connection", Toast.LENGTH_SHORT).show();
+        } else {
             try {
 
                 JSONObject customerJson = new JSONObject(output);
@@ -252,6 +173,30 @@ return false;
             recView.setAdapter(customerViewAdapter);
 
             customerViewAdapter.onItemClickCallback(this);
+
+            recView.addOnScrollListener(new RecyclerView.OnScrollListener() {
+                @Override
+                public void onScrolled(RecyclerView recyclerView, int dx, int dy) {
+                    if (dy > 0 | dy < 0)
+                        fab.hide();
+
+
+                }
+
+                @Override
+                public void onScrollStateChanged(RecyclerView recyclerView, int newState) {
+                    fab.show();
+                }
+            });
+
+
+            fab.setOnClickListener(new View.OnClickListener() {
+                @Override
+                public void onClick(View v) {
+                    Intent i = new Intent(getBaseContext(), AddCustomerActivity.class);
+                    startActivity(i);
+                }
+            });
         }
 
     }

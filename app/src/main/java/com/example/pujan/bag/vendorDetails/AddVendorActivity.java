@@ -2,7 +2,10 @@ package com.example.pujan.bag.vendorDetails;
 
 import android.content.Intent;
 import android.os.Bundle;
+import android.support.design.widget.FloatingActionButton;
 import android.support.v7.app.AppCompatActivity;
+import android.support.v7.widget.Toolbar;
+import android.text.Html;
 import android.view.MenuItem;
 import android.view.View;
 import android.widget.Button;
@@ -20,26 +23,21 @@ public class AddVendorActivity extends AppCompatActivity implements FunctionsThr
     String source;
     String id = "";
 
+
     @Override
     protected void onCreate(Bundle savedInstanceState) {
         super.onCreate(savedInstanceState);
         setContentView(R.layout.activity_add_vendor);
+
+        Toolbar toolbar = (Toolbar) findViewById(R.id.actionBar);
+        setSupportActionBar(toolbar);
         android.support.v7.app.ActionBar actionBar = getSupportActionBar();
-        actionBar.setLogo(R.drawable.vendorsmall);
-        actionBar.setTitle(" Add Vendor");
-        actionBar.setDisplayUseLogoEnabled(true);   // These two are for
-        actionBar.setDisplayShowHomeEnabled(true);
+        actionBar.setTitle(Html.fromHtml("<font color=\"#ffffff\">" + "Add New Vendor" + "</font>"));
         actionBar.setDisplayHomeAsUpEnabled(true);
 
-        addVendorBtn = (Button) findViewById(R.id.addVendorBtn);
-        vendorNameEditText = (EditText) findViewById(R.id.vendorNameEditText);
-        vendorAddressEditText = (EditText) findViewById(R.id.vendorAddressEditText);
-        source = getIntent().getStringExtra("source");
-        if (source.equals("update")) {
-            vendorNameEditText.setText(getIntent().getStringExtra("name"));
-            vendorAddressEditText.setText(getIntent().getStringExtra("address"));
-            id = getIntent().getStringExtra("id");
-        }
+        addVendorBtn = (Button) findViewById(R.id.saveBtn);
+        vendorNameEditText = (EditText) findViewById(R.id.nameEditText);
+        vendorAddressEditText = (EditText) findViewById(R.id.addressEditText);
 
         addVendorBtn.setOnClickListener(new View.OnClickListener() {
             @Override
@@ -49,7 +47,7 @@ public class AddVendorActivity extends AppCompatActivity implements FunctionsThr
 
 
                     FunctionsThread t= new FunctionsThread(AddVendorActivity.this);
-                    t.execute("AddVendor", vendorName, vendorAddress, source, id);
+                    t.execute("AddVendor", vendorName, vendorAddress, "insert", "0");
                     t.trigAsyncResponse(AddVendorActivity.this);
 
 
@@ -63,7 +61,6 @@ public class AddVendorActivity extends AppCompatActivity implements FunctionsThr
         switch (item.getItemId()){
             case android.R.id.home:
                 Intent i = new Intent(getBaseContext(), VendorListActivity.class);
-                i.putExtra("getway", "actionlist");
                 startActivity(i);
         }
         return true;
@@ -72,23 +69,17 @@ public class AddVendorActivity extends AppCompatActivity implements FunctionsThr
     @Override
     public void onBackPressed() {
         Intent i = new Intent(getBaseContext(), VendorListActivity.class);
-        i.putExtra("getway", "actionlist");
         startActivity(i);
     }
 
     @Override
     public void onComplete(String check) {
         if (check.equals("Inserted")) {
-            Toast.makeText(getBaseContext(), "Successfully Added new Vendor", Toast.LENGTH_SHORT).show();
-            Intent i = new Intent(getBaseContext(), VendorDetailsActivity.class);
-            i.putExtra("getway","actionlist");
+            Toast.makeText(getBaseContext(), "Successfully Added New Vendor", Toast.LENGTH_SHORT).show();
+            Intent i = new Intent(this, VendorListActivity.class);
             startActivity(i);
-        } else if (check.equals("Updated")) {
-            Toast.makeText(getBaseContext(), "Successfully updated new Vendor", Toast.LENGTH_SHORT).show();
-            Intent i = new Intent(getBaseContext(), VendorListActivity.class);
-            i.putExtra("getway","actionlist");
-            startActivity(i);
-        } else {
+        }
+        else {
             Toast.makeText(getBaseContext(), check, Toast.LENGTH_SHORT).show();
         }
     }

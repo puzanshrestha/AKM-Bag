@@ -3,6 +3,8 @@ package com.example.pujan.bag.customerDetails;
 import android.content.Intent;
 import android.support.v7.app.AppCompatActivity;
 import android.os.Bundle;
+import android.support.v7.widget.Toolbar;
+import android.text.Html;
 import android.view.MenuItem;
 import android.view.View;
 import android.widget.Button;
@@ -17,57 +19,33 @@ public class AddCustomerActivity extends AppCompatActivity implements FunctionsT
 
     Button addCustomerBtn;
     EditText nameEditText,addressEditText,phoneEditText;
-    String customerName,customerAddress,customerPhone,source,cid;
 
 
     @Override
     protected void onCreate(Bundle savedInstanceState) {
         super.onCreate(savedInstanceState);
         setContentView(R.layout.activity_add_customer);
-        source=getIntent().getStringExtra("source");
 
-       android.support.v7.app.ActionBar actionBar = getSupportActionBar();
-
-        actionBar.setDisplayUseLogoEnabled(true);
-        actionBar.setDisplayShowHomeEnabled(true);
-        actionBar.setLogo(R.drawable.customersmall);
+        Toolbar toolbar = (Toolbar) findViewById(R.id.actionBar);
+        setSupportActionBar(toolbar);
+        android.support.v7.app.ActionBar actionBar = getSupportActionBar();
+        actionBar.setTitle(Html.fromHtml("<font color=\"#ffffff\">" + "Add New Customer" + "</font>"));
         actionBar.setDisplayHomeAsUpEnabled(true);
 
 
-        if (source.equals("update")){
-            actionBar.setTitle(" Update Customer");
 
-        }
-        else{
-            actionBar.setTitle(" Add Customer");
+        addCustomerBtn = (Button)findViewById(R.id.saveBtn);
 
-        }
-
-        addCustomerBtn = (Button)findViewById(R.id.addCustomerBtn);
-
-        nameEditText = (EditText)findViewById(R.id.customerNameEditText);
-        addressEditText = (EditText)findViewById(R.id.customerAddressEditText);
-        phoneEditText = (EditText)findViewById(R.id.customerPhoneEditText);
-
-        cid=getIntent().getStringExtra("cust_id");
-
-        if (source.equals("update")){
-            nameEditText.setText(getIntent().getStringExtra("cust_name"));
-            addressEditText.setText(getIntent().getStringExtra("cust_address"));
-            phoneEditText.setText(getIntent().getStringExtra("cust_phone"));
-        }
-
+        nameEditText = (EditText)findViewById(R.id.nameEditText);
+        addressEditText = (EditText)findViewById(R.id.addressEditText);
+        phoneEditText = (EditText)findViewById(R.id.phoneEditText);
 
 
         addCustomerBtn.setOnClickListener(new View.OnClickListener() {
             @Override
             public void onClick(View v) {
-                customerName = nameEditText.getText().toString();
-                customerAddress = addressEditText.getText().toString();
-                customerPhone = phoneEditText.getText().toString();
-
                 FunctionsThread t = new FunctionsThread(AddCustomerActivity.this);
-                t.execute("AddCustomer",customerName,customerAddress,customerPhone,source,cid);
+                t.execute("AddCustomer",nameEditText.getText().toString(),addressEditText.getText().toString(),phoneEditText.getText().toString(),"add","0");
                 t.trigAsyncResponse(AddCustomerActivity.this);
 
 
@@ -84,7 +62,6 @@ public class AddCustomerActivity extends AppCompatActivity implements FunctionsT
         {
             case android.R.id.home:
                 Intent i = new Intent(getBaseContext(),CustomerListActivity.class);
-                i.putExtra("method","customerview");
                 startActivity(i);
 
         }
@@ -94,7 +71,6 @@ public class AddCustomerActivity extends AppCompatActivity implements FunctionsT
     @Override
     public void onBackPressed() {
         Intent i = new Intent(getBaseContext(),CustomerListActivity.class);
-        i.putExtra("method","customerview");
         startActivity(i);
     }
 
@@ -106,16 +82,6 @@ public class AddCustomerActivity extends AppCompatActivity implements FunctionsT
             Intent i = new Intent(getBaseContext(),CustomerListActivity.class);
             i.putExtra("method","customerview");
             startActivity(i);
-        }
-        else if (check.equals("Update")){
-            Toast.makeText(getBaseContext(),"updated new Customer",Toast.LENGTH_SHORT).show();
-            Intent i = new Intent(getBaseContext(),CustomerListActivity.class);
-            i.putExtra("method","customerview");
-            startActivity(i);
-        }
-        else
-        {
-            Toast.makeText(getBaseContext(),check,Toast.LENGTH_SHORT).show();
         }
 
     }

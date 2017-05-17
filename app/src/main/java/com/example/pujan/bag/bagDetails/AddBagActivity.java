@@ -6,12 +6,15 @@ import android.net.Uri;
 import android.provider.MediaStore;
 import android.support.v7.app.AppCompatActivity;
 import android.os.Bundle;
+import android.support.v7.widget.Toolbar;
+import android.text.Html;
 import android.view.KeyEvent;
 import android.view.MenuItem;
 import android.view.View;
 import android.widget.Button;
 import android.widget.EditText;
 import android.widget.ImageView;
+import android.widget.TextView;
 import android.widget.Toast;
 
 import com.example.pujan.bag.ActionListActivity;
@@ -28,7 +31,7 @@ import java.util.concurrent.ExecutionException;
 
 public class AddBagActivity extends AppCompatActivity implements FunctionsThread.AsyncResponse {
 
-    EditText nameEditText, typeEditText, priceEditText, companyEditText, quantityEditText;
+    EditText nameEditText, typeEditText, priceEditText, companyEditText;
     Button addBagBtn;
     String source;
     String bid, vendor_id;
@@ -38,6 +41,7 @@ public class AddBagActivity extends AppCompatActivity implements FunctionsThread
     String mediaSelect = "";
     String ext = "";
     ImageView bagPhoto;
+    TextView addPhoto;
 
 
     @Override
@@ -47,19 +51,15 @@ public class AddBagActivity extends AppCompatActivity implements FunctionsThread
       //  quantityEditText.setVisibility(View.GONE);
 
         setContentView(R.layout.activity_add_bag);
+
+        Toolbar toolbar = (Toolbar) findViewById(R.id.actionBar);
+        setSupportActionBar(toolbar);
         android.support.v7.app.ActionBar actionBar = getSupportActionBar();
-        actionBar.setLogo(R.drawable.bagsmall);
-        actionBar.setTitle(" Add Bag");
-        actionBar.setDisplayUseLogoEnabled(true);   // These two are for
-        actionBar.setDisplayShowHomeEnabled(true);
+        actionBar.setTitle(Html.fromHtml("<font color=\"#ffffff\">" + "Add New Bag" + "</font>"));
         actionBar.setDisplayHomeAsUpEnabled(true);
 
-        source = getIntent().getStringExtra("source");
 
-        bid = getIntent().getStringExtra("bagid");
-        vendor_id = getIntent().getStringExtra("ven_id");
-
-        addBagBtn = (Button) findViewById(R.id.addBagBtn);
+        addBagBtn = (Button) findViewById(R.id.saveBtn);
 
         nameEditText = (EditText) findViewById(R.id.nameEditText);
         typeEditText = (EditText) findViewById(R.id.typeEditText);
@@ -67,21 +67,22 @@ public class AddBagActivity extends AppCompatActivity implements FunctionsThread
         companyEditText = (EditText) findViewById(R.id.companyEditText);
       //  quantityEditText = (EditText) findViewById(R.id.quantityEditText);
         bagPhoto = (ImageView) findViewById(R.id.bag_photo);
+        addPhoto=(TextView)findViewById(R.id.addPhoto);
 
-        if (source.equals("source")) {
+/*      if (source.equals("source"))
+        {
             nameEditText.setText(getIntent().getStringExtra("name"));
             typeEditText.setText(getIntent().getStringExtra("category"));
             priceEditText.setText(getIntent().getStringExtra("price"));
             companyEditText.setText(getIntent().getStringExtra("company"));
            // quantityEditText.setText(getIntent().getStringExtra("quantity"));
             String photoUri = getIntent().getStringExtra("photo");
-            addBagBtn.setText("Update");
             Picasso.Builder builder = new Picasso.Builder(this);
             builder.listener(new Picasso.Listener() {
                 @Override
                 public void onImageLoadFailed(Picasso picasso, Uri uri, Exception exception) {
                     exception.printStackTrace();
-                    Picasso.with(getApplicationContext()).load(R.drawable.bag).into(bagPhoto);
+                    Picasso.with(getApplicationContext()).load(R.drawable.vector_drawable_logo).into(bagPhoto);
                 }
             });
             builder.build()
@@ -95,6 +96,8 @@ public class AddBagActivity extends AppCompatActivity implements FunctionsThread
 
 
         }
+
+        */
 
         bagPhoto.setOnClickListener(new View.OnClickListener() {
             @Override
@@ -139,7 +142,6 @@ public class AddBagActivity extends AppCompatActivity implements FunctionsThread
             case android.R.id.home:
                 this.finish();
                 Intent i = new Intent(getBaseContext(),BagListActivity.class);
-                i.putExtra("source","bag");
                 startActivity(i);
         }
         return true;
@@ -148,7 +150,6 @@ public class AddBagActivity extends AppCompatActivity implements FunctionsThread
     @Override
     public void onBackPressed() {
         Intent i = new Intent(getBaseContext(),BagListActivity.class);
-        i.putExtra("source","bag");
         startActivity(i);
     }
 
@@ -166,7 +167,13 @@ public class AddBagActivity extends AppCompatActivity implements FunctionsThread
                 bagPhoto.setImageURI(uri);
 
                 ext = mediaSelect.substring(mediaSelect.lastIndexOf(".") + 1, mediaSelect.length());
+
+
+                bagPhoto.setAlpha(1.0f);
+                addPhoto.setVisibility(View.GONE);
+
             }
+
 
 
         }

@@ -1,50 +1,33 @@
 package com.example.pujan.bag.orderDetailsFragment;
 
-import android.app.Dialog;
-import android.app.ProgressDialog;
 import android.content.Context;
-import android.content.DialogInterface;
-import android.content.Intent;
-import android.graphics.Color;
-import android.support.v7.app.AlertDialog;
-import android.support.v7.widget.PopupMenu;
+import android.os.Handler;
 import android.support.v7.widget.RecyclerView;
 import android.text.Html;
-import android.view.Gravity;
 import android.view.LayoutInflater;
-import android.view.MenuItem;
 import android.view.View;
 import android.view.ViewGroup;
-import android.widget.ArrayAdapter;
+import android.view.animation.OvershootInterpolator;
 import android.widget.Button;
 import android.widget.EditText;
 import android.widget.ImageView;
 import android.widget.LinearLayout;
-import android.widget.Spinner;
-import android.widget.TableLayout;
-import android.widget.TableRow;
 import android.widget.TextView;
-import android.widget.Toast;
 
 import com.example.pujan.bag.FunctionsThread;
 import com.example.pujan.bag.R;
-import com.example.pujan.bag.bagDetails.AddBagActivity;
 import com.example.pujan.bag.bagDetails.BagColorQuantity;
 import com.example.pujan.bag.bagDetails.BagEntity;
-import com.example.pujan.bag.bagDetails.BagListActivity;
-import com.example.pujan.bag.bagStock.ColorQuantityEntity;
 import com.example.pujan.bag.database.DbHelper;
+import com.example.pujan.bag.printPackage.PrintEntity;
 import com.squareup.picasso.MemoryPolicy;
 import com.squareup.picasso.NetworkPolicy;
 import com.squareup.picasso.Picasso;
 
-import org.json.JSONArray;
-import org.json.JSONException;
-import org.json.JSONObject;
+import net.cachapa.expandablelayout.ExpandableLayout;
 
 import java.util.ArrayList;
 import java.util.LinkedHashMap;
-import java.util.concurrent.ExecutionException;
 
 /**
  * Created by Pujan on 1/3/2017.
@@ -52,6 +35,7 @@ import java.util.concurrent.ExecutionException;
 public class BagViewFragmentAdapter extends RecyclerView.Adapter<BagViewFragmentAdapter.TestHolder> implements FunctionsThread.AsyncResponse {
 
 
+    boolean show = false;
     int selected_position = 0;
     private ArrayList<BagEntity> listData;
     private LayoutInflater inflater;
@@ -60,8 +44,13 @@ public class BagViewFragmentAdapter extends RecyclerView.Adapter<BagViewFragment
     private Context context;
     String ip = "";
 
+    private RecyclerView recyclerView;
+    private static final int UNSELECTED = -1;
+    private int selectedItem = UNSELECTED;
 
-    ArrayList<BagColorQuantity> colorQuantities = new ArrayList<>();
+
+    ArrayList<PrintEntity> colorQuantities = new ArrayList<>();
+    ArrayList<BagColorQuantity> stockList = new ArrayList<>();
 
 
     private ItemClickCallback itemClickCallback;
@@ -81,20 +70,19 @@ public class BagViewFragmentAdapter extends RecyclerView.Adapter<BagViewFragment
     }
 
     public interface ItemClickCallback {
-        void onItemClick(int p);
+        void onItemClick(ArrayList<PrintEntity> p);
     }
 
 
-    public void onItemClickCallback(BagListFragment itemClickCallback) {
-        this.itemClickCallback = itemClickCallback;
-    }
 
 
-    public BagViewFragmentAdapter(ArrayList<BagEntity> listData, String viewsource, Context c) {
+
+    public BagViewFragmentAdapter(ArrayList<BagEntity> listData, ArrayList<BagColorQuantity> stockList,Context c, RecyclerView recyclerView) {
+        this.recyclerView = recyclerView;
         this.listData = listData;
         this.inflater = LayoutInflater.from(c);
-        this.bag = viewsource;
         this.context = c;
+        this.stockList=stockList;
 
 
         DbHelper db = new DbHelper(context);
@@ -104,17 +92,6 @@ public class BagViewFragmentAdapter extends RecyclerView.Adapter<BagViewFragment
         } finally {
             db.close();
         }
-/*
-        LinkedHashMap<String,Integer> map = new LinkedHashMap<>();
-        map.put("NO1",3);
-        map.put("skf",5);
-        BagColorQuantity bcq = new BagColorQuantity();
-        bcq.setBag_id(1);
-        bcq.setQuantityColor(map);
-        colorQuantities.add(bcq);
-
-
-*/
     }
 
 
@@ -125,6 +102,7 @@ public class BagViewFragmentAdapter extends RecyclerView.Adapter<BagViewFragment
         return new TestHolder(view);
 
     }
+
 
     @Override
     public void onBindViewHolder(final TestHolder holder, int position) {
@@ -139,6 +117,87 @@ public class BagViewFragmentAdapter extends RecyclerView.Adapter<BagViewFragment
         holder.quantity.setText(Html.fromHtml("Stock: " + Integer.toString(item.getQuantity())));
 
 
+        holder.redStockQty.setText("0");
+        holder.blackStockQty.setText("0");
+        holder.brownStockQty.setText("0");
+        holder.othersStockQty.setText("0");
+
+        for(int i=0;i<stockList.size();i++)
+        {
+            if(listData.get(position).getId()==stockList.get(i).getBag_id()) {
+
+                for (LinkedHashMap.Entry<String, Integer> entry : stockList.get(i).getQuantityColor().entrySet()) {
+                    switch (entry.getKey()) {
+                        case "RED":
+                            holder.redStockQty.setText(entry.getValue().toString());
+                            break;
+                        case "BLACK":
+                            holder.blackStockQty.setText(entry.getValue().toString());
+                            break;
+                        case "BROWN":
+                            holder.brownStockQty.setText(entry.getValue().toString());
+                            break;
+                        case "OTHERS":
+                            holder.othersStockQty.setText(entry.getValue().toString());
+                            break;
+
+                        default:
+                            break;
+                    }
+
+                }
+
+                break;
+            }
+
+        }
+
+
+
+        int hold = -1;
+        for (int i = 0; i < colorQuantities.size(); i++) {
+            if (listData.get(position).getId() == colorQuantities.get(i).getBag_id()) {
+
+                hold = i;
+                break;
+            }
+
+        }
+
+        if (hold != -1) {
+            holder.redEditTxt.setText("");
+            holder.blackEditTxt.setText("");
+            holder.othersEditText.setText("");
+            holder.brownEditTxt.setText("");
+            for (LinkedHashMap.Entry<String, Integer> entry : colorQuantities.get(hold).getColorQuantity().entrySet()) {
+                switch (entry.getKey()) {
+                    case "RED":
+                        holder.redEditTxt.setText(entry.getValue().toString());
+                        break;
+                    case "BLACK":
+                        holder.blackEditTxt.setText(entry.getValue().toString());
+                        break;
+                    case "BROWN":
+                        holder.brownEditTxt.setText(entry.getValue().toString());
+                        break;
+                    case "OTHERS":
+                        holder.othersEditText.setText(entry.getValue().toString());
+                        break;
+
+                    default:
+                    break;
+                }
+            }
+
+
+
+        } else {
+            holder.redEditTxt.setText("");
+            holder.blackEditTxt.setText("");
+            holder.brownEditTxt.setText("");
+            holder.othersEditText.setText("");
+        }
+
         try {
             Picasso
                     .with(context)
@@ -146,7 +205,7 @@ public class BagViewFragmentAdapter extends RecyclerView.Adapter<BagViewFragment
                     .memoryPolicy(MemoryPolicy.NO_CACHE)
                     .networkPolicy(NetworkPolicy.NO_CACHE)
                     .resize(300, 300)
-                    .placeholder(R.drawable.bag)
+                    .placeholder(R.mipmap.ic_launcher)
                     .into(holder.photoBox);
 
         } catch (Exception e) {
@@ -154,10 +213,6 @@ public class BagViewFragmentAdapter extends RecyclerView.Adapter<BagViewFragment
         }
 
 
-        if (selected_position == position) {
-            holder.container.setBackgroundColor(Color.DKGRAY);
-        } else
-            holder.container.setBackgroundColor(Color.TRANSPARENT);
     }
 
     @Override
@@ -175,9 +230,13 @@ public class BagViewFragmentAdapter extends RecyclerView.Adapter<BagViewFragment
         private TextView quantity;
         private TextView company;
         private View container;
-
+        private LinearLayout orderContainer;
         private ImageView photoBox;
+        private Button addOrder, clearAllOrder;
+        private EditText redEditTxt, blackEditTxt, brownEditTxt, othersEditText;
+        private TextView redStockQty,blackStockQty,brownStockQty,othersStockQty;
 
+        public ExpandableLayout expandableLayout;
 
         public TestHolder(View itemView) {
             super(itemView);
@@ -192,7 +251,72 @@ public class BagViewFragmentAdapter extends RecyclerView.Adapter<BagViewFragment
             container = itemView.findViewById(R.id.cont_root_item);
             photoBox = (ImageView) itemView.findViewById(R.id.photo_box);
             context = itemView.getContext();
+
+
+            addOrder = (Button) itemView.findViewById(R.id.addOrder);
+            clearAllOrder = (Button) itemView.findViewById(R.id.clearOrder);
+
+            orderContainer = (LinearLayout) itemView.findViewById(R.id.orderContainer);
+
+            expandableLayout = (ExpandableLayout) itemView.findViewById(R.id.expandableLayout);
+            expandableLayout.setInterpolator(new OvershootInterpolator());
+
+            expandableLayout.collapse();
+
             container.setOnClickListener(this);
+
+            redEditTxt = (EditText) itemView.findViewById(R.id.redQty);
+            blackEditTxt = (EditText) itemView.findViewById(R.id.blackQty);
+            brownEditTxt = (EditText) itemView.findViewById(R.id.brownQty);
+            othersEditText = (EditText) itemView.findViewById(R.id.othersQty);
+
+            redStockQty = (TextView) itemView.findViewById(R.id.redStockQty);
+            blackStockQty = (TextView) itemView.findViewById(R.id.blackStockQty);
+            brownStockQty = (TextView) itemView.findViewById(R.id.brownStockQty);
+            othersStockQty = (TextView) itemView.findViewById(R.id.othersStockQty);
+
+
+            addOrder.setOnClickListener(new View.OnClickListener() {
+                @Override
+                public void onClick(View v) {
+
+
+                    for (int i = 0; i < colorQuantities.size(); i++) {
+                        if (colorQuantities.get(i).getBag_id() == listData.get(getAdapterPosition()).getId()) {
+                            colorQuantities.remove(i);
+                        }
+                    }
+                    PrintEntity bcq = new PrintEntity();
+                    LinkedHashMap<String, Integer> colorQty = new LinkedHashMap<>();
+
+                    if (!redEditTxt.getText().toString().replaceAll("\\s+", "").equals(""))
+                        colorQty.put("RED", Integer.parseInt(redEditTxt.getText().toString()));
+                    if (!blackEditTxt.getText().toString().replaceAll("\\s+", "").equals(""))
+                        colorQty.put("BLACK", Integer.parseInt(blackEditTxt.getText().toString()));
+                    if (!brownEditTxt.getText().toString().replaceAll("\\s+", "").equals(""))
+                        colorQty.put("BROWN", Integer.parseInt(brownEditTxt.getText().toString()));
+                    if (!othersEditText.getText().toString().replaceAll("\\s+", "").equals(""))
+                        colorQty.put("OTHERS", Integer.parseInt(othersEditText.getText().toString()));
+
+
+                    if (!(redEditTxt.getText().toString().replaceAll("\\s+", "").equals("") & blackEditTxt.getText().toString().replaceAll("\\s+", "").equals("") & brownEditTxt.getText().toString().replaceAll("\\s+", "").equals("") & othersEditText.getText().toString().replaceAll("\\s+", "").equals(""))) {
+                        bcq.setBag_id(listData.get(getAdapterPosition()).getId());
+                        bcq.setProduct(listData.get(getAdapterPosition()).getName());
+                        bcq.setPrice(listData.get(getAdapterPosition()).getPrice());
+                        bcq.setColorQuantity(colorQty);
+
+
+                        colorQuantities.add(bcq);
+
+
+                    }
+
+
+                }
+
+
+            });
+
 
         }
 
@@ -200,15 +324,80 @@ public class BagViewFragmentAdapter extends RecyclerView.Adapter<BagViewFragment
         @Override
         public void onClick(View v) {
 
-            notifyItemChanged(selected_position);
-            selected_position = getAdapterPosition();
-            notifyItemChanged(selected_position);
 
-            itemClickCallback.onItemClick(listData.get(getAdapterPosition()).getId());
+            final TestHolder holder = (TestHolder) recyclerView.findViewHolderForAdapterPosition(selectedItem);
+            if (holder != null) {
+
+                holder.expandableLayout.collapse();
+
+            }
+
+            if (selectedItem == getAdapterPosition()) {
+                selectedItem = UNSELECTED;
+            } else {
+                expandableLayout.expand();
+                selectedItem = getAdapterPosition();
+
+                if (getAdapterPosition() > listData.size() - 3)
+                    new Handler().postDelayed(new Runnable() {
+                        @Override
+                        public void run() {
+                            recyclerView.smoothScrollBy(0, 500);
+                        }
+                    }, 200);
+
+            }
 
 
         }
+
+
     }
 
+    public void expandLayout(int scrollPosition) {
+
+
+        try {
+            if (selected_position != UNSELECTED) {
+
+                TestHolder holderI = (TestHolder) recyclerView.findViewHolderForAdapterPosition(selected_position);
+                if(holderI.expandableLayout.isExpanded())
+                holderI.expandableLayout.collapse();
+            }
+
+            TestHolder holderIn;
+            holderIn = (TestHolder) recyclerView.findViewHolderForLayoutPosition(scrollPosition);
+            holderIn.expandableLayout.expand();
+            selectedItem = scrollPosition;
+            recyclerView.smoothScrollToPosition(scrollPosition);
+            if (scrollPosition > listData.size() - 3)
+                new Handler().postDelayed(new Runnable() {
+                    @Override
+                    public void run() {
+                        recyclerView.smoothScrollBy(0, 500);
+                    }
+                }, 200);
+
+
+
+        } catch (Exception e) {
+            e.printStackTrace();
+        }
+
+
+    }
+
+
+    public ArrayList<PrintEntity> getColorQuantity() {
+        return colorQuantities;
+    }
+
+
+    public void setPendingData(ArrayList<PrintEntity> colorQuantities)
+    {
+        this.colorQuantities.clear();
+        this.colorQuantities.addAll(colorQuantities);
+        notifyDataSetChanged();
+    }
 
 }

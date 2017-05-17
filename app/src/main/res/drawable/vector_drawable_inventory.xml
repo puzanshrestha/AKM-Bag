@@ -1,0 +1,12 @@
+<?xml version="1.0" encoding="utf-8"?>
+<vector xmlns:android="http://schemas.android.com/apk/res/android" android:viewportWidth="503"
+    android:viewportHeight="441" android:width="150dp" android:height="160dp">
+    <group android:name="inventory">
+        <path android:name="cls-1" android:fillColor="#41A7EB"
+            android:pathData="M459.29,138V56.82H248.18L197.45,0H44.55V138H0L35.22,441.13H469.66L503.81,138ZM59.55,15H190.73l50.73,56.82H444.29V138H59.55Zm396.7,411.13H48.58L16.84,153H487Z" />
+        <path android:name="cls-1" android:fillColor="#41A7EB"
+            android:pathData="M97.71,358.15L405.71,358.15L405.71,373.15L97.71,373.15z" />
+        <path android:name="cls-1" android:fillColor="#41A7EB"
+            android:pathData="M136.26,298.29L367.26,298.29L367.26,313.29L136.26,313.29z" />
+    </group>
+</vector>

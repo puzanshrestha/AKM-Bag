@@ -4,36 +4,17 @@
     android:layout_height="match_parent"
     android:orientation="vertical">
 
-
     <FrameLayout
         android:id="@+id/topFrame"
         android:layout_width="match_parent"
-        android:layout_height="0dp"
-        android:layout_weight="0.3">
+        android:layout_height="match_parent"
+        >
 
     </FrameLayout>
 
-    <LinearLayout
-        android:layout_width="match_parent"
-        android:layout_height="0dp"
-        android:layout_weight="0.5">
 
-        <FrameLayout
-            android:id="@+id/bottomLeft"
-            android:layout_width="0dp"
-            android:layout_height="match_parent"
-            android:layout_weight="0.5"
-            android:background="#1e11FF"
 
-            ></FrameLayout>
 
-        <FrameLayout
-            android:id="@+id/bottomRight"
-            android:layout_width="0dp"
-            android:layout_height="match_parent"
-            android:layout_weight="0.5"
-            android:background="#1e1e1e"></FrameLayout>
-    </LinearLayout>
 </LinearLayout>
 
 

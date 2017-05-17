@@ -1,10 +1,14 @@
 package com.example.pujan.bag.orderDetailsFragment;
 
 import android.os.Bundle;
+
+import android.support.design.widget.FloatingActionButton;
 import android.support.v4.app.Fragment;
 import android.support.v7.widget.LinearLayoutManager;
 import android.support.v7.widget.RecyclerView;
 import android.support.v7.widget.SearchView;
+import android.support.v7.widget.Toolbar;
+import android.util.Log;
 import android.view.LayoutInflater;
 import android.view.View;
 import android.view.ViewGroup;
@@ -14,39 +18,79 @@ import com.example.pujan.bag.FunctionsThread;
 import com.example.pujan.bag.R;
 import com.example.pujan.bag.bagDetails.BagColorQuantity;
 import com.example.pujan.bag.bagDetails.BagEntity;
+import com.example.pujan.bag.printPackage.PrintEntity;
+
 
 import org.json.JSONArray;
+import org.json.JSONException;
 import org.json.JSONObject;
 
 import java.util.ArrayList;
+import java.util.LinkedHashMap;
 
-public class BagListFragment extends Fragment implements BagViewFragmentAdapter.ItemClickCallback, SearchView.OnQueryTextListener, FunctionsThread.AsyncResponse {
+import static android.view.View.GONE;
+
+
+public class BagListFragment extends Fragment implements SearchView.OnQueryTextListener, FunctionsThread.AsyncResponse {
 
     RecyclerView recView;
     BagViewFragmentAdapter bagViewFragmentAdapter;
-    String customer_id = "0";
-    String source = "";
-    String customerName = "";
-    String pending = "";
-    String pId = "";
+
     ArrayList<BagEntity> bagData = new ArrayList<>();
 
-    ArrayList<BagColorQuantity> colorQuantities = new ArrayList<>();
-    ArrayList<BagColorQuantity> pendingList = new ArrayList<>();
+    ArrayList<PrintEntity> orderValues=new ArrayList<>();
+    private BagAdapterPuller bagAdapterPuller;
 
-    private ItemSelect itemSelect;
-    public interface ItemSelect{
-        void onItemClick(int p);
+    ArrayList<BagColorQuantity> bagColorQuantities=new ArrayList<>();
+
+
+
+
+    public void scrollToPosition(int position) {
+
+
+        for(int i=0;i<bagData.size();i++)
+        {
+            if(bagData.get(i).getId()==position)
+                position=i;
+        }
+        recView.smoothScrollToPosition(position);
+        bagViewFragmentAdapter.expandLayout(position);
+
+
+
     }
 
-    public void onItemClickCallback(OrderFragment itemClickCallback) {
-        this.itemSelect = itemClickCallback;
+
+    public interface BagAdapterPuller {
+        void getBagAdapter(BagViewFragmentAdapter bfAdapter);
     }
+
+
+    public void onItemClickCallback(OrderActivity itemClickCallback) {
+        this.bagAdapterPuller = itemClickCallback;
+    }
+
+
+
+    public BagListFragment(ArrayList<PrintEntity> orderValues)
+    {
+        this.orderValues=orderValues;
+        System.out.println(orderValues.size());
+    }
+
+    public BagListFragment(){
+
+        System.out.println("no value");
+    }
+
+
 
     @Override
     public View onCreateView(LayoutInflater inflater, ViewGroup container, Bundle savedInstanceState) {
 
         View view = inflater.inflate(R.layout.activity_view_bag, null);
+
 
 
         /*
@@ -76,16 +120,22 @@ public class BagListFragment extends Fragment implements BagViewFragmentAdapter.
         }
 
 */
+
+        FloatingActionButton fab= (FloatingActionButton) view.findViewById(R.id.addNewBagBtn);
+        Toolbar toolbar =(Toolbar)view.findViewById(R.id.actionBar);
+        toolbar.setVisibility(GONE);
+        fab.setVisibility(GONE);
         recView = (RecyclerView) view.findViewById(R.id.recView);
 
-        recView.setHasFixedSize(true);
-        recView.setItemViewCacheSize(10);
-        recView.setDrawingCacheEnabled(true);
-        recView.setDrawingCacheQuality(View.DRAWING_CACHE_QUALITY_HIGH);
 
 
-        RecyclerView.LayoutManager lm = new LinearLayoutManager(getContext(), LinearLayoutManager.HORIZONTAL, false);
+
+
+
+
+        LinearLayoutManager lm = new LinearLayoutManager(getContext());
         recView.setLayoutManager(lm);
+
 
 
         //  recView.setLayoutManager(new GridLayoutManager(getContext(),2));
@@ -99,13 +149,10 @@ public class BagListFragment extends Fragment implements BagViewFragmentAdapter.
         return view;
     }
 
-    @Override
-    public void onItemClick(int p) {
 
 
-        itemSelect.onItemClick(p);
 
-    }
+
 
 
     @Override
@@ -134,6 +181,7 @@ public class BagListFragment extends Fragment implements BagViewFragmentAdapter.
             }
             JSONObject bagJson = new JSONObject(response);
             JSONArray bagJsonArray = bagJson.getJSONArray("result");
+            JSONArray stockJsonArray=bagJson.getJSONArray("stockData");
 
 
             for (int i = 0; i < bagJsonArray.length(); i++) {
@@ -151,11 +199,72 @@ public class BagListFragment extends Fragment implements BagViewFragmentAdapter.
 
             }
 
+            convertStockData(stockJsonArray);
+
+
+
+
 
         } catch (Exception e) {
             e.printStackTrace();
             Toast.makeText(getContext(), "Error With Database Connection..!!", Toast.LENGTH_SHORT).show();
         }
+
+
+    }
+
+    private void convertStockData(JSONArray bag) {
+
+
+        try {
+
+
+            LinkedHashMap<String, Integer> cqe = new LinkedHashMap<>();
+
+            BagColorQuantity bcqEntity = new BagColorQuantity();
+            JSONObject jObject2 = null;
+            for (int i = 0; i < bag.length(); i++) {
+                JSONObject jObject = bag.getJSONObject(i);
+                bcqEntity.setBag_id(Integer.valueOf(jObject.getString("bag_id")));
+
+                if (i + 1 < bag.length()) {
+                    jObject2 = bag.getJSONObject(i + 1);
+
+                }
+                else
+                    jObject2=jObject;
+                if ((jObject2.getString("bag_id")).equals(jObject.getString("bag_id"))) {
+
+
+                    cqe.put(jObject.getString("color"), Integer.valueOf(jObject.getString("quantityColor")));
+
+                } else {
+
+                    cqe.put(jObject.getString("color"), Integer.valueOf(jObject.getString("quantityColor")));
+                    bcqEntity.setQuantityColor(cqe);
+                    bagColorQuantities.add(bcqEntity);
+                    bcqEntity = new BagColorQuantity();
+                    cqe = new LinkedHashMap<>();
+
+                }
+
+
+
+
+            }
+
+
+            bcqEntity.setQuantityColor(cqe);
+            if(cqe.size()>0)
+                bagColorQuantities.add(bcqEntity);
+
+
+        } catch (JSONException e) {
+            e.printStackTrace();
+        }
+
+
+
     }
 
 
@@ -165,13 +274,15 @@ public class BagListFragment extends Fragment implements BagViewFragmentAdapter.
         getData(output);
 
         if(getActivity()!=null) {
-            bagViewFragmentAdapter = new BagViewFragmentAdapter(bagData, "orderView", getContext());
+            bagViewFragmentAdapter = new BagViewFragmentAdapter(bagData,bagColorQuantities, getContext(),recView);
             recView.setAdapter(bagViewFragmentAdapter);
-            bagViewFragmentAdapter.onItemClickCallback(BagListFragment.this);
-            bagViewFragmentAdapter.notifyDataSetChanged();
+            bagAdapterPuller.getBagAdapter(bagViewFragmentAdapter);
+            bagViewFragmentAdapter.setPendingData(orderValues);
+
         }
 
     }
+
 
 
 }

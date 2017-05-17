@@ -1,0 +1,12 @@
+<?xml version="1.0" encoding="utf-8"?>
+<vector xmlns:android="http://schemas.android.com/apk/res/android" android:viewportWidth="344"
+    android:viewportHeight="478" android:width="150dp" android:height="160dp">
+    <group android:name="report">
+        <path android:name="cls-1" android:fillColor="#41A7EB"
+            android:pathData="M0,0V478H344V0ZM329,463H15V15H329Z" />
+        <path android:name="cls-1" android:fillColor="#41A7EB"
+            android:pathData="M150.1,122.93l41.18,56.38L253.8,91.42l12.68,18.41C264.78,92.52,268.27,69,273,51.5c-15,10.21-36,21.16-52.88,25.19l21.49,6-50.5,71L150.49,98.07,65.59,206.88l11.79,9.24Z" />
+        <path android:name="cls-1" android:fillColor="#41A7EB"
+            android:pathData="M273.5,398 L261,398 L261,322.75 L246,322.75 L246,398 L204,398 L204,240 L189,240 L189,398 L138,398 L138,350.04 L123,350.04 L123,398 L79,398 L79,294.58 L64,294.58 L64,413 L273.5,413 L273.5,398z" />
+    </group>
+</vector>

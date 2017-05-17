@@ -5,7 +5,9 @@
 
     <item android:id="@+id/logOut"
         android:title="Log out"
-        app:showAsAction="never"
+        android:icon="@drawable/vector_drawable_logout"
+
+        app:showAsAction="always"
         >
 
     </item>
