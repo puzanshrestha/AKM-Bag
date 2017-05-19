@@ -23,9 +23,11 @@ import com.example.pujan.bag.FunctionsThread;
 import com.example.pujan.bag.R;
 
 import org.json.JSONArray;
+import org.json.JSONException;
 import org.json.JSONObject;
 
 import java.util.ArrayList;
+import java.util.LinkedHashMap;
 
 public class BagListActivity extends AppCompatActivity implements SearchView.OnQueryTextListener, FunctionsThread.AsyncResponse {
 
@@ -33,7 +35,7 @@ public class BagListActivity extends AppCompatActivity implements SearchView.OnQ
     BagViewAdapter bagViewAdapter;
 
     ArrayList<BagEntity> bagData = new ArrayList<>();
-
+    ArrayList<BagColorQuantity> bagColorQuantities=new ArrayList<>();
     FloatingActionButton addNewBag;
 
 
@@ -158,6 +160,7 @@ public class BagListActivity extends AppCompatActivity implements SearchView.OnQ
             }
             JSONObject bagJson = new JSONObject(response);
             JSONArray bagJsonArray = bagJson.getJSONArray("result");
+            JSONArray stockJsonArray=bagJson.getJSONArray("stockData");
 
 
             for (int i = 0; i < bagJsonArray.length(); i++) {
@@ -168,29 +171,90 @@ public class BagListActivity extends AppCompatActivity implements SearchView.OnQ
                 bagEntity.setCategory(jObject.getString("bag_category"));
                 bagEntity.setPrice(Integer.valueOf(jObject.getString("bag_price")));
                 bagEntity.setCompany(jObject.getString("bag_company"));
-                bagEntity.setQuantity(Integer.valueOf(jObject.getString("bag_quantity")));
+                bagEntity.setVendorId(Integer.valueOf(jObject.getString("vendor_id")));
                 bagEntity.setPhoto(jObject.getString("bag_photo"));
 
                 bagData.add(bagEntity);
 
             }
 
+            convertStockData(stockJsonArray);
+
+
+
+
 
         } catch (Exception e) {
             e.printStackTrace();
             Toast.makeText(this, "Error With Database Connection..!!", Toast.LENGTH_SHORT).show();
         }
+
+
     }
 
 
     @Override
     public void onComplete(String output) {
         getData(output);
-        bagViewAdapter = new BagViewAdapter(bagData, "bag", getBaseContext());
+        bagViewAdapter = new BagViewAdapter(bagData,bagColorQuantities, "bag", getBaseContext());
         recView.setAdapter(bagViewAdapter);
 
 
     }
 
+
+    private void convertStockData(JSONArray bag) {
+
+
+        try {
+
+
+            LinkedHashMap<String, Integer> cqe = new LinkedHashMap<>();
+
+            BagColorQuantity bcqEntity = new BagColorQuantity();
+            JSONObject jObject2 = null;
+            for (int i = 0; i < bag.length(); i++) {
+                JSONObject jObject = bag.getJSONObject(i);
+                bcqEntity.setBag_id(Integer.valueOf(jObject.getString("bag_id")));
+
+                if (i + 1 < bag.length()) {
+                    jObject2 = bag.getJSONObject(i + 1);
+
+                }
+                else
+                    jObject2=jObject;
+                if ((jObject2.getString("bag_id")).equals(jObject.getString("bag_id"))) {
+
+
+                    cqe.put(jObject.getString("color"), Integer.valueOf(jObject.getString("quantityColor")));
+
+                } else {
+
+                    cqe.put(jObject.getString("color"), Integer.valueOf(jObject.getString("quantityColor")));
+                    bcqEntity.setQuantityColor(cqe);
+                    bagColorQuantities.add(bcqEntity);
+                    bcqEntity = new BagColorQuantity();
+                    cqe = new LinkedHashMap<>();
+
+                }
+
+
+
+
+            }
+
+
+            bcqEntity.setQuantityColor(cqe);
+            if(cqe.size()>0)
+                bagColorQuantities.add(bcqEntity);
+
+
+        } catch (JSONException e) {
+            e.printStackTrace();
+        }
+
+
+
+    }
 
 }

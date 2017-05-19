@@ -122,11 +122,13 @@ public class BagViewFragmentAdapter extends RecyclerView.Adapter<BagViewFragment
         holder.brownStockQty.setText("0");
         holder.othersStockQty.setText("0");
 
+        int stockTotal =0;
         for(int i=0;i<stockList.size();i++)
         {
             if(listData.get(position).getId()==stockList.get(i).getBag_id()) {
 
                 for (LinkedHashMap.Entry<String, Integer> entry : stockList.get(i).getQuantityColor().entrySet()) {
+                    stockTotal+=entry.getValue();
                     switch (entry.getKey()) {
                         case "RED":
                             holder.redStockQty.setText(entry.getValue().toString());
@@ -151,6 +153,8 @@ public class BagViewFragmentAdapter extends RecyclerView.Adapter<BagViewFragment
             }
 
         }
+
+        holder.quantity.setText(Html.fromHtml("Stock: " + Integer.toString(stockTotal)));
 
 
 
@@ -205,7 +209,7 @@ public class BagViewFragmentAdapter extends RecyclerView.Adapter<BagViewFragment
                     .memoryPolicy(MemoryPolicy.NO_CACHE)
                     .networkPolicy(NetworkPolicy.NO_CACHE)
                     .resize(300, 300)
-                    .placeholder(R.mipmap.ic_launcher)
+                    .placeholder(R.drawable.vector_drawable_bag)
                     .into(holder.photoBox);
 
         } catch (Exception e) {

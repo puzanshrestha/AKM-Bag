@@ -20,6 +20,7 @@ import android.view.View;
 import android.widget.Button;
 import android.widget.EditText;
 import android.widget.ImageView;
+import android.widget.TextView;
 import android.widget.Toast;
 
 import com.example.pujan.bag.FunctionsThread;
@@ -31,7 +32,7 @@ import com.squareup.picasso.Picasso;
 
 import java.util.concurrent.ExecutionException;
 
-public class BagDetailsActivity extends AppCompatActivity {
+public class BagDetailsActivity extends AppCompatActivity implements FunctionsThread.AsyncResponse{
 
 
     Button editBtn,deleteBtn,saveBtn;
@@ -40,8 +41,9 @@ public class BagDetailsActivity extends AppCompatActivity {
 
     ImageView bagPhoto;
 
-    String bag_id,totalQuantity;
+    String bag_id,vendor_id;
 
+    TextView addPhotoText;
     int selectedPic;
     String mediaSelect = "";
     String ext = "";
@@ -65,6 +67,9 @@ public class BagDetailsActivity extends AppCompatActivity {
         deleteBtn=(Button) findViewById(R.id.deleteBagBtn);
         saveBtn=(Button)findViewById(R.id.saveBtn);
         bagPhoto=(ImageView)findViewById(R.id.bag_photo);
+        addPhotoText=(TextView)findViewById(R.id.addPhoto);
+
+
 
 
         nameEditText = (EditText) findViewById(R.id.nameEditText);
@@ -74,12 +79,13 @@ public class BagDetailsActivity extends AppCompatActivity {
 
 
         bag_id=getIntent().getStringExtra("bagid");
+        vendor_id=getIntent().getStringExtra("vendor_id");
 
         nameEditText.setText(getIntent().getStringExtra("name"));
         typeEditText.setText(getIntent().getStringExtra("category"));
         priceEditText.setText(getIntent().getStringExtra("price"));
         companyEditText.setText(getIntent().getStringExtra("company"));
-        totalQuantity=getIntent().getStringExtra("quantity");
+
         String photoUri = getIntent().getStringExtra("photo");
         Picasso.Builder builder = new Picasso.Builder(this);
         builder.listener(new Picasso.Listener() {
@@ -119,6 +125,9 @@ public class BagDetailsActivity extends AppCompatActivity {
             @Override
             public void onClick(View v) {
                 setEditable(false);
+                FunctionsThread t = new FunctionsThread(getBaseContext());
+                t.execute("AddBag", nameEditText.getText().toString(), typeEditText.getText().toString(), priceEditText.getText().toString(), companyEditText.getText().toString(), "update", bag_id, ext, "0");
+                t.trigAsyncResponse(BagDetailsActivity.this);
             }
         });
 
@@ -168,18 +177,20 @@ public class BagDetailsActivity extends AppCompatActivity {
 
             saveBtn.setVisibility(View.GONE);
             bagPhoto.setClickable(false);
+            bagPhoto.setAlpha(1f);
+            addPhotoText.setVisibility(View.GONE);
         }
 
         else
         {
-
-
             nameEditText.setInputType(InputType.TYPE_CLASS_TEXT);
             typeEditText.setInputType(InputType.TYPE_CLASS_TEXT);
             priceEditText.setInputType(InputType.TYPE_CLASS_NUMBER);
             companyEditText.setInputType(InputType.TYPE_CLASS_TEXT);
             saveBtn.setVisibility(View.VISIBLE);
             bagPhoto.setClickable(true);
+            addPhotoText.setVisibility(View.VISIBLE);
+            bagPhoto.setAlpha(0.5f);
 
 
             nameEditText.dispatchTouchEvent(MotionEvent.obtain(SystemClock.uptimeMillis(), SystemClock.uptimeMillis(), MotionEvent.ACTION_DOWN, 0, 0, 0));
@@ -201,14 +212,13 @@ public class BagDetailsActivity extends AppCompatActivity {
                         final String check;
                         try {
                             check = new FunctionsThread(getBaseContext()).execute("AddBag", " ", " ", " ", " ", "delete", bag_id, " ", " ").get();
-                            //System.out.println(check);
-                            if (check.equals("delete")) {
+                            System.out.println(check+"this is output from php");
+                            if (check.equals("Deleted")) {
                                 Intent i = new Intent(getBaseContext(), BagListActivity.class);
-                                i.putExtra("source", "bag");
                                 startActivity(i);
                                 Toast.makeText(getBaseContext(), "Deleted Successfully", Toast.LENGTH_LONG).show();
                             } else {
-                                Toast.makeText(getBaseContext(), "Failed to Delete", Toast.LENGTH_LONG).show();
+                                Toast.makeText(getBaseContext(), "Failed, Please make sure that this Bag is not used in Pending Bill List", Toast.LENGTH_LONG).show();
                             }
                         } catch (InterruptedException e) {
                             e.printStackTrace();
@@ -249,5 +259,15 @@ public class BagDetailsActivity extends AppCompatActivity {
                 startActivity(i);
         }
         return true;
+    }
+
+    @Override
+    public void onComplete(String output) {
+        System.out.println(output+"is output");
+        if(output.equals("Updated"))
+        Toast.makeText(this,"Successfully Updated Bag Information",Toast.LENGTH_SHORT).show();
+
+        else
+            Toast.makeText(this,"Failed to Update Bag Information",Toast.LENGTH_SHORT).show();
     }
 }

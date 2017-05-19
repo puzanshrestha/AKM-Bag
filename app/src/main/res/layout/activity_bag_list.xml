@@ -26,21 +26,21 @@
             android:gravity="center"
             >
 
-
             <LinearLayout
+                android:layout_margin="8dp"
                 android:layout_width="0dp"
                 android:layout_height="wrap_content"
-                android:layout_marginRight="2dp"
-                android:layout_weight="0.2"
-                android:padding="8dp">
+                android:layout_weight="0.23"
+                android:padding="12dp"
+                android:background="@drawable/order_rounded_back">
 
                 <ImageView
 
                     android:id="@+id/photo_box"
                     android:layout_width="wrap_content"
                     android:layout_height="wrap_content"
-                    android:background="@drawable/order_rounded_back"
-                    android:padding="2dp"
+                    android:src="@drawable/vector_drawable_bag"
+
 
                     />
 

@@ -43,6 +43,7 @@ public class PendingBillAdapter extends RecyclerView.Adapter<PendingBillAdapter.
         b.putString("customer_id",String.valueOf(listData.get(position).getCustomerId()));
         b.putString("customer_name",listData.get(position).getCustomerName());
         b.putString("customer_address",listData.get(position).getAddress());
+        b.putString("total",String.valueOf(listData.get(position).getTotal()));
 
         i.putExtras(b);
 
@@ -73,8 +74,11 @@ public class PendingBillAdapter extends RecyclerView.Adapter<PendingBillAdapter.
     @Override
     public void onBindViewHolder(final TestHolder holder, int position) {
         PendingBillListEntity item = listData.get(position);
-        holder.date.setText(Html.fromHtml("<u><b>"+"Date: "+ item.getDate()+"</b></u>"));
-        holder.customerName.setText("Customer Name: "+item.getCustomerName());
+        holder.pendingName.setText(item.getCustomerName());
+        holder.pendingDate.setText(item.getDate().toString());
+        holder.pendingAddress.setText(item.getAddress());
+        holder.pendingTotal.setText("Rs. "+String.valueOf(item.getTotal()));
+
 
 
     }
@@ -87,8 +91,8 @@ public class PendingBillAdapter extends RecyclerView.Adapter<PendingBillAdapter.
     class TestHolder extends RecyclerView.ViewHolder implements View.OnClickListener {
 
 
-        private TextView date;
-        private TextView customerName;
+
+        private TextView pendingName,pendingAddress,pendingTotal,pendingDate;
         private LinearLayout container;
 
 
@@ -99,8 +103,12 @@ public class PendingBillAdapter extends RecyclerView.Adapter<PendingBillAdapter.
 
 
             container =(LinearLayout)itemView.findViewById(R.id.pendingListContainer);
-            date = (TextView) itemView.findViewById(R.id.date);
-            customerName = (TextView) itemView.findViewById(R.id.customerName);
+
+            pendingName = (TextView) itemView.findViewById(R.id.pendingName);
+            pendingAddress=(TextView) itemView.findViewById(R.id.pendingAddress);
+            pendingTotal=(TextView) itemView.findViewById(R.id.pendingTotal);
+            pendingDate = (TextView) itemView.findViewById(R.id.pendingDate);
+
             container.setOnClickListener(this);
         }
 

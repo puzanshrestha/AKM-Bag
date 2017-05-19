@@ -133,12 +133,17 @@ public class FileUpload extends AsyncTask<String, Void, String> {
                 // read file and write it into form...
                 bytesRead = fileInputStream.read(buffer, 0, bufferSize);
 
+                int i=0;
                 while (bytesRead > 0) {
 
+
+                    i++;
                     dos.write(buffer, 0, bufferSize);
                     bytesAvailable = fileInputStream.available();
                     bufferSize = Math.min(bytesAvailable, maxBufferSize);
                     bytesRead = fileInputStream.read(buffer, 0, bufferSize);
+
+                    System.out.println(i+"progress");
 
                 }
 

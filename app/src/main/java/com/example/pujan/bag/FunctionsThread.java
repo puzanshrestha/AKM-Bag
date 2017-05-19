@@ -5,8 +5,12 @@ import android.content.Context;
 import android.os.AsyncTask;
 
 import com.example.pujan.bag.bagDetails.AddBagActivity;
+import com.example.pujan.bag.bagDetails.BagDetailsActivity;
 import com.example.pujan.bag.bagDetails.BagListActivity;
 import com.example.pujan.bag.bagDetails.BagViewAdapter;
+import com.example.pujan.bag.bagDetails.vendorSelectFragment.VendorSelectFragementAdapter;
+import com.example.pujan.bag.bagDetails.vendorSelectFragment.VendorSelectFragment;
+import com.example.pujan.bag.bagStock.StockDetailsActivity;
 import com.example.pujan.bag.bagStock.StockListActivity;
 import com.example.pujan.bag.bagStock.StockUpdateActivity;
 import com.example.pujan.bag.bagStock.StockViewActivity;
@@ -128,6 +132,11 @@ public class FunctionsThread extends AsyncTask<String, Void, String> {
 
     public void trigAsyncResponse(CustomerDetailsActivity activity) {this.callback = activity;}
     public void trigAsyncResponse(VendorDetailsActivity activity) {this.callback = activity;}
+    public void trigAsyncResponse(VendorSelectFragment activity) {this.callback = activity;}
+    public void trigAsyncResponse(BagDetailsActivity activity) {this.callback = activity;}
+    public void trigAsyncResponse(StockDetailsActivity activity) {this.callback = activity;}
+
+
     public FunctionsThread(Context c) {
         this.c = c;
         DbHelper db = new DbHelper(c);
@@ -249,7 +258,7 @@ public class FunctionsThread extends AsyncTask<String, Void, String> {
 
             }
         } else if (method.equals("AddBag")) {
-            String name, type, price, company, source, bid, ext, quantity;
+            String name, type, price, company, source, bid, ext, vendor_id;
             name = params[1];
             type = params[2];
             price = params[3];
@@ -257,8 +266,8 @@ public class FunctionsThread extends AsyncTask<String, Void, String> {
             source = params[5];
             bid = params[6];
             ext = params[7];
-            quantity = params[8];
-            System.out.println("Inside thread");
+            vendor_id = params[8];
+
 
 
             try {
@@ -279,7 +288,8 @@ public class FunctionsThread extends AsyncTask<String, Void, String> {
                         URLEncoder.encode("source", "UTF-8") + "=" + URLEncoder.encode(source, "UTF-8") + "&" +
                         URLEncoder.encode("bid", "UTF-8") + "=" + URLEncoder.encode(bid, "UTF-8") + "&" +
                         URLEncoder.encode("ext", "UTF-8") + "=" + URLEncoder.encode(ext, "UTF-8") + "&" +
-                        URLEncoder.encode("bag_quantity", "UTF-8") + "=" + URLEncoder.encode(quantity, "UTF-8");
+                        URLEncoder.encode("vendor_id", "UTF-8") + "=" + URLEncoder.encode(vendor_id, "UTF-8");
+
 
 
                 bufferedWriter.write(data);
@@ -289,7 +299,7 @@ public class FunctionsThread extends AsyncTask<String, Void, String> {
                 InputStream is = con.getInputStream();
                 BufferedReader bufferedReader = new BufferedReader(new InputStreamReader(is, "iso-8859-1"));
                 StringBuilder sb = new StringBuilder();
-                String line = new String();
+                String line;
 
                 while ((line = bufferedReader.readLine()) != null) {
                     sb.append(line);
@@ -306,7 +316,11 @@ public class FunctionsThread extends AsyncTask<String, Void, String> {
 
             }
 
-        } else if (method.equals("AddRelation")) {
+        }
+
+
+        /*
+        else if (method.equals("AddRelation")) {
 
             String vendor_id = params[1];
             String bag_name = params[2];
@@ -343,7 +357,10 @@ public class FunctionsThread extends AsyncTask<String, Void, String> {
             } catch (Exception e) {
                 return "Error Inserting relation";
             }
-        } else if (method.equals("AddCustomer")) {
+        }
+
+        */
+        else if (method.equals("AddCustomer")) {
             String customerName = params[1];
             String customerAddress = params[2];
             String customerPhone = params[3];

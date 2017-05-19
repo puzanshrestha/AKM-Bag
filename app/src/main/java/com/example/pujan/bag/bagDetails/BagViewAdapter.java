@@ -67,7 +67,7 @@ public class BagViewAdapter extends RecyclerView.Adapter<BagViewAdapter.TestHold
 
     String[] array_spinner;
 
-    ArrayList<BagColorQuantity> colorQuantities = new ArrayList<>();
+    ArrayList<BagColorQuantity> stockList = new ArrayList<>();
 
 
 
@@ -93,19 +93,13 @@ public class BagViewAdapter extends RecyclerView.Adapter<BagViewAdapter.TestHold
 
 
 
-    public BagViewAdapter(ArrayList<BagEntity> listData, String viewsource, Context c,ArrayList<BagColorQuantity> pending) {
-        this.listData = listData;
-        this.inflater = LayoutInflater.from(c);
-        this.bag = viewsource;
-        this.context = c;
-        this.colorQuantities = pending;
 
-    }
-    public BagViewAdapter(ArrayList<BagEntity> listData, String viewsource, Context c) {
+    public BagViewAdapter(ArrayList<BagEntity> listData,ArrayList<BagColorQuantity> stockList, String viewsource, Context c) {
         this.listData = listData;
         this.inflater = LayoutInflater.from(c);
         this.bag = viewsource;
         this.context = c;
+        this.stockList=stockList;
 
 
 
@@ -148,8 +142,25 @@ public class BagViewAdapter extends RecyclerView.Adapter<BagViewAdapter.TestHold
         holder.category.setText(Html.fromHtml("Category: "+item.getCategory()));
         holder.price.setText(Html.fromHtml("Price: "+Integer.toString(item.getPrice())));
         holder.company.setText(Html.fromHtml("Company: "+item.getCompany()));
-        holder.quantity.setText(Html.fromHtml("Stock: "+Integer.toString(item.getQuantity())));
 
+
+        int stockTotal=0;
+        for(int i=0;i<stockList.size();i++)
+        {
+            if(listData.get(position).getId()==stockList.get(i).getBag_id()) {
+
+                for (LinkedHashMap.Entry<String, Integer> entry : stockList.get(i).getQuantityColor().entrySet()) {
+
+                    stockTotal+=entry.getValue();
+
+                }
+
+                break;
+            }
+
+        }
+
+        holder.quantity.setText(Html.fromHtml("Stock: "+Integer.toString(stockTotal)));
 
 
 
@@ -161,7 +172,7 @@ public class BagViewAdapter extends RecyclerView.Adapter<BagViewAdapter.TestHold
                     .memoryPolicy(MemoryPolicy.NO_CACHE)
                     .networkPolicy(NetworkPolicy.NO_CACHE)
                     .resize(300, 300)
-                    .placeholder(R.mipmap.ic_launcher)
+                    .placeholder(R.drawable.vector_drawable_bag)
                     .into(holder.photoBox);
 
         } catch (Exception e) {
@@ -194,7 +205,7 @@ public class BagViewAdapter extends RecyclerView.Adapter<BagViewAdapter.TestHold
 
         private ImageView photoBox;
         private TextView optionsMenu;
-
+        private TextView redStockQty,blackStockQty,brownStockQty,othersStockQty;
 
 
 
@@ -220,6 +231,12 @@ public class BagViewAdapter extends RecyclerView.Adapter<BagViewAdapter.TestHold
 
 
             context=itemView.getContext();
+
+
+            redStockQty = (TextView) itemView.findViewById(R.id.redStockQty);
+            blackStockQty = (TextView) itemView.findViewById(R.id.blackStockQty);
+            brownStockQty = (TextView) itemView.findViewById(R.id.brownStockQty);
+            othersStockQty = (TextView) itemView.findViewById(R.id.othersStockQty);
 
 
 
@@ -267,9 +284,7 @@ public class BagViewAdapter extends RecyclerView.Adapter<BagViewAdapter.TestHold
 
     }
 
-    public ArrayList<BagColorQuantity> getRecValues() {
-        return colorQuantities;
-    }
+
 
 
     public void edit(int position) {
@@ -283,13 +298,14 @@ public class BagViewAdapter extends RecyclerView.Adapter<BagViewAdapter.TestHold
             String name = item.getName();
             String company = item.getCompany();
             String price = Integer.toString(item.getPrice());
+        String vendorID =Integer.toString(item.getVendorId());
             String quantity = Integer.toString(item.getQuantity());
             i.putExtra("bagid", bagid);
             i.putExtra("name", name);
             i.putExtra("category", category);
             i.putExtra("price", price);
             i.putExtra("company", company);
-            i.putExtra("quantity", quantity);
+            i.putExtra("vendor_id", vendorID);
             i.putExtra("photo", item.getPhoto());
             context.startActivity(i);
 

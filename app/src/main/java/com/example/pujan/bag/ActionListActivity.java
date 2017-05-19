@@ -19,6 +19,7 @@ import android.widget.LinearLayout;
 
 import com.example.pujan.bag.bagDetails.BagListActivity;
 import com.example.pujan.bag.bagStock.StockDetailsActivity;
+import com.example.pujan.bag.bagStock.StockListActivity;
 import com.example.pujan.bag.customerDetails.CustomerDetailsActivity;
 
 import com.example.pujan.bag.customerDetails.CustomerListActivity;
@@ -131,7 +132,7 @@ public class ActionListActivity extends AppCompatActivity {
         bagStockBtn.setOnClickListener(new View.OnClickListener() {
             @Override
             public void onClick(View v) {
-                Intent i = new Intent(getBaseContext(), StockDetailsActivity.class);
+                Intent i = new Intent(getBaseContext(), StockListActivity.class);
                 startActivity(i);
 
             }

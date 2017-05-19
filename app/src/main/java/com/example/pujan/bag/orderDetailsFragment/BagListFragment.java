@@ -192,7 +192,7 @@ public class BagListFragment extends Fragment implements SearchView.OnQueryTextL
                 bagEntity.setCategory(jObject.getString("bag_category"));
                 bagEntity.setPrice(Integer.valueOf(jObject.getString("bag_price")));
                 bagEntity.setCompany(jObject.getString("bag_company"));
-                bagEntity.setQuantity(Integer.valueOf(jObject.getString("bag_quantity")));
+                bagEntity.setVendorId(Integer.valueOf(jObject.getString("vendor_id")));
                 bagEntity.setPhoto(jObject.getString("bag_photo"));
 
                 bagData.add(bagEntity);

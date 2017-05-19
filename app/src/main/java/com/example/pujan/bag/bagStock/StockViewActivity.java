@@ -82,7 +82,6 @@ public class StockViewActivity extends Activity implements FunctionsThread.Async
 
         try {
 
-            System.out.println(response+"this is reaposone");
             JSONObject queryQuantity = new JSONObject(response);
             JSONArray queryQuantityJsonArray = queryQuantity.getJSONArray("response");
             for (int i = 0; i < queryQuantityJsonArray.length(); i++) {

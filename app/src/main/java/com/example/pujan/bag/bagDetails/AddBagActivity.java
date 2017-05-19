@@ -2,14 +2,18 @@ package com.example.pujan.bag.bagDetails;
 
 import android.content.Intent;
 import android.database.Cursor;
+import android.media.Image;
 import android.net.Uri;
 import android.provider.MediaStore;
+import android.support.v4.app.FragmentManager;
 import android.support.v7.app.AppCompatActivity;
 import android.os.Bundle;
 import android.support.v7.widget.Toolbar;
 import android.text.Html;
+import android.text.InputType;
 import android.view.KeyEvent;
 import android.view.MenuItem;
+import android.view.MotionEvent;
 import android.view.View;
 import android.widget.Button;
 import android.widget.EditText;
@@ -22,6 +26,8 @@ import com.example.pujan.bag.FileUpload;
 import com.example.pujan.bag.FunctionsThread;
 import com.example.pujan.bag.MainActivity;
 import com.example.pujan.bag.R;
+import com.example.pujan.bag.bagDetails.vendorSelectFragment.VendorSelectFragment;
+import com.example.pujan.bag.orderDetailsFragment.customerSelectFragment.SelectCustomerFragment;
 import com.example.pujan.bag.vendorDetails.VendorListActivity;
 import com.squareup.picasso.MemoryPolicy;
 import com.squareup.picasso.NetworkPolicy;
@@ -31,10 +37,9 @@ import java.util.concurrent.ExecutionException;
 
 public class AddBagActivity extends AppCompatActivity implements FunctionsThread.AsyncResponse {
 
-    EditText nameEditText, typeEditText, priceEditText, companyEditText;
-    Button addBagBtn;
-    String source;
-    String bid, vendor_id;
+    EditText nameEditText, typeEditText, priceEditText, companyEditText,vendorEditText;
+    Button addBagBtn,vendorSelectBtn;
+    String bid, vendor_id="-1";
     String bagName, bagCategory, bagPrice, bagCompany, bagQuantity;
 
     int selectedPic;
@@ -65,39 +70,23 @@ public class AddBagActivity extends AppCompatActivity implements FunctionsThread
         typeEditText = (EditText) findViewById(R.id.typeEditText);
         priceEditText = (EditText) findViewById(R.id.priceEditText);
         companyEditText = (EditText) findViewById(R.id.companyEditText);
-      //  quantityEditText = (EditText) findViewById(R.id.quantityEditText);
         bagPhoto = (ImageView) findViewById(R.id.bag_photo);
+        vendorEditText=(EditText) findViewById(R.id.vendorEditText);
         addPhoto=(TextView)findViewById(R.id.addPhoto);
+        vendorSelectBtn=(Button)findViewById(R.id.vendorDropDown);
 
-/*      if (source.equals("source"))
-        {
-            nameEditText.setText(getIntent().getStringExtra("name"));
-            typeEditText.setText(getIntent().getStringExtra("category"));
-            priceEditText.setText(getIntent().getStringExtra("price"));
-            companyEditText.setText(getIntent().getStringExtra("company"));
-           // quantityEditText.setText(getIntent().getStringExtra("quantity"));
-            String photoUri = getIntent().getStringExtra("photo");
-            Picasso.Builder builder = new Picasso.Builder(this);
-            builder.listener(new Picasso.Listener() {
-                @Override
-                public void onImageLoadFailed(Picasso picasso, Uri uri, Exception exception) {
-                    exception.printStackTrace();
-                    Picasso.with(getApplicationContext()).load(R.drawable.vector_drawable_logo).into(bagPhoto);
-                }
-            });
-            builder.build()
-                    .load("http://" + MainActivity.ip + "/bagWebServices/uploads/" + photoUri)
-                    .memoryPolicy(MemoryPolicy.NO_CACHE)
-                    .networkPolicy(NetworkPolicy.NO_CACHE)
-                    .noFade()
-                    .fit()
-                    .centerCrop()
-                    .into(bagPhoto);
+        vendorEditText.setInputType(InputType.TYPE_NULL);
+
+        vendorSelectBtn.setOnClickListener(new View.OnClickListener() {
+            @Override
+            public void onClick(View v) {
+                FragmentManager fm = getSupportFragmentManager();
+                VendorSelectFragment selectCustomerFragment = new VendorSelectFragment();
+                selectCustomerFragment.show(fm,"Dialog");
+            }
+        });
 
 
-        }
-
-        */
 
         bagPhoto.setOnClickListener(new View.OnClickListener() {
             @Override
@@ -114,20 +103,20 @@ public class AddBagActivity extends AppCompatActivity implements FunctionsThread
             public void onClick(View v) {
 
 
-                bagName = nameEditText.getText().toString();
-                bagCategory = typeEditText.getText().toString();
-                bagPrice = priceEditText.getText().toString();
-                bagCompany = companyEditText.getText().toString();
-                //bagQuantity = quantityEditText.getText().toString();
+                if(!vendor_id.equals("-1")) {
+                    bagName = nameEditText.getText().toString();
+                    bagCategory = typeEditText.getText().toString();
+                    bagPrice = priceEditText.getText().toString();
+                    bagCompany = companyEditText.getText().toString();
+                    //bagQuantity = quantityEditText.getText().toString();
 
-                FunctionsThread t = new FunctionsThread(AddBagActivity.this);
-                t.execute("AddBag", bagName, bagCategory, bagPrice, bagCompany, source, bid, ext, "0");
-                t.trigAsyncResponse(AddBagActivity.this);
+                    FunctionsThread t = new FunctionsThread(AddBagActivity.this);
+                    t.execute("AddBag", bagName, bagCategory, bagPrice, bagCompany, "insert", "0", ext, vendor_id);
+                    t.trigAsyncResponse(AddBagActivity.this);
 
-                FunctionsThread check = new FunctionsThread(AddBagActivity.this);
-                check.execute("AddRelation", vendor_id, bagName);
-                check.trigAsyncResponse(AddBagActivity.this);
-
+                }
+                else
+                    Toast.makeText(getBaseContext(),"Please Select Vendor",Toast.LENGTH_LONG).show();
 
             }
 
@@ -184,7 +173,7 @@ public class AddBagActivity extends AppCompatActivity implements FunctionsThread
     public void onComplete(String check) {
         try {
 
-
+            System.out.println(check);
 
             if (check.equals("Inserted")) {
                 Toast.makeText(getBaseContext(), "Inserted new bag Item", Toast.LENGTH_SHORT).show();
@@ -215,5 +204,10 @@ public class AddBagActivity extends AppCompatActivity implements FunctionsThread
             e.printStackTrace();
         }
 
+    }
+
+    public void setVendorInfo(Bundle bundle) {
+        vendorEditText.setText(bundle.getString("name"));
+        vendor_id=String.valueOf(bundle.getInt("id"));
     }
 }
