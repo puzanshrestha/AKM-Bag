@@ -7,6 +7,7 @@ import android.content.DialogInterface;
 import android.content.Intent;
 import android.content.SharedPreferences;
 import android.graphics.Color;
+import android.os.Bundle;
 import android.support.v7.app.AlertDialog;
 import android.support.v7.widget.PopupMenu;
 import android.support.v7.widget.RecyclerView;
@@ -38,6 +39,7 @@ import com.example.pujan.bag.bagDetails.BagListActivity;
 import com.example.pujan.bag.bagStock.ColorQuantityEntity;
 import com.example.pujan.bag.database.DbHelper;
 import com.example.pujan.bag.orderDetailsFragment.BagListFragment;
+import com.google.gson.Gson;
 import com.squareup.picasso.MemoryPolicy;
 import com.squareup.picasso.NetworkPolicy;
 import com.squareup.picasso.Picasso;
@@ -68,7 +70,6 @@ public class StockViewAdapter extends RecyclerView.Adapter<StockViewAdapter.Test
     private Context context;
     String ip = "";
 
-    String[] array_spinner;
 
     ArrayList<BagColorQuantity> stockList = new ArrayList<>();
 
@@ -292,6 +293,13 @@ public class StockViewAdapter extends RecyclerView.Adapter<StockViewAdapter.Test
 
         i = new Intent(context, StockDetailsActivity.class);
 
+        int stockPos=0;
+        for(int j=0;j<stockList.size();j++)
+        {
+            if(stockList.get(j).getBag_id()==listData.get(position).getId())
+                stockPos=j;
+        }
+
         BagEntity item = listData.get(position);
         String bagid = Integer.toString(item.getId());
         String category = item.getCategory();
@@ -307,6 +315,10 @@ public class StockViewAdapter extends RecyclerView.Adapter<StockViewAdapter.Test
         i.putExtra("company", company);
         i.putExtra("vendor_id", vendorID);
         i.putExtra("photo", item.getPhoto());
+
+        Gson gson = new Gson();
+        String stockListJson = gson.toJson(stockList.get(stockPos).getQuantityColor());
+        i.putExtra("stockList",stockListJson);
         context.startActivity(i);
 
 

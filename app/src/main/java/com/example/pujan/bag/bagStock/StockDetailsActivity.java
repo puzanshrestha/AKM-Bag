@@ -26,51 +26,57 @@ import android.widget.Toast;
 import com.example.pujan.bag.FunctionsThread;
 import com.example.pujan.bag.MainActivity;
 import com.example.pujan.bag.R;
+import com.example.pujan.bag.bagDetails.BagColorQuantity;
 import com.example.pujan.bag.bagDetails.BagDetailsActivity;
+import com.google.gson.Gson;
+import com.google.gson.reflect.TypeToken;
 import com.squareup.picasso.MemoryPolicy;
 import com.squareup.picasso.NetworkPolicy;
 import com.squareup.picasso.Picasso;
 
+import java.lang.reflect.Type;
+import java.util.ArrayList;
+import java.util.LinkedHashMap;
 import java.util.concurrent.ExecutionException;
 
-public class StockDetailsActivity extends AppCompatActivity implements FunctionsThread.AsyncResponse{
+public class StockDetailsActivity extends AppCompatActivity implements FunctionsThread.AsyncResponse {
 
 
-    Button editBtn,deleteBtn,saveBtn;
+    Button editBtn, deleteBtn, saveBtn;
 
     EditText nameEditText, typeEditText, priceEditText, companyEditText;
+    TextView redStockQty, blackStockQty, brownStockQty, othersStockQty;
 
     ImageView bagPhoto;
 
-    String bag_id,vendor_id;
+    String bag_id, vendor_id;
 
     TextView addPhotoText;
     int selectedPic;
     String mediaSelect = "";
     String ext = "";
 
+
     @Override
     protected void onCreate(Bundle savedInstanceState) {
         super.onCreate(savedInstanceState);
         setContentView(R.layout.activity_stock_details);
 
-        Toolbar toolbar = (Toolbar)findViewById(R.id.MyToolbar);
+        Toolbar toolbar = (Toolbar) findViewById(R.id.MyToolbar);
         setSupportActionBar(toolbar);
         getSupportActionBar().setDisplayHomeAsUpEnabled(true);
-        CollapsingToolbarLayout collapsingToolbarLayout = (CollapsingToolbarLayout)findViewById(R.id.collapse_toolbar);
+        CollapsingToolbarLayout collapsingToolbarLayout = (CollapsingToolbarLayout) findViewById(R.id.collapse_toolbar);
 
         collapsingToolbarLayout.setExpandedTitleTextAppearance(R.style.ExpandedAppBar);
         collapsingToolbarLayout.setCollapsedTitleTextAppearance(R.style.CollapsedAppBar);
 
-        collapsingToolbarLayout.setTitle("Bag Details");
+        collapsingToolbarLayout.setTitle("Update Stock");
 
-        editBtn=(Button) findViewById(R.id.editBagBtn);
-        deleteBtn=(Button) findViewById(R.id.deleteBagBtn);
-        saveBtn=(Button)findViewById(R.id.saveBtn);
-        bagPhoto=(ImageView)findViewById(R.id.bag_photo);
-        addPhotoText=(TextView)findViewById(R.id.addPhoto);
-
-
+        editBtn = (Button) findViewById(R.id.editBagBtn);
+        deleteBtn = (Button) findViewById(R.id.deleteBagBtn);
+        saveBtn = (Button) findViewById(R.id.saveBtn);
+        bagPhoto = (ImageView) findViewById(R.id.bag_photo);
+        addPhotoText = (TextView) findViewById(R.id.addPhoto);
 
 
         nameEditText = (EditText) findViewById(R.id.nameEditText);
@@ -78,9 +84,38 @@ public class StockDetailsActivity extends AppCompatActivity implements Functions
         priceEditText = (EditText) findViewById(R.id.priceEditText);
         companyEditText = (EditText) findViewById(R.id.companyEditText);
 
+        redStockQty = (TextView) findViewById(R.id.redStockQty);
+        blackStockQty = (TextView) findViewById(R.id.blackStockQty);
+        brownStockQty = (TextView) findViewById(R.id.brownStockQty);
+        othersStockQty = (TextView) findViewById(R.id.othersStockQty);
 
-        bag_id=getIntent().getStringExtra("bagid");
-        vendor_id=getIntent().getStringExtra("vendor_id");
+        Gson gson = new Gson();
+        String stockListGson = getIntent().getStringExtra("stockList");
+        Type entityType = new TypeToken< LinkedHashMap<String, Integer>>(){}.getType();
+        LinkedHashMap<String,Integer> stockList=gson.fromJson(stockListGson,entityType);
+
+        for (LinkedHashMap.Entry<String, Integer> entry : stockList.entrySet()) {
+            switch (entry.getKey()) {
+                case "RED":
+                    redStockQty.setText(entry.getValue().toString());
+                    break;
+                case "BLACK":
+                    blackStockQty.setText(entry.getValue().toString());
+                    break;
+                case "BROWN":
+                    brownStockQty.setText(entry.getValue().toString());
+                    break;
+                case "OTHERS":
+                    othersStockQty.setText(entry.getValue().toString());
+                    break;
+
+                default:
+                    break;
+            }
+        }
+
+        bag_id = getIntent().getStringExtra("bagid");
+        vendor_id = getIntent().getStringExtra("vendor_id");
 
         nameEditText.setText(getIntent().getStringExtra("name"));
         typeEditText.setText(getIntent().getStringExtra("category"));
@@ -104,8 +139,6 @@ public class StockDetailsActivity extends AppCompatActivity implements Functions
                 .fit()
                 .centerCrop()
                 .into(bagPhoto);
-
-
 
 
         editBtn.setOnClickListener(new View.OnClickListener() {
@@ -169,8 +202,7 @@ public class StockDetailsActivity extends AppCompatActivity implements Functions
 
     private void setEditable(boolean b) {
 
-        if(b==false)
-        {
+        if (b == false) {
             nameEditText.setInputType(InputType.TYPE_NULL);
             typeEditText.setInputType(InputType.TYPE_NULL);
             priceEditText.setInputType(InputType.TYPE_NULL);
@@ -180,10 +212,7 @@ public class StockDetailsActivity extends AppCompatActivity implements Functions
             bagPhoto.setClickable(false);
             bagPhoto.setAlpha(1f);
             addPhotoText.setVisibility(View.GONE);
-        }
-
-        else
-        {
+        } else {
             nameEditText.setInputType(InputType.TYPE_CLASS_TEXT);
             typeEditText.setInputType(InputType.TYPE_CLASS_TEXT);
             priceEditText.setInputType(InputType.TYPE_CLASS_NUMBER);
@@ -203,7 +232,6 @@ public class StockDetailsActivity extends AppCompatActivity implements Functions
     public void delete() {
 
 
-
         final AlertDialog.Builder alertDialogBuilder = new AlertDialog.Builder(this);
         alertDialogBuilder.setMessage("Are you sure,You want to Delete?");
         alertDialogBuilder.setPositiveButton("Yes",
@@ -213,7 +241,7 @@ public class StockDetailsActivity extends AppCompatActivity implements Functions
                         final String check;
                         try {
                             check = new FunctionsThread(getBaseContext()).execute("AddBag", " ", " ", " ", " ", "delete", bag_id, " ", " ").get();
-                            System.out.println(check+"this is output from php");
+                            System.out.println(check + "this is output from php");
                             if (check.equals("Deleted")) {
                                 Intent i = new Intent(getBaseContext(), StockListActivity.class);
                                 startActivity(i);
@@ -243,20 +271,21 @@ public class StockDetailsActivity extends AppCompatActivity implements Functions
         alertDialog.show();
 
 
-
     }
+
     public void onBackPressed() {
         Intent i = new Intent(getBaseContext(), StockListActivity.class);
         startActivity(i);
 
 
     }
+
     @Override
     public boolean onOptionsItemSelected(MenuItem item) {
         switch (item.getItemId()) {
             case android.R.id.home:
                 this.finish();
-                Intent i = new Intent(getBaseContext(),StockListActivity.class);
+                Intent i = new Intent(getBaseContext(), StockListActivity.class);
                 startActivity(i);
         }
         return true;
@@ -264,11 +293,11 @@ public class StockDetailsActivity extends AppCompatActivity implements Functions
 
     @Override
     public void onComplete(String output) {
-        System.out.println(output+"is output");
-        if(output.equals("Updated"))
-            Toast.makeText(this,"Successfully Updated Bag Information",Toast.LENGTH_SHORT).show();
+        System.out.println(output + "is output");
+        if (output.equals("Updated"))
+            Toast.makeText(this, "Successfully Updated Bag Information", Toast.LENGTH_SHORT).show();
 
         else
-            Toast.makeText(this,"Failed to Update Bag Information",Toast.LENGTH_SHORT).show();
+            Toast.makeText(this, "Failed to Update Bag Information", Toast.LENGTH_SHORT).show();
     }
 }
