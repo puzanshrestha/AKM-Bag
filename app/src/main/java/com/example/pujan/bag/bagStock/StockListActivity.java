@@ -38,7 +38,7 @@ public class StockListActivity extends AppCompatActivity implements SearchView.O
 
     ArrayList<BagEntity> bagData = new ArrayList<>();
     ArrayList<BagColorQuantity> bagColorQuantities=new ArrayList<>();
-    FloatingActionButton addNewBag;
+
 
 
 
@@ -80,13 +80,13 @@ public class StockListActivity extends AppCompatActivity implements SearchView.O
     @Override
     protected void onCreate(Bundle savedInstanceState) {
         super.onCreate(savedInstanceState);
-        setContentView(R.layout.activity_view_bag);
+        setContentView(R.layout.activity_stock_list);
 
 
 
         Toolbar actionBar = (Toolbar) findViewById(R.id.actionBar);
         setSupportActionBar(actionBar);
-        getSupportActionBar().setTitle("Bag");
+        getSupportActionBar().setTitle("Inventory");
         getSupportActionBar().setDisplayHomeAsUpEnabled(true);
 
         recView = (RecyclerView) findViewById(R.id.recView);
@@ -102,30 +102,10 @@ public class StockListActivity extends AppCompatActivity implements SearchView.O
         recView.setLayoutManager(lm);
         //recView.setLayoutManager(new ScrollingLinearLayoutManager(this, LinearLayoutManager.VERTICAL, false, duration));
 
-        addNewBag = (FloatingActionButton)findViewById(R.id.addNewBagBtn);
-
-        addNewBag.setOnClickListener(new View.OnClickListener() {
-            @Override
-            public void onClick(View v) {
-                Intent i = new Intent(getBaseContext(),StockDetailsActivity.class);
-                startActivity(i);
-            }
-        });
-
-        recView.addOnScrollListener(new RecyclerView.OnScrollListener() {
-            @Override
-            public void onScrolled(RecyclerView recyclerView, int dx, int dy) {
-                if(dy>0|dy<0)
-                    addNewBag.hide();
 
 
-            }
 
-            @Override
-            public void onScrollStateChanged(RecyclerView recyclerView, int newState) {
-                addNewBag.show();
-            }
-        });
+
 
 
         FunctionsThread t = new FunctionsThread(this);
@@ -157,7 +137,7 @@ public class StockListActivity extends AppCompatActivity implements SearchView.O
     public void getData(String response) {
         try {
 
-            if (response == "Error") {
+            if (response.equals("Error") ){
                 Toast.makeText(this, "Connection Error... Please check your connection !", Toast.LENGTH_SHORT).show();
             }
             JSONObject bagJson = new JSONObject(response);
@@ -200,6 +180,8 @@ public class StockListActivity extends AppCompatActivity implements SearchView.O
         getData(output);
         bagViewAdapter = new StockViewAdapter(bagData,bagColorQuantities, "bag", getBaseContext());
         recView.setAdapter(bagViewAdapter);
+
+
 
 
     }

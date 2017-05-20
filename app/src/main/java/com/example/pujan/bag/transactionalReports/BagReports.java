@@ -8,6 +8,7 @@ import android.support.design.widget.CoordinatorLayout;
 import android.support.design.widget.Snackbar;
 import android.support.v7.app.ActionBar;
 import android.support.v7.app.AppCompatActivity;
+import android.support.v7.widget.Toolbar;
 import android.view.Gravity;
 import android.view.MenuItem;
 import android.view.View;
@@ -70,12 +71,10 @@ public class BagReports extends AppCompatActivity implements FunctionsThread.Asy
         setContentView(R.layout.activity_bag_reports);
 
 
-        ActionBar actionBar = getSupportActionBar();
-        actionBar.setLogo(R.drawable.bagsmall);
-        actionBar.setTitle("Reports");
-        actionBar.setDisplayUseLogoEnabled(true);   // These two are for
-        actionBar.setDisplayShowHomeEnabled(true);
-        actionBar.setDisplayHomeAsUpEnabled(true);
+        Toolbar actionBar = (Toolbar) findViewById(R.id.actionBar);
+        setSupportActionBar(actionBar);
+        getSupportActionBar().setTitle("Inventory");
+        getSupportActionBar().setDisplayHomeAsUpEnabled(true);
 
 
         coordinatorLayout = (CoordinatorLayout) findViewById(R.id.viewReports);
@@ -377,7 +376,7 @@ public class BagReports extends AppCompatActivity implements FunctionsThread.Asy
 
                         TableRow.LayoutParams params = new TableRow.LayoutParams();
                         params.span = 6;
-                        params.setMargins(0, 0, -80, 0);
+                        params.setMargins(0, 0, 0, 0);
 
                         TextView subtotals = new TextView(this);
                         subtotals.setBackgroundColor(Color.parseColor("#00d857"));
@@ -465,7 +464,7 @@ public class BagReports extends AppCompatActivity implements FunctionsThread.Asy
 
                     TableRow.LayoutParams params = new TableRow.LayoutParams();
                     params.span = 6;
-                    params.setMargins(0, 0, -80, 0);
+                    params.setMargins(0, 0, 0, 0);
 
                     TextView subtotals = new TextView(this);
                     subtotals.setBackgroundColor(Color.parseColor("#00d857"));

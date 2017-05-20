@@ -937,12 +937,12 @@ public class FunctionsThread extends AsyncTask<String, Void, String> {
                 bufferedReader.close();
                 is.close();
                 httpURLConnection.disconnect();
+                System.out.println(response.toString().trim());
                 return response.toString().trim();
 
 
             } catch (Exception e) {
                 e.printStackTrace();
-                System.out.println("Error in ");
                 return "error";
 
             }

@@ -34,6 +34,9 @@ import com.squareup.picasso.MemoryPolicy;
 import com.squareup.picasso.NetworkPolicy;
 import com.squareup.picasso.Picasso;
 
+import org.json.JSONArray;
+import org.json.JSONObject;
+
 import java.lang.reflect.Type;
 import java.util.ArrayList;
 import java.util.LinkedHashMap;
@@ -42,20 +45,19 @@ import java.util.concurrent.ExecutionException;
 public class StockDetailsActivity extends AppCompatActivity implements FunctionsThread.AsyncResponse {
 
 
-    Button editBtn, deleteBtn, saveBtn;
+    Button editBtn,updateStockBtn;
 
     EditText nameEditText, typeEditText, priceEditText, companyEditText;
     TextView redStockQty, blackStockQty, brownStockQty, othersStockQty;
-
+    EditText redEditTxt, blackEditTxt, brownEditTxt, othersEditText;
     ImageView bagPhoto;
 
     String bag_id, vendor_id;
 
     TextView addPhotoText;
-    int selectedPic;
-    String mediaSelect = "";
-    String ext = "";
 
+    ArrayList<ColorQuantityEntity> colorValues=new ArrayList<>();
+    LinkedHashMap<String,Integer> stockList=new LinkedHashMap<>();
 
     @Override
     protected void onCreate(Bundle savedInstanceState) {
@@ -73,8 +75,7 @@ public class StockDetailsActivity extends AppCompatActivity implements Functions
         collapsingToolbarLayout.setTitle("Update Stock");
 
         editBtn = (Button) findViewById(R.id.editBagBtn);
-        deleteBtn = (Button) findViewById(R.id.deleteBagBtn);
-        saveBtn = (Button) findViewById(R.id.saveBtn);
+
         bagPhoto = (ImageView) findViewById(R.id.bag_photo);
         addPhotoText = (TextView) findViewById(R.id.addPhoto);
 
@@ -89,33 +90,22 @@ public class StockDetailsActivity extends AppCompatActivity implements Functions
         brownStockQty = (TextView) findViewById(R.id.brownStockQty);
         othersStockQty = (TextView) findViewById(R.id.othersStockQty);
 
-        Gson gson = new Gson();
-        String stockListGson = getIntent().getStringExtra("stockList");
-        Type entityType = new TypeToken< LinkedHashMap<String, Integer>>(){}.getType();
-        LinkedHashMap<String,Integer> stockList=gson.fromJson(stockListGson,entityType);
+        redEditTxt = (EditText) findViewById(R.id.redQty);
+        blackEditTxt = (EditText) findViewById(R.id.blackQty);
+        brownEditTxt = (EditText) findViewById(R.id.brownQty);
+        othersEditText = (EditText) findViewById(R.id.othersQty);
 
-        for (LinkedHashMap.Entry<String, Integer> entry : stockList.entrySet()) {
-            switch (entry.getKey()) {
-                case "RED":
-                    redStockQty.setText(entry.getValue().toString());
-                    break;
-                case "BLACK":
-                    blackStockQty.setText(entry.getValue().toString());
-                    break;
-                case "BROWN":
-                    brownStockQty.setText(entry.getValue().toString());
-                    break;
-                case "OTHERS":
-                    othersStockQty.setText(entry.getValue().toString());
-                    break;
-
-                default:
-                    break;
-            }
-        }
+        updateStockBtn=(Button)findViewById(R.id.updateStockBtn);
 
         bag_id = getIntent().getStringExtra("bagid");
         vendor_id = getIntent().getStringExtra("vendor_id");
+
+
+        FunctionsThread t= new FunctionsThread(this);
+        t.execute("ViewStockInformation", bag_id);
+        t.trigAsyncResponse(StockDetailsActivity.this);
+
+
 
         nameEditText.setText(getIntent().getStringExtra("name"));
         typeEditText.setText(getIntent().getStringExtra("category"));
@@ -148,53 +138,78 @@ public class StockDetailsActivity extends AppCompatActivity implements Functions
             }
         });
 
-        deleteBtn.setOnClickListener(new View.OnClickListener() {
-            @Override
-            public void onClick(View v) {
-                delete();
-            }
-        });
 
-        saveBtn.setOnClickListener(new View.OnClickListener() {
+        updateStockBtn.setOnClickListener(new View.OnClickListener() {
             @Override
             public void onClick(View v) {
                 setEditable(false);
-                FunctionsThread t = new FunctionsThread(getBaseContext());
-                t.execute("AddBag", nameEditText.getText().toString(), typeEditText.getText().toString(), priceEditText.getText().toString(), companyEditText.getText().toString(), "update", bag_id, ext, "0");
-                t.trigAsyncResponse(StockDetailsActivity.this);
+
+                ArrayList<ColorQuantityEntity> cqeArray = new ArrayList<>();
+                ColorQuantityEntity cqe;
+
+                if(!redEditTxt.getText().toString().equals("")) {
+                    cqe=new ColorQuantityEntity();
+                    cqe.setColor("RED");
+                    cqe.setCquantity(Integer.parseInt(redStockQty.getText().toString()) + Integer.parseInt(redEditTxt.getText().toString()));
+                    cqeArray.add(cqe);
+
+                }
+                if(!blackEditTxt.getText().toString().equals("")) {
+                    cqe=new ColorQuantityEntity();
+                    cqe.setColor("BLACK");
+                    cqe.setCquantity(Integer.parseInt(blackStockQty.getText().toString()) + Integer.parseInt(blackEditTxt.getText().toString()));
+                    cqeArray.add(cqe);
+                }
+
+                if(!brownEditTxt.getText().toString().equals("")) {
+                    cqe=new ColorQuantityEntity();
+                    cqe.setColor("BROWN");
+                    cqe.setCquantity(Integer.parseInt(brownStockQty.getText().toString()) + Integer.parseInt(brownEditTxt.getText().toString()));
+                    cqeArray.add(cqe);
+                }
+                if(!othersEditText.getText().toString().equals("")) {
+                    cqe=new ColorQuantityEntity();
+                    cqe.setColor("OTHERS");
+                    cqe.setCquantity(Integer.parseInt(othersStockQty.getText().toString()) + Integer.parseInt(othersEditText.getText().toString()));
+                    cqeArray.add(cqe);
+                }
+
+
+                Gson stockEdit = new Gson();
+                String stockEditJson = stockEdit.toJson(cqeArray);
+                System.out.println(stockEditJson);
+                FunctionsThread tEdt=new FunctionsThread(getBaseContext());
+                tEdt.execute("EditStockInformation",bag_id,stockEditJson);
+                tEdt.trigAsyncResponse(StockDetailsActivity.this);
             }
         });
 
 
-        bagPhoto.setOnClickListener(new View.OnClickListener() {
-            @Override
-            public void onClick(View v) {
-                Intent i = new Intent(Intent.ACTION_PICK, android.provider.MediaStore.Images.Media.EXTERNAL_CONTENT_URI);
-                startActivityForResult(i, selectedPic);
-            }
-        });
 
 
         setEditable(false);
     }
 
-    @Override
-    protected void onActivityResult(int requestCode, int resultCode, Intent data) {
-        super.onActivityResult(requestCode, resultCode, data);
-        if (requestCode == selectedPic) {
-            if (resultCode == RESULT_OK) {
-                Uri uri = data.getData();
-                String[] projection = {MediaStore.Images.Media.DATA};
-                Cursor cursor = getContentResolver().query(uri, projection, null, null, null);
-                cursor.moveToFirst();
-                int columnIndex = cursor.getColumnIndex(projection[0]);
-                mediaSelect = cursor.getString(columnIndex);
-                bagPhoto.setImageURI(uri);
+    private void populateStockText() {
 
-                ext = mediaSelect.substring(mediaSelect.lastIndexOf(".") + 1, mediaSelect.length());
+        for (LinkedHashMap.Entry<String, Integer> entry : stockList.entrySet()) {
+            switch (entry.getKey()) {
+                case "RED":
+                    redStockQty.setText(entry.getValue().toString());
+                    break;
+                case "BLACK":
+                    blackStockQty.setText(entry.getValue().toString());
+                    break;
+                case "BROWN":
+                    brownStockQty.setText(entry.getValue().toString());
+                    break;
+                case "OTHERS":
+                    othersStockQty.setText(entry.getValue().toString());
+                    break;
+
+                default:
+                    break;
             }
-
-
         }
 
     }
@@ -208,7 +223,7 @@ public class StockDetailsActivity extends AppCompatActivity implements Functions
             priceEditText.setInputType(InputType.TYPE_NULL);
             companyEditText.setInputType(InputType.TYPE_NULL);
 
-            saveBtn.setVisibility(View.GONE);
+
             bagPhoto.setClickable(false);
             bagPhoto.setAlpha(1f);
             addPhotoText.setVisibility(View.GONE);
@@ -217,7 +232,7 @@ public class StockDetailsActivity extends AppCompatActivity implements Functions
             typeEditText.setInputType(InputType.TYPE_CLASS_TEXT);
             priceEditText.setInputType(InputType.TYPE_CLASS_NUMBER);
             companyEditText.setInputType(InputType.TYPE_CLASS_TEXT);
-            saveBtn.setVisibility(View.VISIBLE);
+
             bagPhoto.setClickable(true);
             addPhotoText.setVisibility(View.VISIBLE);
             bagPhoto.setAlpha(0.5f);
@@ -229,49 +244,7 @@ public class StockDetailsActivity extends AppCompatActivity implements Functions
     }
 
 
-    public void delete() {
 
-
-        final AlertDialog.Builder alertDialogBuilder = new AlertDialog.Builder(this);
-        alertDialogBuilder.setMessage("Are you sure,You want to Delete?");
-        alertDialogBuilder.setPositiveButton("Yes",
-                new DialogInterface.OnClickListener() {
-                    @Override
-                    public void onClick(DialogInterface arg0, int arg1) {
-                        final String check;
-                        try {
-                            check = new FunctionsThread(getBaseContext()).execute("AddBag", " ", " ", " ", " ", "delete", bag_id, " ", " ").get();
-                            System.out.println(check + "this is output from php");
-                            if (check.equals("Deleted")) {
-                                Intent i = new Intent(getBaseContext(), StockListActivity.class);
-                                startActivity(i);
-                                Toast.makeText(getBaseContext(), "Deleted Successfully", Toast.LENGTH_LONG).show();
-                            } else {
-                                Toast.makeText(getBaseContext(), "Failed, Please make sure that this Bag is not used in Pending Bill List", Toast.LENGTH_LONG).show();
-                            }
-                        } catch (InterruptedException e) {
-                            e.printStackTrace();
-                        } catch (ExecutionException e) {
-                            e.printStackTrace();
-                        }
-
-
-                    }
-                });
-
-        alertDialogBuilder.setNegativeButton("No", new DialogInterface.OnClickListener() {
-            @Override
-
-            public void onClick(DialogInterface dialog, int which) {
-
-            }
-        });
-
-        AlertDialog alertDialog = alertDialogBuilder.create();
-        alertDialog.show();
-
-
-    }
 
     public void onBackPressed() {
         Intent i = new Intent(getBaseContext(), StockListActivity.class);
@@ -293,11 +266,42 @@ public class StockDetailsActivity extends AppCompatActivity implements Functions
 
     @Override
     public void onComplete(String output) {
-        System.out.println(output + "is output");
-        if (output.equals("Updated"))
-            Toast.makeText(this, "Successfully Updated Bag Information", Toast.LENGTH_SHORT).show();
 
+        if (output.equals("Succeeded")) {
+            FunctionsThread t= new FunctionsThread(this);
+            t.execute("ViewStockInformation", bag_id);
+            t.trigAsyncResponse(StockDetailsActivity.this);
+
+            Toast.makeText(this, "Successfully Updated Stock Information", Toast.LENGTH_SHORT).show();
+        }
+        else if(output.equals("Failed")) {
+            Toast.makeText(this, "Failed to Update Stock Information", Toast.LENGTH_SHORT).show();
+        }
         else
-            Toast.makeText(this, "Failed to Update Bag Information", Toast.LENGTH_SHORT).show();
+            getStock(output);
     }
+
+    public void getStock(String response)
+    {
+        LinkedHashMap<String,Integer> temp= new LinkedHashMap<>();
+        try {
+            JSONObject stockJson = new JSONObject(response);
+            JSONArray stockJsonArray = stockJson.getJSONArray("result");
+            for (int i = 0; i < stockJsonArray.length(); i++) {
+                JSONObject jObject = stockJsonArray.getJSONObject(i);
+                temp.put(jObject.getString("color"),Integer.valueOf(jObject.getString("quantityColor")));
+
+            }
+
+            stockList.clear();
+            stockList.putAll(temp);
+            populateStockText();
+        }
+        catch (Exception e)
+        {
+            Toast.makeText(this, "Error has been occured", Toast.LENGTH_SHORT).show();
+        }
+
+    }
+
 }

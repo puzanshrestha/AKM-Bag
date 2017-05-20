@@ -316,9 +316,6 @@ public class StockViewAdapter extends RecyclerView.Adapter<StockViewAdapter.Test
         i.putExtra("vendor_id", vendorID);
         i.putExtra("photo", item.getPhoto());
 
-        Gson gson = new Gson();
-        String stockListJson = gson.toJson(stockList.get(stockPos).getQuantityColor());
-        i.putExtra("stockList",stockListJson);
         context.startActivity(i);
 
 
