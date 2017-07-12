@@ -1,25 +1,32 @@
 package com.example.pujan.bag.orderDetailsFragment;
 
+import android.graphics.Color;
+import android.graphics.drawable.ColorDrawable;
 import android.os.Bundle;
-
 import android.support.design.widget.FloatingActionButton;
 import android.support.v4.app.Fragment;
+import android.support.v4.content.ContextCompat;
+import android.support.v4.view.MenuItemCompat;
 import android.support.v7.widget.LinearLayoutManager;
 import android.support.v7.widget.RecyclerView;
 import android.support.v7.widget.SearchView;
 import android.support.v7.widget.Toolbar;
-import android.util.Log;
 import android.view.LayoutInflater;
+import android.view.Menu;
+import android.view.MenuInflater;
+import android.view.MenuItem;
 import android.view.View;
 import android.view.ViewGroup;
+import android.widget.EditText;
+import android.widget.ProgressBar;
 import android.widget.Toast;
 
-import com.example.pujan.bag.FunctionsThread;
 import com.example.pujan.bag.R;
+import com.example.pujan.bag.VolleyFunctions;
 import com.example.pujan.bag.bagDetails.BagColorQuantity;
 import com.example.pujan.bag.bagDetails.BagEntity;
+import com.example.pujan.bag.bagDetails.vendorSelectFragment.VendorSelectFragementAdapter;
 import com.example.pujan.bag.printPackage.PrintEntity;
-
 
 import org.json.JSONArray;
 import org.json.JSONException;
@@ -31,32 +38,31 @@ import java.util.LinkedHashMap;
 import static android.view.View.GONE;
 
 
-public class BagListFragment extends Fragment implements SearchView.OnQueryTextListener, FunctionsThread.AsyncResponse {
+public class BagListFragment extends Fragment implements SearchView.OnQueryTextListener, VolleyFunctions.AsyncResponse {
 
     RecyclerView recView;
     BagViewFragmentAdapter bagViewFragmentAdapter;
 
     ArrayList<BagEntity> bagData = new ArrayList<>();
 
-    ArrayList<PrintEntity> orderValues=new ArrayList<>();
+    ArrayList<PrintEntity> orderValues = new ArrayList<>();
     private BagAdapterPuller bagAdapterPuller;
 
-    ArrayList<BagColorQuantity> bagColorQuantities=new ArrayList<>();
+    ArrayList<BagColorQuantity> bagColorQuantities = new ArrayList<>();
 
 
+    ProgressBar progressBar;
 
 
     public void scrollToPosition(int position) {
 
 
-        for(int i=0;i<bagData.size();i++)
-        {
-            if(bagData.get(i).getId()==position)
-                position=i;
+        for (int i = 0; i < bagData.size(); i++) {
+            if (bagData.get(i).getId() == position)
+                position = i;
         }
         recView.smoothScrollToPosition(position);
         bagViewFragmentAdapter.expandLayout(position);
-
 
 
     }
@@ -72,18 +78,37 @@ public class BagListFragment extends Fragment implements SearchView.OnQueryTextL
     }
 
 
+    public BagListFragment(ArrayList<PrintEntity> orderValues) {
+        this.orderValues = orderValues;
 
-    public BagListFragment(ArrayList<PrintEntity> orderValues)
-    {
-        this.orderValues=orderValues;
-        System.out.println(orderValues.size());
     }
 
-    public BagListFragment(){
+    public BagListFragment() {
 
-        System.out.println("no value");
+
     }
 
+    @Override
+    public void onCreateOptionsMenu(Menu menu, MenuInflater inflater) {
+        super.onCreateOptionsMenu(menu, inflater);
+        menu.clear();
+        inflater.inflate(R.menu.search_action_bar, menu);
+        MenuItem item = menu.findItem(R.id.searchh);
+        SearchView searchView = new SearchView(((OrderActivity) getContext()).getSupportActionBar().getThemedContext());
+        EditText searchEditText = (EditText) searchView.findViewById(android.support.v7.appcompat.R.id.search_src_text);
+        searchEditText.setTextColor(ContextCompat.getColor(getContext(), R.color.colorPrimary));
+        searchEditText.setHintTextColor(ContextCompat.getColor(getContext(), R.color.colorPrimary));
+        searchEditText.setHint("Search Bag");
+        searchEditText.setBackground(new ColorDrawable(Color.WHITE));
+        MenuItemCompat.setShowAsAction(item, MenuItemCompat.SHOW_AS_ACTION_COLLAPSE_ACTION_VIEW | MenuItemCompat.SHOW_AS_ACTION_IF_ROOM);
+        MenuItemCompat.setActionView(item, searchView);
+
+
+        searchView.setOnQueryTextListener(this);
+
+
+
+    }
 
 
     @Override
@@ -92,7 +117,7 @@ public class BagListFragment extends Fragment implements SearchView.OnQueryTextL
         View view = inflater.inflate(R.layout.activity_view_bag, null);
 
 
-
+        setHasOptionsMenu(true);
         /*
         source = getIntent().getStringExtra("source");
         customerName = getIntent().getStringExtra("customerName");
@@ -121,38 +146,32 @@ public class BagListFragment extends Fragment implements SearchView.OnQueryTextL
 
 */
 
-        FloatingActionButton fab= (FloatingActionButton) view.findViewById(R.id.addNewBagBtn);
-        Toolbar toolbar =(Toolbar)view.findViewById(R.id.actionBar);
+        progressBar = (ProgressBar) view.findViewById(R.id.progressBar);
+        progressBar.setVisibility(View.VISIBLE);
+
+        FloatingActionButton fab = (FloatingActionButton) view.findViewById(R.id.addNewBagBtn);
+        Toolbar toolbar = (Toolbar) view.findViewById(R.id.actionBar);
         toolbar.setVisibility(GONE);
         fab.setVisibility(GONE);
         recView = (RecyclerView) view.findViewById(R.id.recView);
 
-
-
-
-
+        BagViewFragmentAdapter.TestHolder test = (BagViewFragmentAdapter.TestHolder) recView.findViewHolderForLayoutPosition(0);
 
 
         LinearLayoutManager lm = new LinearLayoutManager(getContext());
         recView.setLayoutManager(lm);
 
 
-
         //  recView.setLayoutManager(new GridLayoutManager(getContext(),2));
 
 
-        FunctionsThread t = new FunctionsThread(getContext());
-        t.execute("ViewBag");
+        VolleyFunctions t = new VolleyFunctions(getContext());
+        t.viewBag("0", "0");
         t.trigAsyncResponse(BagListFragment.this);
 
 
         return view;
     }
-
-
-
-
-
 
 
     @Override
@@ -169,6 +188,7 @@ public class BagListFragment extends Fragment implements SearchView.OnQueryTextL
                 newbag.add(bagEntity);
             }
         }
+        if(newbag.size()>0)
         bagViewFragmentAdapter.setFilter(newbag);
         return false;
     }
@@ -181,7 +201,7 @@ public class BagListFragment extends Fragment implements SearchView.OnQueryTextL
             }
             JSONObject bagJson = new JSONObject(response);
             JSONArray bagJsonArray = bagJson.getJSONArray("result");
-            JSONArray stockJsonArray=bagJson.getJSONArray("stockData");
+            JSONArray stockJsonArray = bagJson.getJSONArray("stockData");
 
 
             for (int i = 0; i < bagJsonArray.length(); i++) {
@@ -200,9 +220,6 @@ public class BagListFragment extends Fragment implements SearchView.OnQueryTextL
             }
 
             convertStockData(stockJsonArray);
-
-
-
 
 
         } catch (Exception e) {
@@ -230,9 +247,8 @@ public class BagListFragment extends Fragment implements SearchView.OnQueryTextL
                 if (i + 1 < bag.length()) {
                     jObject2 = bag.getJSONObject(i + 1);
 
-                }
-                else
-                    jObject2=jObject;
+                } else
+                    jObject2 = jObject;
                 if ((jObject2.getString("bag_id")).equals(jObject.getString("bag_id"))) {
 
 
@@ -249,13 +265,11 @@ public class BagListFragment extends Fragment implements SearchView.OnQueryTextL
                 }
 
 
-
-
             }
 
 
             bcqEntity.setQuantityColor(cqe);
-            if(cqe.size()>0)
+            if (cqe.size() > 0)
                 bagColorQuantities.add(bcqEntity);
 
 
@@ -264,25 +278,30 @@ public class BagListFragment extends Fragment implements SearchView.OnQueryTextL
         }
 
 
-
     }
 
 
     @Override
     public void onComplete(String output) {
 
-        getData(output);
 
-        if(getActivity()!=null) {
-            bagViewFragmentAdapter = new BagViewFragmentAdapter(bagData,bagColorQuantities, getContext(),recView);
-            recView.setAdapter(bagViewFragmentAdapter);
-            bagAdapterPuller.getBagAdapter(bagViewFragmentAdapter);
-            bagViewFragmentAdapter.setPendingData(orderValues);
+
+        if (output.equals("ERROR")) {
+            Toast.makeText(getContext(), "Network Error", Toast.LENGTH_SHORT).show();
+        } else {
+            getData(output);
+
+            if (getActivity() != null) {
+                bagViewFragmentAdapter = new BagViewFragmentAdapter(bagData, bagColorQuantities, getContext(), recView);
+                recView.setAdapter(bagViewFragmentAdapter);
+                bagAdapterPuller.getBagAdapter(bagViewFragmentAdapter);
+                bagViewFragmentAdapter.setPendingData(orderValues);
+                progressBar.setVisibility(GONE);
+
+            }
 
         }
-
     }
-
 
 
 }

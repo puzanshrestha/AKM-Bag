@@ -30,11 +30,8 @@
         <activity android:name=".vendorDetails.VendorDetailsActivity" />
         <activity android:name=".orderDetails.OrderDetailsActivity" />
         <activity android:name=".bagDetails.AddBagActivity" />
-        <activity android:name=".bagDetails.ViewBagActivity" />
         <activity android:name=".customerDetails.AddCustomerActivity" />
-        <activity android:name=".customerDetails.ViewCustomerActivity" />
         <activity android:name=".vendorDetails.AddVendorActivity" />
-        <activity android:name=".vendorDetails.ViewVendorActivity" />
         <activity android:name=".bagDetails.BagListActivity" />
         <activity android:name=".customerDetails.CustomerListActivity">
             <meta-data
@@ -43,13 +40,10 @@
         </activity>
         <activity android:name=".printPackage.PrintDemo" />
         <activity android:name=".printPackage.DeviceListActivity" />
-        <activity android:name=".orderDetails.OrderDisplayActivity" />
         <activity android:name=".vendorDetails.VendorListActivity" />
         <activity android:name=".transactionalReports.BagReports" />
         <activity android:name=".bagStock.StockListActivity" />
-        <activity android:name=".bagStock.StockUpdateActivity" />
         <activity android:name=".bagStock.StockDetailsActivity" />
-        <activity android:name=".bagStock.StockViewActivity" />
         <activity android:name=".pendingBill.PendingBillList" />
         <activity android:name=".transactionalReports.RePrintBill" />
         <activity android:name=".orderDetailsFragment.OrderActivity" />

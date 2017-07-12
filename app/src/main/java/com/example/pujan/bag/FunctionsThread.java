@@ -4,35 +4,7 @@ import android.app.ProgressDialog;
 import android.content.Context;
 import android.os.AsyncTask;
 
-import com.example.pujan.bag.bagDetails.AddBagActivity;
-import com.example.pujan.bag.bagDetails.BagDetailsActivity;
-import com.example.pujan.bag.bagDetails.BagListActivity;
-import com.example.pujan.bag.bagDetails.BagViewAdapter;
-import com.example.pujan.bag.bagDetails.vendorSelectFragment.VendorSelectFragementAdapter;
-import com.example.pujan.bag.bagDetails.vendorSelectFragment.VendorSelectFragment;
-import com.example.pujan.bag.bagStock.StockDetailsActivity;
-import com.example.pujan.bag.bagStock.StockListActivity;
-import com.example.pujan.bag.bagStock.StockUpdateActivity;
-import com.example.pujan.bag.bagStock.StockViewActivity;
-import com.example.pujan.bag.customerDetails.AddCustomerActivity;
-import com.example.pujan.bag.customerDetails.CustomerDetailsActivity;
-import com.example.pujan.bag.customerDetails.CustomerListActivity;
 import com.example.pujan.bag.database.DbHelper;
-import com.example.pujan.bag.orderDetails.OrderDisplayActivity;
-import com.example.pujan.bag.orderDetailsFragment.BagListFragment;
-
-import com.example.pujan.bag.orderDetailsFragment.OrderActivity;
-import com.example.pujan.bag.orderDetailsFragment.customerSelectFragment.SelectCustomerFragment;
-import com.example.pujan.bag.orderDetailsFragment.printPackageFragment.FragmentPrintDemo;
-import com.example.pujan.bag.pendingBill.PendingBillAdapter;
-import com.example.pujan.bag.pendingBill.PendingBillListFragment;
-import com.example.pujan.bag.pendingBill.PendingBillList;
-import com.example.pujan.bag.printPackage.PrintDemo;
-import com.example.pujan.bag.transactionalReports.BagReports;
-import com.example.pujan.bag.transactionalReports.RePrintBill;
-import com.example.pujan.bag.vendorDetails.AddVendorActivity;
-import com.example.pujan.bag.vendorDetails.VendorDetailsActivity;
-import com.example.pujan.bag.vendorDetails.VendorListActivity;
 
 import java.io.BufferedReader;
 import java.io.BufferedWriter;
@@ -59,82 +31,19 @@ public class FunctionsThread extends AsyncTask<String, Void, String> {
     Context c;
 
     String ipMain;
+    String responseRet="";
 
     public ProgressDialog pd;
 
-    private AsyncResponse callback = null;
+
 
 
     private int flagPd=1;
 
-
+    private AsyncResponse callback = null;
     public interface AsyncResponse {
         void onComplete(String output);
     }
-
-    public void trigAsyncResponse(BagListActivity activity) {this.callback = activity;}
-
-    public void trigAsyncResponse(BagViewAdapter activity) {
-        this.callback = activity;
-    }
-
-    public void trigAsyncResponse(CustomerListActivity activity) {
-        this.callback = activity;
-    }
-
-    public void trigAsyncResponse(VendorListActivity activity) {
-        this.callback = activity;
-    }
-
-    public void trigAsyncResponse(AddBagActivity activity) {
-        this.callback = activity;
-    }
-
-    public void trigAsyncResponse(AddCustomerActivity activity) {
-        this.callback = activity;
-    }
-
-    public void trigAsyncResponse(AddVendorActivity activity) {
-        this.callback = activity;
-    }
-
-    public void trigAsyncResponse(BagReports activity) {
-        this.callback = activity;
-    }
-
-    public void trigAsyncResponse(StockListActivity activity) {
-        this.callback = activity;
-    }
-
-    public void trigAsyncResponse(StockUpdateActivity activity) {
-        this.callback = activity;
-    }
-
-    public void trigAsyncResponse(OrderDisplayActivity activity) {
-        this.callback = activity;
-    }
-
-    public void trigAsyncResponse(StockViewActivity activity) {
-        this.callback = activity;
-    }
-
-    public void trigAsyncResponse(MainActivity activity) {this.callback = activity; }
-    public void trigAsyncResponse(PrintDemo activity) {this.callback = activity;}
-
-    public void trigAsyncResponse(PendingBillList activity) {this.callback = activity;}
-    public void trigAsyncResponse(RePrintBill activity) {this.callback = activity;}
-    public void trigAsyncResponse(BagListFragment activity) {this.callback = activity;}
-    public void trigAsyncResponse(PendingBillListFragment activity) {this.callback = activity;}
-    public void trigAsyncResponse(FragmentPrintDemo activity) {this.callback = activity;}
-    public void trigAsyncResponse(OrderActivity activity) {this.callback = activity;}
-    public void trigAsyncResponse(PendingBillAdapter activity) {this.callback = activity;}
-    public void trigAsyncResponse(SelectCustomerFragment activity) {this.callback = activity;}
-
-    public void trigAsyncResponse(CustomerDetailsActivity activity) {this.callback = activity;}
-    public void trigAsyncResponse(VendorDetailsActivity activity) {this.callback = activity;}
-    public void trigAsyncResponse(VendorSelectFragment activity) {this.callback = activity;}
-    public void trigAsyncResponse(BagDetailsActivity activity) {this.callback = activity;}
-    public void trigAsyncResponse(StockDetailsActivity activity) {this.callback = activity;}
 
 
     public FunctionsThread(Context c) {
@@ -214,9 +123,12 @@ public class FunctionsThread extends AsyncTask<String, Void, String> {
                 return "Error connecting to server";
             }
 
-        } else if (method.equals("Login")) {
-            String username = params[1];
-            String password = params[2];
+        }
+
+        else if (method.equals("Login")) {
+            final String username = params[1];
+            final String password = params[2];
+
 
             try {
                 URL url = new URL(ip + "login.php");
@@ -257,6 +169,7 @@ public class FunctionsThread extends AsyncTask<String, Void, String> {
                 return "error";
 
             }
+
         } else if (method.equals("AddBag")) {
             String name, type, price, company, source, bid, ext, vendor_id;
             name = params[1];
@@ -447,14 +360,24 @@ public class FunctionsThread extends AsyncTask<String, Void, String> {
                 return "Error Inserting new Vendor";
             }
         } else if (method.equals("ViewBag")) {
+
+            String offset=params[1];
+            String difference=params[2];
             try {
 
                 URL url = new URL(ip + "viewBagWithStock.php");
                 HttpURLConnection conn = (HttpURLConnection) url.openConnection();
-
-
-                conn.setReadTimeout(5000);
                 conn.setConnectTimeout(5000);
+                conn.setRequestMethod("POST");
+                conn.setDoInput(true);
+                conn.setDoOutput(true);
+                OutputStream os = conn.getOutputStream();
+                BufferedWriter bufferedWriter = new BufferedWriter(new OutputStreamWriter(os, "UTF-8"));
+                String data = URLEncoder.encode("offset", "UTF-8") + "=" + URLEncoder.encode(offset, "UTF-8")+"&"+
+                        URLEncoder.encode("difference", "UTF-8") + "=" + URLEncoder.encode(difference, "UTF-8");
+                bufferedWriter.write(data);
+                bufferedWriter.flush();
+                bufferedWriter.close();
 
                 InputStream is = conn.getInputStream();
                 BufferedReader bufferedReader = new BufferedReader(new InputStreamReader(is, "ISO-8859-1"));
@@ -587,6 +510,43 @@ public class FunctionsThread extends AsyncTask<String, Void, String> {
                         URLEncoder.encode("customer_name", "UTF-8") + "=" + URLEncoder.encode(customer_name, "UTF-8")+ "&" +
                         URLEncoder.encode("source", "UTF-8") + "=" + URLEncoder.encode(source, "UTF-8")+ "&" +
                         URLEncoder.encode("discount", "UTF-8") + "=" + URLEncoder.encode(discount, "UTF-8");
+
+                bufferedWriter.write(data);
+                bufferedWriter.flush();
+                bufferedWriter.close();
+
+                InputStream is = conn.getInputStream();
+                BufferedReader bufferedReader = new BufferedReader(new InputStreamReader(is, "ISO-8859-1"));
+                StringBuilder sb = new StringBuilder();
+                String line;
+                while ((line = bufferedReader.readLine()) != null) {
+                    sb.append(line);
+                }
+
+                is.close();
+                bufferedReader.close();
+                conn.disconnect();
+                return sb.toString().trim();
+            } catch (Exception e) {
+                return "Error";
+            }
+        }
+        else if (method == "CancelPendingBill") {
+
+            String pId = params[1];
+
+
+
+            try {
+                URL url = new URL(ip + "cancelPendingBill.php");
+                HttpURLConnection conn = (HttpURLConnection) url.openConnection();
+                conn.setConnectTimeout(5000);
+                conn.setRequestMethod("POST");
+                conn.setDoInput(true);
+                conn.setDoOutput(true);
+                OutputStream os = conn.getOutputStream();
+                BufferedWriter bufferedWriter = new BufferedWriter(new OutputStreamWriter(os, "UTF-8"));
+                String data = URLEncoder.encode("pId", "UTF-8") + "=" + URLEncoder.encode(pId, "UTF-8");
 
                 bufferedWriter.write(data);
                 bufferedWriter.flush();

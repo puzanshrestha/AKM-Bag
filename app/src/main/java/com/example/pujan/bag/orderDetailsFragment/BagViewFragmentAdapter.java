@@ -13,9 +13,10 @@ import android.widget.EditText;
 import android.widget.ImageView;
 import android.widget.LinearLayout;
 import android.widget.TextView;
+import android.widget.Toast;
 
-import com.example.pujan.bag.FunctionsThread;
 import com.example.pujan.bag.R;
+import com.example.pujan.bag.VolleyFunctions;
 import com.example.pujan.bag.bagDetails.BagColorQuantity;
 import com.example.pujan.bag.bagDetails.BagEntity;
 import com.example.pujan.bag.database.DbHelper;
@@ -32,7 +33,7 @@ import java.util.LinkedHashMap;
 /**
  * Created by Pujan on 1/3/2017.
  */
-public class BagViewFragmentAdapter extends RecyclerView.Adapter<BagViewFragmentAdapter.TestHolder> implements FunctionsThread.AsyncResponse {
+public class BagViewFragmentAdapter extends RecyclerView.Adapter<BagViewFragmentAdapter.TestHolder> implements VolleyFunctions.AsyncResponse {
 
 
     boolean show = false;
@@ -122,6 +123,8 @@ public class BagViewFragmentAdapter extends RecyclerView.Adapter<BagViewFragment
         holder.brownStockQty.setText("0");
         holder.othersStockQty.setText("0");
 
+
+        holder.bind();
         int stockTotal =0;
         for(int i=0;i<stockList.size();i++)
         {
@@ -265,7 +268,7 @@ public class BagViewFragmentAdapter extends RecyclerView.Adapter<BagViewFragment
             expandableLayout = (ExpandableLayout) itemView.findViewById(R.id.expandableLayout);
             expandableLayout.setInterpolator(new OvershootInterpolator());
 
-            expandableLayout.collapse();
+
 
             container.setOnClickListener(this);
 
@@ -278,6 +281,7 @@ public class BagViewFragmentAdapter extends RecyclerView.Adapter<BagViewFragment
             blackStockQty = (TextView) itemView.findViewById(R.id.blackStockQty);
             brownStockQty = (TextView) itemView.findViewById(R.id.brownStockQty);
             othersStockQty = (TextView) itemView.findViewById(R.id.othersStockQty);
+
 
 
             addOrder.setOnClickListener(new View.OnClickListener() {
@@ -293,24 +297,31 @@ public class BagViewFragmentAdapter extends RecyclerView.Adapter<BagViewFragment
                     PrintEntity bcq = new PrintEntity();
                     LinkedHashMap<String, Integer> colorQty = new LinkedHashMap<>();
 
-                    if (!redEditTxt.getText().toString().replaceAll("\\s+", "").equals(""))
+                    if (!redEditTxt.getText().toString().replaceAll("\\s+", "").equals("")&!redEditTxt.getText().toString().replaceAll("\\s+", "").equals("0"))
                         colorQty.put("RED", Integer.parseInt(redEditTxt.getText().toString()));
-                    if (!blackEditTxt.getText().toString().replaceAll("\\s+", "").equals(""))
+                    if (!blackEditTxt.getText().toString().replaceAll("\\s+", "").equals("")&!blackEditTxt.getText().toString().replaceAll("\\s+", "").equals("0"))
                         colorQty.put("BLACK", Integer.parseInt(blackEditTxt.getText().toString()));
-                    if (!brownEditTxt.getText().toString().replaceAll("\\s+", "").equals(""))
+                    if (!brownEditTxt.getText().toString().replaceAll("\\s+", "").equals("")&!brownEditTxt.getText().toString().replaceAll("\\s+", "").equals("0"))
                         colorQty.put("BROWN", Integer.parseInt(brownEditTxt.getText().toString()));
-                    if (!othersEditText.getText().toString().replaceAll("\\s+", "").equals(""))
+                    if (!othersEditText.getText().toString().replaceAll("\\s+", "").equals("")&!othersEditText.getText().toString().replaceAll("\\s+", "").equals("0"))
                         colorQty.put("OTHERS", Integer.parseInt(othersEditText.getText().toString()));
 
 
                     if (!(redEditTxt.getText().toString().replaceAll("\\s+", "").equals("") & blackEditTxt.getText().toString().replaceAll("\\s+", "").equals("") & brownEditTxt.getText().toString().replaceAll("\\s+", "").equals("") & othersEditText.getText().toString().replaceAll("\\s+", "").equals(""))) {
-                        bcq.setBag_id(listData.get(getAdapterPosition()).getId());
-                        bcq.setProduct(listData.get(getAdapterPosition()).getName());
-                        bcq.setPrice(listData.get(getAdapterPosition()).getPrice());
-                        bcq.setColorQuantity(colorQty);
+                        //if((Integer.parseInt(redStockQty.getText().toString())>Integer.parseInt(redEditTxt.getText().toString()))&(Integer.parseInt(blackStockQty.getText().toString())>Integer.parseInt(blackEditTxt.getText().toString()))&(Integer.parseInt(brownStockQty.getText().toString())>Integer.parseInt(brownEditTxt.getText().toString()))&(Integer.parseInt(othersStockQty.getText().toString())>Integer.parseInt(othersEditText.getText().toString())))
+                        if(isStockAvailable())
+                        {
+                            bcq.setBag_id(listData.get(getAdapterPosition()).getId());
+                            bcq.setProduct(listData.get(getAdapterPosition()).getName());
+                            bcq.setPrice(listData.get(getAdapterPosition()).getPrice());
+                            bcq.setColorQuantity(colorQty);
 
-
-                        colorQuantities.add(bcq);
+                            colorQuantities.add(bcq);
+                        }
+                        else
+                        {
+                            Toast.makeText(context,"Stock Not Available",Toast.LENGTH_LONG).show();
+                        }
 
 
                     }
@@ -321,6 +332,42 @@ public class BagViewFragmentAdapter extends RecyclerView.Adapter<BagViewFragment
 
             });
 
+
+        }
+
+        private boolean isStockAvailable() {
+
+            boolean result=true;
+            if(!redEditTxt.getText().toString().equals(""))
+            {
+                if(Integer.parseInt(redStockQty.getText().toString())<Integer.parseInt(redEditTxt.getText().toString()))
+                {
+                    result=false;
+                }
+            }
+            if(!blackEditTxt.getText().toString().equals(""))
+            {
+                if(Integer.parseInt(blackStockQty.getText().toString())<Integer.parseInt(blackEditTxt.getText().toString()))
+                {
+                    result=false;
+                }
+            }
+            if(!brownEditTxt.getText().toString().equals(""))
+            {
+                if(Integer.parseInt(brownStockQty.getText().toString())<Integer.parseInt(brownEditTxt.getText().toString()))
+                {
+                    result=false;
+                }
+            }
+            if(!othersEditText.getText().toString().equals(""))
+            {
+                if(Integer.parseInt(othersStockQty.getText().toString())<Integer.parseInt(othersEditText.getText().toString()))
+                {
+                    result=false;
+                }
+            }
+
+            return result;
 
         }
 
@@ -356,18 +403,18 @@ public class BagViewFragmentAdapter extends RecyclerView.Adapter<BagViewFragment
         }
 
 
+        public void bind() {
+
+            expandableLayout.collapse();
+        }
     }
+
+
 
     public void expandLayout(int scrollPosition) {
 
 
         try {
-            if (selected_position != UNSELECTED) {
-
-                TestHolder holderI = (TestHolder) recyclerView.findViewHolderForAdapterPosition(selected_position);
-                if(holderI.expandableLayout.isExpanded())
-                holderI.expandableLayout.collapse();
-            }
 
             TestHolder holderIn;
             holderIn = (TestHolder) recyclerView.findViewHolderForLayoutPosition(scrollPosition);

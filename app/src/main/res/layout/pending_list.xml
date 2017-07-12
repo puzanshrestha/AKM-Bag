@@ -55,6 +55,22 @@
                 android:textSize="15sp"
                 android:id="@+id/pendingDate"
                 android:textColor="@color/textColor"/>
+            <net.cachapa.expandablelayout.ExpandableLayout
+                android:layout_marginTop="10dp"
+                android:layout_width="match_parent"
+                android:layout_height="wrap_content"
+                card_view:el_expanded="true"
+                android:layout_below="@id/pendingDate"
+                android:layout_gravity="center"
+                android:id="@+id/expandableLayout">
+                <Button
+                    android:id="@+id/cancelPendingBillBtn"
+                    android:layout_width="match_parent"
+                    android:layout_height="wrap_content"
+                    android:background="@color/colorPrimary"
+                    android:textColor="@color/white"
+                    android:text="Cancel "/>
+            </net.cachapa.expandablelayout.ExpandableLayout>
 
 
 
@@ -75,6 +91,7 @@
             android:background="@drawable/ic_keyboard_arrow_right_black_24dp"
             android:textAppearance="?android:textAppearanceLarge"
             android:layout_alignParentRight="true" />
+
 
         </RelativeLayout>
         </android.support.v7.widget.CardView>

@@ -1,8 +1,8 @@
 package com.example.pujan.bag.bagDetails;
 
+import android.app.ProgressDialog;
 import android.content.Intent;
 import android.database.Cursor;
-import android.media.Image;
 import android.net.Uri;
 import android.provider.MediaStore;
 import android.support.v4.app.FragmentManager;
@@ -11,9 +11,7 @@ import android.os.Bundle;
 import android.support.v7.widget.Toolbar;
 import android.text.Html;
 import android.text.InputType;
-import android.view.KeyEvent;
 import android.view.MenuItem;
-import android.view.MotionEvent;
 import android.view.View;
 import android.widget.Button;
 import android.widget.EditText;
@@ -21,21 +19,14 @@ import android.widget.ImageView;
 import android.widget.TextView;
 import android.widget.Toast;
 
-import com.example.pujan.bag.ActionListActivity;
 import com.example.pujan.bag.FileUpload;
-import com.example.pujan.bag.FunctionsThread;
-import com.example.pujan.bag.MainActivity;
 import com.example.pujan.bag.R;
+import com.example.pujan.bag.VolleyFunctions;
 import com.example.pujan.bag.bagDetails.vendorSelectFragment.VendorSelectFragment;
-import com.example.pujan.bag.orderDetailsFragment.customerSelectFragment.SelectCustomerFragment;
-import com.example.pujan.bag.vendorDetails.VendorListActivity;
-import com.squareup.picasso.MemoryPolicy;
-import com.squareup.picasso.NetworkPolicy;
-import com.squareup.picasso.Picasso;
 
 import java.util.concurrent.ExecutionException;
 
-public class AddBagActivity extends AppCompatActivity implements FunctionsThread.AsyncResponse {
+public class AddBagActivity extends AppCompatActivity implements VolleyFunctions.AsyncResponse {
 
     EditText nameEditText, typeEditText, priceEditText, companyEditText,vendorEditText;
     Button addBagBtn,vendorSelectBtn;
@@ -110,8 +101,8 @@ public class AddBagActivity extends AppCompatActivity implements FunctionsThread
                     bagCompany = companyEditText.getText().toString();
                     //bagQuantity = quantityEditText.getText().toString();
 
-                    FunctionsThread t = new FunctionsThread(AddBagActivity.this);
-                    t.execute("AddBag", bagName, bagCategory, bagPrice, bagCompany, "insert", "0", ext, vendor_id);
+                    VolleyFunctions t = new VolleyFunctions(AddBagActivity.this);
+                    t.addBag(bagName, bagCategory, bagPrice, bagCompany, "insert", "0", ext, vendor_id);
                     t.trigAsyncResponse(AddBagActivity.this);
 
                 }
@@ -173,28 +164,21 @@ public class AddBagActivity extends AppCompatActivity implements FunctionsThread
     public void onComplete(String check) {
         try {
 
-            System.out.println(check);
+            ProgressDialog pd = new ProgressDialog(this);
 
-            if (check.equals("Inserted")) {
+
+            if (check.substring(0,8).equals("Inserted")) {
                 Toast.makeText(getBaseContext(), "Inserted new bag Item", Toast.LENGTH_SHORT).show();
                 Intent i = new Intent(getBaseContext(), BagListActivity.class);
                 i.putExtra("source", "bag");
                 startActivity(i);
-                new FileUpload(getBaseContext()).execute("UploadFile", mediaSelect, bid, "b").get();
+                bid=check.substring(11,check.length());
+                System.out.println(bid);
+                new FileUpload(getBaseContext(),pd).execute(mediaSelect, bid, "b").get();
 
             }
-            if (check.equals("Updated")) {
-                Toast.makeText(getBaseContext(), "Inserted relation", Toast.LENGTH_LONG).show();
-            }
 
-            else if (check.equals("Update")) {
-                new FileUpload(getBaseContext()).execute(mediaSelect, bid, "b");
-                Toast.makeText(getBaseContext(), "Bag has been Updated", Toast.LENGTH_SHORT).show();
-                Intent i = new Intent(getBaseContext(), BagListActivity.class);
-                i.putExtra("source", "bag");
-               startActivity(i);
-
-            } else
+          else
                 Toast.makeText(getBaseContext(), check, Toast.LENGTH_SHORT).show();
         } catch (InterruptedException e) {
             System.out.println("error");

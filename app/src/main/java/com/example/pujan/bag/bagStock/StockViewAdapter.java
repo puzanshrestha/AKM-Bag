@@ -1,65 +1,31 @@
 package com.example.pujan.bag.bagStock;
 
-import android.app.Dialog;
-import android.app.ProgressDialog;
 import android.content.Context;
-import android.content.DialogInterface;
 import android.content.Intent;
-import android.content.SharedPreferences;
-import android.graphics.Color;
-import android.os.Bundle;
-import android.support.v7.app.AlertDialog;
-import android.support.v7.widget.PopupMenu;
 import android.support.v7.widget.RecyclerView;
 import android.text.Html;
-import android.text.InputType;
-import android.text.TextUtils;
-import android.view.Gravity;
 import android.view.LayoutInflater;
-import android.view.MenuItem;
 import android.view.View;
 import android.view.ViewGroup;
-import android.widget.ArrayAdapter;
-import android.widget.Button;
-import android.widget.CheckBox;
-import android.widget.EditText;
 import android.widget.ImageView;
-import android.widget.LinearLayout;
-import android.widget.Spinner;
-import android.widget.TableLayout;
-import android.widget.TableRow;
 import android.widget.TextView;
-import android.widget.Toast;
 
-import com.example.pujan.bag.FunctionsThread;
 import com.example.pujan.bag.R;
+import com.example.pujan.bag.VolleyFunctions;
 import com.example.pujan.bag.bagDetails.BagColorQuantity;
 import com.example.pujan.bag.bagDetails.BagEntity;
-import com.example.pujan.bag.bagDetails.BagListActivity;
-import com.example.pujan.bag.bagStock.ColorQuantityEntity;
 import com.example.pujan.bag.database.DbHelper;
-import com.example.pujan.bag.orderDetailsFragment.BagListFragment;
-import com.google.gson.Gson;
 import com.squareup.picasso.MemoryPolicy;
 import com.squareup.picasso.NetworkPolicy;
 import com.squareup.picasso.Picasso;
 
-import org.json.JSONArray;
-import org.json.JSONException;
-import org.json.JSONObject;
-import org.w3c.dom.Text;
-
 import java.util.ArrayList;
-import java.util.HashMap;
-import java.util.Iterator;
 import java.util.LinkedHashMap;
-
-import java.util.concurrent.ExecutionException;
 
 /**
  * Created by Pujan on 1/3/2017.
  */
-public class StockViewAdapter extends RecyclerView.Adapter<StockViewAdapter.TestHolder> implements FunctionsThread.AsyncResponse {
+public class StockViewAdapter extends RecyclerView.Adapter<StockViewAdapter.TestHolder> implements VolleyFunctions.AsyncResponse {
 
 
 

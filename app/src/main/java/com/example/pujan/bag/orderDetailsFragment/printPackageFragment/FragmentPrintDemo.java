@@ -14,12 +14,14 @@ import android.util.Log;
 import android.view.LayoutInflater;
 import android.view.View;
 import android.view.ViewGroup;
+import android.view.Window;
 import android.widget.Button;
 import android.widget.Toast;
 
 import com.example.pujan.bag.ActionListActivity;
-import com.example.pujan.bag.FunctionsThread;
 import com.example.pujan.bag.R;
+import com.example.pujan.bag.VolleyFunctions;
+import com.example.pujan.bag.database.DbHelper;
 import com.example.pujan.bag.printPackage.PrintEntity;
 import com.google.gson.Gson;
 import com.zj.btsdk.BluetoothService;
@@ -31,8 +33,10 @@ import java.util.ArrayList;
 import java.util.Date;
 import java.util.LinkedHashMap;
 
+import static android.view.View.GONE;
 
-public class FragmentPrintDemo extends DialogFragment implements FunctionsThread.AsyncResponse {
+
+public class FragmentPrintDemo extends DialogFragment implements VolleyFunctions.AsyncResponse {
     Button btnSearch;
     Button btnSendDraw;
     Button btnPendingBill;
@@ -50,6 +54,7 @@ public class FragmentPrintDemo extends DialogFragment implements FunctionsThread
     String customer_id = "";
     String customer_name = "";
     String address="";
+    String shop_number="";
     String discount, source;
     int total=0;
 
@@ -63,13 +68,25 @@ public class FragmentPrintDemo extends DialogFragment implements FunctionsThread
         this.total=total;
 
 
+
+    }
+
+    @Override
+    public void onStart() {
+        super.onStart();
+
+        Window window = getDialog().getWindow();
+        window.setBackgroundDrawableResource(R.color.colorPrimary);
     }
 
     @Override
     public View onCreateView(LayoutInflater inflater, ViewGroup container, Bundle savedInstanceState)
 
     {
+        DbHelper dbh = new DbHelper(getContext());
+        this.shop_number=dbh.getShop();
         View view = inflater.inflate(R.layout.main, null);
+        getDialog().requestWindowFeature(Window.FEATURE_NO_TITLE);
 
 
         mService = new BluetoothService(getContext(), mHandler);
@@ -90,8 +107,15 @@ public class FragmentPrintDemo extends DialogFragment implements FunctionsThread
             btnSearch.setOnClickListener(new ClickEvent());
             btnSendDraw.setEnabled(false);
 
+
             btnPendingBill = (Button) view.findViewById(R.id.pendingBillBtn);
             btnPendingBill.setOnClickListener(new ClickEvent());
+            btnPendingBill.setEnabled(false);
+
+            if(customer_id.equals("0"))
+            {
+                btnPendingBill.setVisibility(GONE);
+            }
         } catch (Exception ex) {
             Log.e("������Ϣ", ex.getMessage());
         }
@@ -117,12 +141,6 @@ public class FragmentPrintDemo extends DialogFragment implements FunctionsThread
     }
 
 
-    @Override
-    public void onStart() {
-        super.onStart();
-
-
-    }
 
 
 
@@ -130,7 +148,7 @@ public class FragmentPrintDemo extends DialogFragment implements FunctionsThread
     public void onComplete(String output) {
 
 
-        System.out.println(output);
+
         if (output.equals("addedPendingBill")) {
             Toast.makeText(getContext(), "Added To Pending Bill List", Toast.LENGTH_SHORT).show();
             String msg = "";
@@ -150,11 +168,13 @@ public class FragmentPrintDemo extends DialogFragment implements FunctionsThread
                 Date date = new Date();
                 String sDate = sdf.format(date);
 
-                msg += alignMiddle("PBRS Enterprises") + "\n";
+              /*  msg += alignMiddle("PBRS Enterprises") + "\n";
 
                 msg += alignMiddle("New Road, Kathmandu") + "\n";
 
                 msg += alignMiddle("Phone:+977-1-5589330") + "\n\n";
+                */
+
                 msg += "               " + "Date : " + sDate + "\n\n";
 
 
@@ -292,11 +312,13 @@ public class FragmentPrintDemo extends DialogFragment implements FunctionsThread
                 Date date = new Date();
                 String sDate = sdf.format(date);
 
-                msg += alignMiddle("PBRS Enterprises") + "\n";
+              /*  msg += alignMiddle("PBRS Enterprises") + "\n";
 
                 msg += alignMiddle("New Road, Kathmandu") + "\n";
 
                 msg += alignMiddle("Phone:+977-1-5589330") + "\n\n";
+
+                */
                 msg += "               " + "Date : " + sDate + "\n\n";
 
 
@@ -427,12 +449,18 @@ public class FragmentPrintDemo extends DialogFragment implements FunctionsThread
                 startActivityForResult(serverIntent, REQUEST_CONNECT_DEVICE);
 
 
+                Gson test = new Gson();
+                String jsonData = test.toJson(getData);
+                VolleyFunctions t = new VolleyFunctions(getContext());
+                t.addOrder( jsonData, customer_id, customer_name, discount,source,shop_number);
+                t.trigAsyncResponse(FragmentPrintDemo.this);
+
             } else if (v == btnSendDraw) {
 
                 Gson test = new Gson();
                 String jsonData = test.toJson(getData);
-                FunctionsThread t = new FunctionsThread(getContext());
-                t.execute("AddOrder", jsonData, customer_id, customer_name, discount,source);
+                VolleyFunctions t = new VolleyFunctions(getContext());
+                t.addOrder( jsonData, customer_id, customer_name, discount,source,shop_number);
                 t.trigAsyncResponse(FragmentPrintDemo.this);
 
 
@@ -441,8 +469,8 @@ public class FragmentPrintDemo extends DialogFragment implements FunctionsThread
                 Gson test = new Gson();
                 String jsonData = test.toJson(getData);
                 System.out.println(jsonData);
-                FunctionsThread t = new FunctionsThread(getContext());
-                t.execute("AddPendingBill", jsonData, customer_id, customer_name,String.valueOf(total), address);
+                VolleyFunctions t = new VolleyFunctions(getContext());
+                t.addPendingBill( jsonData, customer_id, customer_name,String.valueOf(total), address,shop_number);
                 t.trigAsyncResponse(FragmentPrintDemo.this);
             }
         }
@@ -459,6 +487,7 @@ public class FragmentPrintDemo extends DialogFragment implements FunctionsThread
                             Toast.makeText(getContext(), "Connect successful",
                                     Toast.LENGTH_SHORT).show();
                             btnSendDraw.setEnabled(true);
+                            btnPendingBill.setEnabled(true);
                             break;
                         case BluetoothService.STATE_CONNECTING:
                             Log.d("��������", "��������.....");
@@ -473,6 +502,7 @@ public class FragmentPrintDemo extends DialogFragment implements FunctionsThread
                     Toast.makeText(getContext(), "Device connection was lost",
                             Toast.LENGTH_SHORT).show();
                     btnSendDraw.setEnabled(false);
+                    btnPendingBill.setEnabled(false);
                     break;
                 case BluetoothService.MESSAGE_UNABLE_CONNECT:
                     Toast.makeText(getContext(), "Unable to connect device",

@@ -118,11 +118,14 @@ public class FragmentDeviceListActivity extends Activity {
     @Override
     protected void onDestroy() {
         super.onDestroy();
+
         if (mService != null) {
         	mService.cancelDiscovery();
         }
         mService = null;
         this.unregisterReceiver(mReceiver);
+
+
     }
 
     /**

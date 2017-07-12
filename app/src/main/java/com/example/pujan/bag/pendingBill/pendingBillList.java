@@ -11,10 +11,12 @@ import android.support.v7.widget.Toolbar;
 import android.text.Html;
 import android.view.MenuItem;
 import android.view.View;
+import android.widget.ProgressBar;
 import android.widget.Toast;
 
-import com.example.pujan.bag.FunctionsThread;
 import com.example.pujan.bag.R;
+import com.example.pujan.bag.VolleyFunctions;
+import com.example.pujan.bag.database.DbHelper;
 import com.example.pujan.bag.orderDetailsFragment.OrderActivity;
 
 import org.json.JSONArray;
@@ -23,13 +25,11 @@ import org.json.JSONObject;
 
 import java.sql.Date;
 import java.util.ArrayList;
-import java.util.concurrent.ExecutionException;
 
 /**
  * Created by puzan on 26-Mar-17.
  */
-public class PendingBillList extends AppCompatActivity implements FunctionsThread.AsyncResponse{
-
+public class PendingBillList extends AppCompatActivity implements VolleyFunctions.AsyncResponse {
 
 
     @Override
@@ -45,11 +45,15 @@ public class PendingBillList extends AppCompatActivity implements FunctionsThrea
     FloatingActionButton addOrderFab;
     PendingBillAdapter pendingBillAdapter;
     ArrayList<PendingBillListEntity> pBillList;
+    ProgressBar progressBar;
+
     @Override
     protected void onCreate(Bundle savedInstanceState) {
         super.onCreate(savedInstanceState);
         setContentView(R.layout.fragment_order_list_activity);
 
+        progressBar = (ProgressBar) findViewById(R.id.progressBar);
+        progressBar.setVisibility(View.VISIBLE);
 
         Toolbar toolbar = (Toolbar) findViewById(R.id.actionBar);
         setSupportActionBar(toolbar);
@@ -58,7 +62,8 @@ public class PendingBillList extends AppCompatActivity implements FunctionsThrea
         actionBar.setTitle(Html.fromHtml("<font color=\"#FFFFFF\">" + "Pending Order" + "</font>"));
 
         recView = (RecyclerView) findViewById(R.id.recView);
-        addOrderFab=(FloatingActionButton)findViewById(R.id.addOrderFab);
+        addOrderFab = (FloatingActionButton) findViewById(R.id.addOrderFab);
+
 
         recView.setHasFixedSize(true);
         recView.setItemViewCacheSize(10);
@@ -71,16 +76,18 @@ public class PendingBillList extends AppCompatActivity implements FunctionsThrea
         recView.setLayoutManager(lm);
 
 
-        FunctionsThread thread = new FunctionsThread(this);
-        thread.execute("QueryPendingBillList");
-        thread.trigAsyncResponse(this);
+        DbHelper dbh = new DbHelper(this);
+
+        VolleyFunctions thread = new VolleyFunctions(this);
+        thread.queryPendingBillList(dbh.getShop());
+        thread.trigAsyncResponse(PendingBillList.this);
 
         addOrderFab.setOnClickListener(new View.OnClickListener() {
             @Override
             public void onClick(View v) {
-                Intent i = new Intent(getBaseContext(),OrderActivity.class);
-                i.putExtra("source","Order");
-                i.putExtra("pendingData","Null");
+                Intent i = new Intent(getBaseContext(), OrderActivity.class);
+                i.putExtra("source", "Order");
+                i.putExtra("pendingData", "Null");
                 startActivity(i);
 
 
@@ -90,7 +97,7 @@ public class PendingBillList extends AppCompatActivity implements FunctionsThrea
         recView.addOnScrollListener(new RecyclerView.OnScrollListener() {
             @Override
             public void onScrolled(RecyclerView recyclerView, int dx, int dy) {
-                if(dy>0|dy<0)
+                if (dy > 0 | dy < 0)
                     addOrderFab.hide();
 
 
@@ -103,41 +110,44 @@ public class PendingBillList extends AppCompatActivity implements FunctionsThrea
         });
 
 
-
     }
 
     @Override
     public void onComplete(String response) {
 
+        progressBar.setVisibility(View.GONE);
+        if (response.equals("ERROR")) {
+            Toast.makeText(getBaseContext(), "Network Error", Toast.LENGTH_SHORT).show();
+        } else {
 
-        pBillList= new ArrayList<>();
-        try {
+            pBillList = new ArrayList<>();
+            try {
 
-            JSONObject bagJson = new JSONObject(response);
-            JSONArray bagJsonArray = bagJson.getJSONArray("result");
+                JSONObject bagJson = new JSONObject(response);
+                JSONArray bagJsonArray = bagJson.getJSONArray("result");
 
 
-            for (int i = 0; i < bagJsonArray.length(); i++) {
-                JSONObject jObject = bagJsonArray.getJSONObject(i);
-                PendingBillListEntity pBillEntity = new PendingBillListEntity();
-                pBillEntity.setDate(Date.valueOf(jObject.getString("date")));
-                pBillEntity.setCustomerName(jObject.getString("customer_name"));
-                pBillEntity.setpId(Integer.valueOf(jObject.getString("pId")));
-                pBillEntity.setCustomerId(Integer.parseInt(jObject.getString("customer_id")));
-                pBillEntity.setAddress(jObject.getString("address"));
-                pBillEntity.setTotal(Integer.parseInt(jObject.getString("total")));
-                pBillList.add(pBillEntity);
+                for (int i = 0; i < bagJsonArray.length(); i++) {
+                    JSONObject jObject = bagJsonArray.getJSONObject(i);
+                    PendingBillListEntity pBillEntity = new PendingBillListEntity();
+                    pBillEntity.setDate(Date.valueOf(jObject.getString("date")));
+                    pBillEntity.setCustomerName(jObject.getString("customer_name"));
+                    pBillEntity.setpId(Integer.valueOf(jObject.getString("pId")));
+                    pBillEntity.setCustomerId(Integer.parseInt(jObject.getString("customer_id")));
+                    pBillEntity.setAddress(jObject.getString("address"));
+                    pBillEntity.setTotal(Integer.parseInt(jObject.getString("total")));
+                    pBillList.add(pBillEntity);
 
+                }
+
+
+            } catch (JSONException e) {
+                e.printStackTrace();
+                Toast.makeText(this, "Error connecting with the Server..!", Toast.LENGTH_SHORT).show();
             }
-
-
-        } catch (JSONException e) {
-            e.printStackTrace();
-            Toast.makeText(this,"Error connecting with the Server..!",Toast.LENGTH_SHORT).show();
+            pendingBillAdapter = new PendingBillAdapter(pBillList, this, recView);
+            recView.setAdapter(pendingBillAdapter);
         }
-        pendingBillAdapter = new PendingBillAdapter(pBillList, this);
-        recView.setAdapter(pendingBillAdapter);
-        pendingBillAdapter.notifyDataSetChanged();
     }
 
     @Override

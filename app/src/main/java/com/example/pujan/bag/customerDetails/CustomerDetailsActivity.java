@@ -2,12 +2,8 @@ package com.example.pujan.bag.customerDetails;
 
 import android.content.DialogInterface;
 import android.content.Intent;
-import android.database.Cursor;
-import android.net.Uri;
 import android.os.SystemClock;
-import android.provider.MediaStore;
 import android.support.design.widget.CollapsingToolbarLayout;
-import android.support.v7.app.ActionBar;
 import android.support.v7.app.AlertDialog;
 import android.support.v7.app.AppCompatActivity;
 import android.os.Bundle;
@@ -19,21 +15,16 @@ import android.view.View;
 import android.widget.Button;
 import android.widget.EditText;
 import android.widget.ImageView;
-import android.widget.LinearLayout;
 import android.widget.TextView;
 import android.widget.Toast;
 
-import com.example.pujan.bag.ActionListActivity;
-import com.example.pujan.bag.FunctionsThread;
-import com.example.pujan.bag.MainActivity;
 import com.example.pujan.bag.R;
-import com.squareup.picasso.MemoryPolicy;
-import com.squareup.picasso.NetworkPolicy;
-import com.squareup.picasso.Picasso;
+import com.example.pujan.bag.FunctionsThread;
+import com.example.pujan.bag.VolleyFunctions;
 
 import java.util.concurrent.ExecutionException;
 
-public class CustomerDetailsActivity extends AppCompatActivity implements FunctionsThread.AsyncResponse {
+public class CustomerDetailsActivity extends AppCompatActivity implements VolleyFunctions.AsyncResponse {
 
     Button editBtn,deleteBtn,saveBtn;
     ImageView bagPhoto;
@@ -98,8 +89,8 @@ public class CustomerDetailsActivity extends AppCompatActivity implements Functi
                 setEditable(false);
 
 
-                FunctionsThread t = new FunctionsThread(getBaseContext());
-                t.execute("AddCustomer",nameEditText.getText().toString(),addressEditText.getText().toString(),phoneEditText.getText().toString(),"update",customer_id);
+                VolleyFunctions t = new VolleyFunctions(getBaseContext());
+                t.addCustomer(nameEditText.getText().toString(),addressEditText.getText().toString(),phoneEditText.getText().toString(),"update",customer_id);
                 t.trigAsyncResponse(CustomerDetailsActivity.this);
             }
         });

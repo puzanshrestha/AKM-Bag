@@ -296,15 +296,21 @@
                         android:layout_gravity="center">
 
                         <Button
+                            android:layout_margin="5dp"
                             android:layout_width="wrap_content"
                             android:layout_height="wrap_content"
                             android:text="Add"
-                            android:id="@+id/addOrder"/>
+                            android:id="@+id/addOrder"
+                            android:background="@color/colorPrimary"
+                            android:textColor="@color/white"/>
                         <Button
+                            android:layout_margin="5dp"
                             android:layout_width="wrap_content"
                             android:layout_height="wrap_content"
                             android:text="Clear"
-                            android:id="@+id/clearOrder"/>
+                            android:id="@+id/clearOrder"
+                            android:background="@color/colorPrimary"
+                            android:textColor="@color/white"/>
                     </LinearLayout>
 
                 </LinearLayout>

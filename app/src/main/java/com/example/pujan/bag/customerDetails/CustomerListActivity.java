@@ -1,15 +1,12 @@
 package com.example.pujan.bag.customerDetails;
 
 
-import android.app.SearchManager;
-import android.content.ClipData;
-import android.content.Context;
-import android.content.DialogInterface;
 import android.content.Intent;
 import android.graphics.Color;
+import android.graphics.drawable.ColorDrawable;
 import android.support.design.widget.FloatingActionButton;
+import android.support.v4.content.ContextCompat;
 import android.support.v4.view.MenuItemCompat;
-import android.support.v7.app.AlertDialog;
 import android.support.v7.app.AppCompatActivity;
 import android.os.Bundle;
 import android.support.v7.widget.LinearLayoutManager;
@@ -22,16 +19,13 @@ import android.view.MenuInflater;
 import android.view.MenuItem;
 
 import android.view.View;
-import android.view.ViewGroup;
 import android.widget.EditText;
-import android.widget.LinearLayout;
-import android.widget.TableRow;
-import android.widget.TextView;
+import android.widget.ProgressBar;
 import android.widget.Toast;
 
 import com.example.pujan.bag.ActionListActivity;
-import com.example.pujan.bag.FunctionsThread;
 import com.example.pujan.bag.R;
+import com.example.pujan.bag.VolleyFunctions;
 import com.example.pujan.bag.bagDetails.BagListActivity;
 
 import org.json.JSONArray;
@@ -39,13 +33,15 @@ import org.json.JSONObject;
 
 import java.util.ArrayList;
 
-public class CustomerListActivity extends AppCompatActivity implements FunctionsThread.AsyncResponse, CustomerViewAdapter.ItemClickCallback, SearchView.OnQueryTextListener {
+public class CustomerListActivity extends AppCompatActivity implements VolleyFunctions.AsyncResponse, CustomerViewAdapter.ItemClickCallback, SearchView.OnQueryTextListener {
 
     RecyclerView recView;
     CustomerViewAdapter customerViewAdapter;
     String method = "customer";
     ArrayList<CustomerEntity> customerData;
     FloatingActionButton fab;
+
+    ProgressBar progressBar;
 
     @Override
     protected void onCreate(Bundle savedInstanceState) {
@@ -61,9 +57,11 @@ public class CustomerListActivity extends AppCompatActivity implements Functions
 
         fab = (FloatingActionButton) findViewById(R.id.fab);
 
+        progressBar = (ProgressBar)findViewById(R.id.progressBar);
 
-        FunctionsThread t = new FunctionsThread(this);
-        t.execute("ViewCustomer");
+
+        VolleyFunctions t = new VolleyFunctions(this);
+        t.viewCustomer();
         t.trigAsyncResponse(this);
 
 
@@ -90,6 +88,11 @@ public class CustomerListActivity extends AppCompatActivity implements Functions
         inflater.inflate(R.menu.search_action_bar, search);
         MenuItem menuItem = search.findItem(R.id.searchh);
         SearchView searchView = (SearchView) MenuItemCompat.getActionView(menuItem);
+        EditText searchEditText = (EditText) searchView.findViewById(android.support.v7.appcompat.R.id.search_src_text);
+        searchEditText.setTextColor(ContextCompat.getColor(this, R.color.colorPrimary));
+        searchEditText.setHintTextColor(ContextCompat.getColor(this, R.color.colorPrimary));
+        searchEditText.setBackground(new ColorDrawable(Color.WHITE));
+        searchEditText.setHint("Search Customer");
         searchView.setOnQueryTextListener(this);
         return true;
 
@@ -137,67 +140,72 @@ public class CustomerListActivity extends AppCompatActivity implements Functions
     @Override
     public void onComplete(String output) {
 
-        customerData = new ArrayList<>();
-        if (output.equals("Error")) {
-            Toast.makeText(this, "Error in Connection", Toast.LENGTH_SHORT).show();
+        progressBar.setVisibility(View.GONE);
+        if (output.equals("ERROR")) {
+            Toast.makeText(this, "Network Error", Toast.LENGTH_SHORT).show();
         } else {
-            try {
+            customerData = new ArrayList<>();
+            if (output.equals("Error")) {
+                Toast.makeText(this, "Error in Connection", Toast.LENGTH_SHORT).show();
+            } else {
+                try {
 
-                JSONObject customerJson = new JSONObject(output);
-                JSONArray customerJsonArray = customerJson.getJSONArray("result");
-                System.out.println(customerJson);
-                System.out.println(customerJsonArray);
-
-
-                for (int i = 0; i < customerJsonArray.length(); i++) {
-                    JSONObject jObject = customerJsonArray.getJSONObject(i);
-                    CustomerEntity customerEntity = new CustomerEntity();
-                    customerEntity.setId(((jObject.getInt("customer_id"))));
-                    customerEntity.setName(jObject.getString("customer_name"));
-                    customerEntity.setAddress(jObject.getString("customer_address"));
-                    customerEntity.setPhone(jObject.getString("customer_phone"));
-
-                    customerData.add(customerEntity);
+                    JSONObject customerJson = new JSONObject(output);
+                    JSONArray customerJsonArray = customerJson.getJSONArray("result");
+                    System.out.println(customerJson);
+                    System.out.println(customerJsonArray);
 
 
+                    for (int i = 0; i < customerJsonArray.length(); i++) {
+                        JSONObject jObject = customerJsonArray.getJSONObject(i);
+                        CustomerEntity customerEntity = new CustomerEntity();
+                        customerEntity.setId(((jObject.getInt("customer_id"))));
+                        customerEntity.setName(jObject.getString("customer_name"));
+                        customerEntity.setAddress(jObject.getString("customer_address"));
+                        customerEntity.setPhone(jObject.getString("customer_phone"));
+
+                        customerData.add(customerEntity);
+
+
+                    }
+
+                } catch (Exception e) {
+                    e.printStackTrace();
                 }
+                recView = (RecyclerView) findViewById(R.id.recView);
+                recView.setLayoutManager(new LinearLayoutManager(this, LinearLayoutManager.VERTICAL, false));
 
-            } catch (Exception e) {
-                e.printStackTrace();
+
+                customerViewAdapter = new CustomerViewAdapter(customerData, method, this);
+                recView.setAdapter(customerViewAdapter);
+
+                customerViewAdapter.onItemClickCallback(this);
+
+                recView.addOnScrollListener(new RecyclerView.OnScrollListener() {
+                    @Override
+                    public void onScrolled(RecyclerView recyclerView, int dx, int dy) {
+                        if (dy > 0 | dy < 0)
+                            fab.hide();
+
+
+                    }
+
+                    @Override
+                    public void onScrollStateChanged(RecyclerView recyclerView, int newState) {
+                        fab.show();
+                    }
+                });
+
+
+                fab.setOnClickListener(new View.OnClickListener() {
+                    @Override
+                    public void onClick(View v) {
+                        Intent i = new Intent(getBaseContext(), AddCustomerActivity.class);
+                        startActivity(i);
+                    }
+                });
             }
-            recView = (RecyclerView) findViewById(R.id.recView);
-            recView.setLayoutManager(new LinearLayoutManager(this, LinearLayoutManager.VERTICAL, false));
 
-
-            customerViewAdapter = new CustomerViewAdapter(customerData, method, this);
-            recView.setAdapter(customerViewAdapter);
-
-            customerViewAdapter.onItemClickCallback(this);
-
-            recView.addOnScrollListener(new RecyclerView.OnScrollListener() {
-                @Override
-                public void onScrolled(RecyclerView recyclerView, int dx, int dy) {
-                    if (dy > 0 | dy < 0)
-                        fab.hide();
-
-
-                }
-
-                @Override
-                public void onScrollStateChanged(RecyclerView recyclerView, int newState) {
-                    fab.show();
-                }
-            });
-
-
-            fab.setOnClickListener(new View.OnClickListener() {
-                @Override
-                public void onClick(View v) {
-                    Intent i = new Intent(getBaseContext(), AddCustomerActivity.class);
-                    startActivity(i);
-                }
-            });
         }
-
     }
 }

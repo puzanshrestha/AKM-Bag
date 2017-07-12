@@ -9,28 +9,19 @@ import android.support.v7.app.AlertDialog;
 import android.support.v7.app.AppCompatActivity;
 import android.support.v7.widget.Toolbar;
 import android.text.InputType;
-import android.view.KeyEvent;
 import android.view.MenuItem;
 import android.view.MotionEvent;
 import android.view.View;
 import android.widget.Button;
 import android.widget.EditText;
 import android.widget.ImageView;
-import android.widget.LinearLayout;
 import android.widget.TextView;
 import android.widget.Toast;
 
-import com.example.pujan.bag.ActionListActivity;
-import com.example.pujan.bag.FunctionsThread;
 import com.example.pujan.bag.R;
-import com.example.pujan.bag.customerDetails.CustomerDetailsActivity;
-import com.squareup.picasso.MemoryPolicy;
-import com.squareup.picasso.NetworkPolicy;
-import com.squareup.picasso.Picasso;
+import com.example.pujan.bag.VolleyFunctions;
 
-import java.util.concurrent.ExecutionException;
-
-public class VendorDetailsActivity extends AppCompatActivity implements FunctionsThread.AsyncResponse {
+public class VendorDetailsActivity extends AppCompatActivity implements VolleyFunctions.AsyncResponse {
 
     Button editBtn, deleteBtn, saveBtn;
     ImageView bagPhoto;
@@ -39,7 +30,7 @@ public class VendorDetailsActivity extends AppCompatActivity implements Function
 
     String vendor_id = "";
 
-    FunctionsThread t;
+    VolleyFunctions t;
 
     protected void onCreate(Bundle savedInstanceState) {
         super.onCreate(savedInstanceState);
@@ -72,7 +63,7 @@ public class VendorDetailsActivity extends AppCompatActivity implements Function
         phoneEditText.setText(getIntent().getStringExtra("phone"));
 
 
-         t= new FunctionsThread(this);
+         t= new VolleyFunctions(this);
 
         editBtn.setOnClickListener(new View.OnClickListener() {
             @Override
@@ -95,7 +86,7 @@ public class VendorDetailsActivity extends AppCompatActivity implements Function
             public void onClick(View v) {
                 setEditable(false);
 
-                t.execute("AddVendor", nameEditText.getText().toString(), addressEditText.getText().toString(), "update", vendor_id);
+                t.addVendor(nameEditText.getText().toString(), addressEditText.getText().toString(), "update", vendor_id);
                 t.trigAsyncResponse(VendorDetailsActivity.this);
 
             }
@@ -160,7 +151,7 @@ public class VendorDetailsActivity extends AppCompatActivity implements Function
                     public void onClick(DialogInterface arg0, int arg1) {
 
 
-                        t.execute("AddVendor", a, a, "delete", vendor_id);
+                        t.addVendor( a, a, "delete", vendor_id);
                         t.trigAsyncResponse(VendorDetailsActivity.this);
 
                     }

@@ -164,6 +164,9 @@ public class DeviceListActivity extends Activity {
             // Set result and finish this Activity
             setResult(Activity.RESULT_OK, intent);
             finish();
+
+            //This part is for selecting Printer-------------------------------------*********************************
+            //*********************************************
         }
     };
 

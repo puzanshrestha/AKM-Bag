@@ -2,7 +2,6 @@ package com.example.pujan.bag.vendorDetails;
 
 import android.content.Intent;
 import android.os.Bundle;
-import android.support.design.widget.FloatingActionButton;
 import android.support.v7.app.AppCompatActivity;
 import android.support.v7.widget.Toolbar;
 import android.text.Html;
@@ -12,10 +11,10 @@ import android.widget.Button;
 import android.widget.EditText;
 import android.widget.Toast;
 
-import com.example.pujan.bag.FunctionsThread;
 import com.example.pujan.bag.R;
+import com.example.pujan.bag.VolleyFunctions;
 
-public class AddVendorActivity extends AppCompatActivity implements FunctionsThread.AsyncResponse{
+public class AddVendorActivity extends AppCompatActivity implements VolleyFunctions.AsyncResponse{
 
     Button addVendorBtn;
     EditText vendorNameEditText, vendorAddressEditText;
@@ -46,8 +45,8 @@ public class AddVendorActivity extends AppCompatActivity implements FunctionsThr
                 vendorAddress = vendorAddressEditText.getText().toString();
 
 
-                    FunctionsThread t= new FunctionsThread(AddVendorActivity.this);
-                    t.execute("AddVendor", vendorName, vendorAddress, "insert", "0");
+                    VolleyFunctions t= new VolleyFunctions(AddVendorActivity.this);
+                    t.addVendor(vendorName, vendorAddress, "insert", "0");
                     t.trigAsyncResponse(AddVendorActivity.this);
 
 

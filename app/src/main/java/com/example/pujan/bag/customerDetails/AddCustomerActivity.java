@@ -11,10 +11,10 @@ import android.widget.Button;
 import android.widget.EditText;
 import android.widget.Toast;
 
-import com.example.pujan.bag.FunctionsThread;
 import com.example.pujan.bag.R;
+import com.example.pujan.bag.VolleyFunctions;
 
-public class AddCustomerActivity extends AppCompatActivity implements FunctionsThread.AsyncResponse {
+public class AddCustomerActivity extends AppCompatActivity implements VolleyFunctions.AsyncResponse {
 
 
     Button addCustomerBtn;
@@ -44,8 +44,8 @@ public class AddCustomerActivity extends AppCompatActivity implements FunctionsT
         addCustomerBtn.setOnClickListener(new View.OnClickListener() {
             @Override
             public void onClick(View v) {
-                FunctionsThread t = new FunctionsThread(AddCustomerActivity.this);
-                t.execute("AddCustomer",nameEditText.getText().toString(),addressEditText.getText().toString(),phoneEditText.getText().toString(),"add","0");
+                VolleyFunctions t = new VolleyFunctions(AddCustomerActivity.this);
+                t.addCustomer(nameEditText.getText().toString(),addressEditText.getText().toString(),phoneEditText.getText().toString(),"add","0");
                 t.trigAsyncResponse(AddCustomerActivity.this);
 
 

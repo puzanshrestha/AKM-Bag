@@ -6,7 +6,6 @@ import android.graphics.Color;
 import android.os.Bundle;
 import android.support.design.widget.CoordinatorLayout;
 import android.support.design.widget.Snackbar;
-import android.support.v7.app.ActionBar;
 import android.support.v7.app.AppCompatActivity;
 import android.support.v7.widget.Toolbar;
 import android.view.Gravity;
@@ -20,8 +19,9 @@ import android.widget.TableRow;
 import android.widget.TextView;
 
 import com.example.pujan.bag.ActionListActivity;
-import com.example.pujan.bag.FunctionsThread;
 import com.example.pujan.bag.R;
+import com.example.pujan.bag.VolleyFunctions;
+import com.example.pujan.bag.database.DbHelper;
 
 import org.json.JSONArray;
 import org.json.JSONException;
@@ -34,7 +34,7 @@ import java.text.SimpleDateFormat;
 import java.util.ArrayList;
 import java.util.Calendar;
 
-public class BagReports extends AppCompatActivity implements FunctionsThread.AsyncResponse {
+public class BagReports extends AppCompatActivity implements VolleyFunctions.AsyncResponse {
 
     EditText editTo, editFrom;
     Calendar dateTime = Calendar.getInstance();
@@ -45,6 +45,7 @@ public class BagReports extends AppCompatActivity implements FunctionsThread.Asy
     TableLayout tableLayout;
     private Button view;
     CoordinatorLayout coordinatorLayout;
+    String shop_number="";
 
     @Override
     public void onBackPressed() {
@@ -70,6 +71,9 @@ public class BagReports extends AppCompatActivity implements FunctionsThread.Asy
         super.onCreate(savedInstanceState);
         setContentView(R.layout.activity_bag_reports);
 
+
+        DbHelper dbh = new DbHelper(this);
+        shop_number=dbh.getShop();
 
         Toolbar actionBar = (Toolbar) findViewById(R.id.actionBar);
         setSupportActionBar(actionBar);
@@ -105,8 +109,8 @@ public class BagReports extends AppCompatActivity implements FunctionsThread.Asy
             @Override
             public void onClick(View v) {
                 if (editFrom.getText().toString().length() > 0 & editTo.getText().toString().length() > 0) {
-                    FunctionsThread t = new FunctionsThread(BagReports.this);
-                    t.execute("ViewRecords", editTo.getText().toString(), editFrom.getText().toString());
+                    VolleyFunctions t = new VolleyFunctions(BagReports.this);
+                    t.viewRecords(editTo.getText().toString(), editFrom.getText().toString(),shop_number);
                     t.trigAsyncResponse(BagReports.this);
                 } else
                     Snackbar.make(coordinatorLayout, "Please Select Date First", Snackbar.LENGTH_SHORT).show();

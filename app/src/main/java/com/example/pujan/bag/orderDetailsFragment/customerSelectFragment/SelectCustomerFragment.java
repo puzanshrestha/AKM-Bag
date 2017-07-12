@@ -1,33 +1,27 @@
 package com.example.pujan.bag.orderDetailsFragment.customerSelectFragment;
 
 import android.content.DialogInterface;
-import android.content.Intent;
-import android.content.res.Resources;
 import android.graphics.Color;
+import android.os.Bundle;
 import android.support.design.widget.FloatingActionButton;
 import android.support.v4.app.DialogFragment;
 import android.support.v7.app.AlertDialog;
-import android.support.v7.app.AppCompatActivity;
-import android.os.Bundle;
 import android.support.v7.widget.LinearLayoutManager;
 import android.support.v7.widget.RecyclerView;
-import android.support.v7.widget.Toolbar;
 import android.view.LayoutInflater;
 import android.view.View;
 import android.view.ViewGroup;
 import android.view.Window;
 import android.widget.EditText;
 import android.widget.LinearLayout;
+import android.widget.ProgressBar;
 import android.widget.TableRow;
 import android.widget.TextView;
 import android.widget.Toast;
 
-import com.example.pujan.bag.FunctionsThread;
 import com.example.pujan.bag.R;
-import com.example.pujan.bag.bagDetails.BagListActivity;
+import com.example.pujan.bag.VolleyFunctions;
 import com.example.pujan.bag.customerDetails.CustomerEntity;
-import com.example.pujan.bag.customerDetails.CustomerListActivity;
-import com.example.pujan.bag.customerDetails.CustomerViewAdapter;
 import com.example.pujan.bag.orderDetailsFragment.OrderActivity;
 
 import org.json.JSONArray;
@@ -35,11 +29,26 @@ import org.json.JSONObject;
 
 import java.util.ArrayList;
 
-public class SelectCustomerFragment extends DialogFragment implements FunctionsThread.AsyncResponse,SelectCustomerFragmentAdapter.ItemClickCallback{
+public class SelectCustomerFragment extends DialogFragment implements VolleyFunctions.AsyncResponse, SelectCustomerFragmentAdapter.ItemClickCallback {
 
     RecyclerView recView;
     SelectCustomerFragmentAdapter selectCustomerFragmentAdapter;
     ArrayList<CustomerEntity> customerData;
+
+    ProgressBar progressBar;
+
+    private ItemClickCallback itemClickCallback;
+
+    public interface ItemClickCallback {
+        void customerSelected(String customerName);
+
+
+    }
+
+    public void onCustomerSelected(ItemClickCallback itemClickCallback) {
+        this.itemClickCallback = itemClickCallback;
+
+    }
 
     @Override
     public void onStart() {
@@ -48,6 +57,7 @@ public class SelectCustomerFragment extends DialogFragment implements FunctionsT
         Window window = getDialog().getWindow();
         window.setBackgroundDrawableResource(R.color.colorPrimary);
     }
+
     @Override
     public View onCreateView(LayoutInflater inflater, ViewGroup container, Bundle savedInstanceState)
 
@@ -56,15 +66,17 @@ public class SelectCustomerFragment extends DialogFragment implements FunctionsT
         getDialog().requestWindowFeature(Window.FEATURE_NO_TITLE);
 
 
-
         FloatingActionButton fab = (FloatingActionButton) view.findViewById(R.id.fab);
 
+        progressBar = (ProgressBar) view.findViewById(R.id.progressBar);
+        progressBar.setVisibility(View.VISIBLE);
 
-        FunctionsThread t = new FunctionsThread(getContext());
-        t.execute("ViewCustomer");
-        t.trigAsyncResponse(this);
+        VolleyFunctions t = new VolleyFunctions(getContext());
+        t.viewCustomer();
+        t.trigAsyncResponse(SelectCustomerFragment.this);
+
+
         recView = (RecyclerView) view.findViewById(R.id.recView);
-
 
 
         fab.setOnClickListener(new View.OnClickListener() {
@@ -96,10 +108,9 @@ public class SelectCustomerFragment extends DialogFragment implements FunctionsT
                 dialog.setPositiveButton("Ok", new DialogInterface.OnClickListener() {
                     @Override
                     public void onClick(DialogInterface dialog, int which) {
-                        Intent i = new Intent(getContext(), BagListActivity.class);
-                        i.putExtra("source", "manual");
-                        i.putExtra("customerName", eTxt.getText().toString());
-                        startActivity(i);
+                        if (!eTxt.getText().toString().equals(""))
+                            itemClickCallback.customerSelected(eTxt.getText().toString());
+                        dismiss();
                     }
                 });
                 dialog.setNegativeButton("Cancel", new DialogInterface.OnClickListener() {
@@ -122,44 +133,50 @@ public class SelectCustomerFragment extends DialogFragment implements FunctionsT
 
     public void onComplete(String output) {
 
-        customerData = new ArrayList<>();
-        if(output.equals("Error"))
-        {
-            Toast.makeText(getContext(),"Error in Connection",Toast.LENGTH_SHORT).show();
-        }
-        else {
-            try {
-
-                JSONObject customerJson = new JSONObject(output);
-                JSONArray customerJsonArray = customerJson.getJSONArray("result");
+        progressBar.setVisibility(View.GONE);
+        if (output.equals("ERROR")) {
+            System.out.println("error has been occured");
+            //Toast.makeText(getActivity().getBaseContext(), "Network Error", Toast.LENGTH_SHORT).show();
+        } else {
 
 
+            customerData = new ArrayList<>();
+            if (output.equals("Error")) {
+                Toast.makeText(getContext(), "Error in Connection", Toast.LENGTH_SHORT).show();
+            } else {
+                try {
 
-                for (int i = 0; i < customerJsonArray.length(); i++) {
-                    JSONObject jObject = customerJsonArray.getJSONObject(i);
-                    CustomerEntity customerEntity = new CustomerEntity();
-                    customerEntity.setId(((jObject.getInt("customer_id"))));
-                    customerEntity.setName(jObject.getString("customer_name"));
-                    customerEntity.setAddress(jObject.getString("customer_address"));
-                    customerEntity.setPhone(jObject.getString("customer_phone"));
-
-                    customerData.add(customerEntity);
+                    JSONObject customerJson = new JSONObject(output);
+                    JSONArray customerJsonArray = customerJson.getJSONArray("result");
 
 
+                    for (int i = 0; i < customerJsonArray.length(); i++) {
+                        JSONObject jObject = customerJsonArray.getJSONObject(i);
+                        CustomerEntity customerEntity = new CustomerEntity();
+                        customerEntity.setId(((jObject.getInt("customer_id"))));
+                        customerEntity.setName(jObject.getString("customer_name"));
+                        customerEntity.setAddress(jObject.getString("customer_address"));
+                        customerEntity.setPhone(jObject.getString("customer_phone"));
+
+                        customerData.add(customerEntity);
+
+
+                    }
+
+                } catch (Exception e) {
+                    e.printStackTrace();
                 }
 
-            } catch (Exception e) {
-                e.printStackTrace();
-            }
-
-            recView.setLayoutManager(new LinearLayoutManager(getContext(), LinearLayoutManager.VERTICAL, false));
+                recView.setLayoutManager(new LinearLayoutManager(getContext(), LinearLayoutManager.VERTICAL, false));
 
 
-            selectCustomerFragmentAdapter = new SelectCustomerFragmentAdapter(customerData, (OrderActivity)getActivity(), getContext());
-            selectCustomerFragmentAdapter.onItemClickCallback(this);
-            recView.setAdapter(selectCustomerFragmentAdapter);
+                selectCustomerFragmentAdapter = new SelectCustomerFragmentAdapter(customerData, (OrderActivity) getActivity(), getContext());
+                selectCustomerFragmentAdapter.onItemClickCallback(this);
+                recView.setAdapter(selectCustomerFragmentAdapter);
 
 //            customerViewAdapter.onItemClickCallback(this);
+
+            }
         }
 
     }

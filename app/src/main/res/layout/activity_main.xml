@@ -133,6 +133,17 @@
                 android:textSize="18sp"
                 />
 
+            <Button
+                android:id="@+id/setShop"
+                style="@style/Base.Widget.AppCompat.Button.Borderless.Colored"
+                android:layout_width="match_parent"
+                android:layout_height="wrap_content"
+                android:layout_gravity="center_horizontal"
+                android:text="Set Shop"
+                android:textAllCaps="false"
+                android:textColor="@color/colorPrimary"
+                android:textSize="18sp"
+                />
 
             <RelativeLayout
                 android:layout_width="match_parent"

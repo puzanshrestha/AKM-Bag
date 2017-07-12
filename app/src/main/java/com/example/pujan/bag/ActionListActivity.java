@@ -59,7 +59,7 @@ public class ActionListActivity extends AppCompatActivity {
         sharedPreferences = getSharedPreferences("Login", Context.MODE_PRIVATE);
         String userType = sharedPreferences.getString("userType", "");
         if (userType.equals("userType#0"))
-            bagRecordsBtn.setVisibility(View.INVISIBLE);
+            bagStockBtn.setVisibility(View.INVISIBLE);
 
 
         bagDetailsBtn.setOnClickListener(new View.OnClickListener() {

@@ -4,8 +4,9 @@ package com.example.pujan.bag.printPackage;
 import android.content.Intent;
 
 import com.example.pujan.bag.ActionListActivity;
-import com.example.pujan.bag.FunctionsThread;
 import com.example.pujan.bag.R;
+import com.example.pujan.bag.VolleyFunctions;
+import com.example.pujan.bag.database.DbHelper;
 import com.google.gson.Gson;
 import com.zj.btsdk.BluetoothService;
 import com.zj.btsdk.PrintPic;
@@ -19,7 +20,6 @@ import android.os.Handler;
 import android.os.Message;
 import android.view.View;
 import android.widget.Button;
-import android.widget.EditText;
 import android.widget.Toast;
 
 import android.util.Log;
@@ -29,10 +29,9 @@ import java.text.SimpleDateFormat;
 import java.util.ArrayList;
 import java.util.Date;
 import java.util.LinkedHashMap;
-import java.util.concurrent.ExecutionException;
 
 
-public class PrintDemo extends Activity implements FunctionsThread.AsyncResponse {
+public class PrintDemo extends Activity implements VolleyFunctions.AsyncResponse {
     Button btnSearch;
     Button btnSendDraw;
     Button btnPendingBill;
@@ -49,7 +48,7 @@ public class PrintDemo extends Activity implements FunctionsThread.AsyncResponse
      */
     String customer_id = "";
     String customer_name = "";
-    String discount,source;
+    String discount,source,shop_number;
 
     @Override
     public void onCreate(Bundle savedInstanceState) {
@@ -61,7 +60,9 @@ public class PrintDemo extends Activity implements FunctionsThread.AsyncResponse
         customer_name = getIntent().getStringExtra("customer_name");
         discount = getIntent().getStringExtra("discount");
         source=getIntent().getStringExtra("source");
-        System.out.println(discount + "This is check");
+
+        DbHelper dbh = new DbHelper(getBaseContext());
+        shop_number=dbh.getShop();
 
 
         mService = new BluetoothService(this, mHandler);
@@ -415,11 +416,7 @@ public class PrintDemo extends Activity implements FunctionsThread.AsyncResponse
             if (v == btnSearch) {
                 Intent serverIntent = new Intent(PrintDemo.this, DeviceListActivity.class);
                 startActivityForResult(serverIntent, REQUEST_CONNECT_DEVICE);
-                Gson test = new Gson();
-                String jsonData = test.toJson(getData);
-                FunctionsThread t = new FunctionsThread(PrintDemo.this);
-                t.execute("AddOrder", jsonData, customer_id, customer_name, discount,source);
-                t.trigAsyncResponse(PrintDemo.this);
+
 
 
 
@@ -427,16 +424,16 @@ public class PrintDemo extends Activity implements FunctionsThread.AsyncResponse
 
                 Gson test = new Gson();
                 String jsonData = test.toJson(getData);
-                FunctionsThread t = new FunctionsThread(PrintDemo.this);
-                t.execute("AddOrder", jsonData, customer_id, customer_name, discount,source);
+                VolleyFunctions t = new VolleyFunctions(PrintDemo.this);
+                t.addOrder( jsonData, customer_id, customer_name, discount,source,shop_number);
                 t.trigAsyncResponse(PrintDemo.this);
 
 
             } else if (v == btnPendingBill) {
                 Gson test = new Gson();
                 String jsonData = test.toJson(getData);
-                FunctionsThread t = new FunctionsThread(PrintDemo.this);
-                t.execute("AddPendingBill", jsonData, customer_id, customer_name, discount);
+                VolleyFunctions t = new VolleyFunctions(PrintDemo.this);
+                t.addPendingBill(jsonData, customer_id, customer_name, discount,source,shop_number);
                 t.trigAsyncResponse(PrintDemo.this);
             }
         }

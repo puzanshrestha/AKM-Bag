@@ -1,15 +1,9 @@
 package com.example.pujan.bag.bagStock;
 
-import android.content.DialogInterface;
 import android.content.Intent;
-import android.database.Cursor;
-import android.graphics.Typeface;
 import android.net.Uri;
 import android.os.SystemClock;
-import android.provider.MediaStore;
 import android.support.design.widget.CollapsingToolbarLayout;
-import android.support.v4.content.ContextCompat;
-import android.support.v7.app.AlertDialog;
 import android.support.v7.app.AppCompatActivity;
 import android.os.Bundle;
 import android.support.v7.widget.Toolbar;
@@ -23,13 +17,10 @@ import android.widget.ImageView;
 import android.widget.TextView;
 import android.widget.Toast;
 
-import com.example.pujan.bag.FunctionsThread;
 import com.example.pujan.bag.MainActivity;
 import com.example.pujan.bag.R;
-import com.example.pujan.bag.bagDetails.BagColorQuantity;
-import com.example.pujan.bag.bagDetails.BagDetailsActivity;
+import com.example.pujan.bag.VolleyFunctions;
 import com.google.gson.Gson;
-import com.google.gson.reflect.TypeToken;
 import com.squareup.picasso.MemoryPolicy;
 import com.squareup.picasso.NetworkPolicy;
 import com.squareup.picasso.Picasso;
@@ -37,12 +28,10 @@ import com.squareup.picasso.Picasso;
 import org.json.JSONArray;
 import org.json.JSONObject;
 
-import java.lang.reflect.Type;
 import java.util.ArrayList;
 import java.util.LinkedHashMap;
-import java.util.concurrent.ExecutionException;
 
-public class StockDetailsActivity extends AppCompatActivity implements FunctionsThread.AsyncResponse {
+public class StockDetailsActivity extends AppCompatActivity implements VolleyFunctions.AsyncResponse {
 
 
     Button editBtn,updateStockBtn;
@@ -101,8 +90,8 @@ public class StockDetailsActivity extends AppCompatActivity implements Functions
         vendor_id = getIntent().getStringExtra("vendor_id");
 
 
-        FunctionsThread t= new FunctionsThread(this);
-        t.execute("ViewStockInformation", bag_id);
+        VolleyFunctions t= new VolleyFunctions(this);
+        t.viewStockInformation(bag_id);
         t.trigAsyncResponse(StockDetailsActivity.this);
 
 
@@ -178,8 +167,8 @@ public class StockDetailsActivity extends AppCompatActivity implements Functions
                 Gson stockEdit = new Gson();
                 String stockEditJson = stockEdit.toJson(cqeArray);
                 System.out.println(stockEditJson);
-                FunctionsThread tEdt=new FunctionsThread(getBaseContext());
-                tEdt.execute("EditStockInformation",bag_id,stockEditJson);
+                VolleyFunctions tEdt=new VolleyFunctions(getBaseContext());
+                tEdt.editStockInformation(bag_id,stockEditJson);
                 tEdt.trigAsyncResponse(StockDetailsActivity.this);
             }
         });
@@ -268,8 +257,8 @@ public class StockDetailsActivity extends AppCompatActivity implements Functions
     public void onComplete(String output) {
 
         if (output.equals("Succeeded")) {
-            FunctionsThread t= new FunctionsThread(this);
-            t.execute("ViewStockInformation", bag_id);
+            VolleyFunctions t= new VolleyFunctions(this);
+            t.viewStockInformation( bag_id);
             t.trigAsyncResponse(StockDetailsActivity.this);
 
             Toast.makeText(this, "Successfully Updated Stock Information", Toast.LENGTH_SHORT).show();

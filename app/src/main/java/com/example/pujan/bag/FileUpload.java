@@ -1,9 +1,12 @@
 package com.example.pujan.bag;
 
+import android.app.ProgressDialog;
 import android.content.Context;
 import android.os.AsyncTask;
 import android.os.Environment;
 import android.util.Log;
+import android.view.View;
+import android.widget.ProgressBar;
 
 import com.example.pujan.bag.database.DbHelper;
 
@@ -22,13 +25,16 @@ import java.net.URL;
 /**
  * Created by Pujan on 20-Feb-17.
  */
-public class FileUpload extends AsyncTask<String, Void, String> {
+public class FileUpload extends AsyncTask<String, Integer, String> {
+
 
     String ipMain;
     Context context;
 
-    public FileUpload(Context c) {
+    ProgressDialog pd;
+    public FileUpload(Context c,ProgressDialog pd) {
         this.context = c;
+        this.pd=pd;
         DbHelper db = new DbHelper(c);
 
         try {
@@ -40,6 +46,15 @@ public class FileUpload extends AsyncTask<String, Void, String> {
             db.close();
         }
 
+    }
+
+
+    @Override
+    protected void onPreExecute() {
+        pd.setTitle("Uploading Image");
+        pd.setProgressStyle(ProgressDialog.STYLE_HORIZONTAL);
+        pd.setProgress(0);
+        pd.show();
     }
 
     @Override
@@ -102,7 +117,7 @@ public class FileUpload extends AsyncTask<String, Void, String> {
 
         } else {
             try {
-                System.out.println("input stream");
+
                 // open a URL connection to the Servlet
                 FileInputStream fileInputStream = new FileInputStream(sourceFile);
                 URL url = new URL(upLoadServerUri);
@@ -127,7 +142,7 @@ public class FileUpload extends AsyncTask<String, Void, String> {
                 // create a buffer of  maximum size
                 bytesAvailable = fileInputStream.available();
 
-                bufferSize = Math.min(bytesAvailable, maxBufferSize);
+                bufferSize = (int)sourceFile.length()/500;
                 buffer = new byte[bufferSize];
 
                 // read file and write it into form...
@@ -137,13 +152,21 @@ public class FileUpload extends AsyncTask<String, Void, String> {
                 while (bytesRead > 0) {
 
 
-                    i++;
+                    i=i+bufferSize;
+
+
+
+
                     dos.write(buffer, 0, bufferSize);
                     bytesAvailable = fileInputStream.available();
-                    bufferSize = Math.min(bytesAvailable, maxBufferSize);
+                    if(bytesAvailable<bufferSize)
+                    bufferSize=bytesAvailable;
                     bytesRead = fileInputStream.read(buffer, 0, bufferSize);
 
-                    System.out.println(i+"progress");
+                    publishProgress((int)(i * 100 / sourceFile.length()));
+
+
+
 
                 }
 
@@ -188,5 +211,17 @@ public class FileUpload extends AsyncTask<String, Void, String> {
 
 
         }
+    }
+
+    @Override
+    protected void onProgressUpdate(Integer... values) {
+        System.out.println(values[0]+"is the progress");
+        pd.setProgress(values[0]);
+
+    }
+
+    @Override
+    protected void onPostExecute(String s) {
+        pd.dismiss();
     }
 }

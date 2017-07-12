@@ -4,23 +4,23 @@ import android.content.Intent;
 import android.graphics.Color;
 import android.graphics.drawable.ColorDrawable;
 import android.os.Bundle;
-import android.support.design.widget.FloatingActionButton;
+import android.support.v4.content.ContextCompat;
 import android.support.v4.view.MenuItemCompat;
-import android.support.v7.app.ActionBar;
 import android.support.v7.app.AppCompatActivity;
 import android.support.v7.widget.LinearLayoutManager;
 import android.support.v7.widget.RecyclerView;
 import android.support.v7.widget.SearchView;
 import android.support.v7.widget.Toolbar;
-import android.text.Html;
 import android.view.Menu;
 import android.view.MenuItem;
 import android.view.View;
+import android.widget.EditText;
+import android.widget.ProgressBar;
 import android.widget.Toast;
 
 import com.example.pujan.bag.ActionListActivity;
-import com.example.pujan.bag.FunctionsThread;
 import com.example.pujan.bag.R;
+import com.example.pujan.bag.VolleyFunctions;
 import com.example.pujan.bag.bagDetails.BagColorQuantity;
 import com.example.pujan.bag.bagDetails.BagEntity;
 
@@ -31,7 +31,7 @@ import org.json.JSONObject;
 import java.util.ArrayList;
 import java.util.LinkedHashMap;
 
-public class StockListActivity extends AppCompatActivity implements SearchView.OnQueryTextListener, FunctionsThread.AsyncResponse {
+public class StockListActivity extends AppCompatActivity implements SearchView.OnQueryTextListener, VolleyFunctions.AsyncResponse {
 
     RecyclerView recView;
     StockViewAdapter bagViewAdapter;
@@ -39,7 +39,7 @@ public class StockListActivity extends AppCompatActivity implements SearchView.O
     ArrayList<BagEntity> bagData = new ArrayList<>();
     ArrayList<BagColorQuantity> bagColorQuantities=new ArrayList<>();
 
-
+    ProgressBar progressBar;
 
 
 
@@ -48,6 +48,11 @@ public class StockListActivity extends AppCompatActivity implements SearchView.O
         getMenuInflater().inflate(R.menu.search_action_bar, menu);
         MenuItem menuItem = menu.findItem(R.id.searchh);
         SearchView searchView = (SearchView) MenuItemCompat.getActionView(menuItem);
+        EditText searchEditText = (EditText) searchView.findViewById(android.support.v7.appcompat.R.id.search_src_text);
+        searchEditText.setTextColor(ContextCompat.getColor(this, R.color.colorPrimary));
+        searchEditText.setHintTextColor(ContextCompat.getColor(this, R.color.colorPrimary));
+        searchEditText.setHint("Search Bag");
+        searchEditText.setBackground(new ColorDrawable(Color.WHITE));
         searchView.setOnQueryTextListener(this);
 
         return true;
@@ -91,6 +96,8 @@ public class StockListActivity extends AppCompatActivity implements SearchView.O
 
         recView = (RecyclerView) findViewById(R.id.recView);
 
+        progressBar=(ProgressBar)findViewById(R.id.progressBar);
+        progressBar.setVisibility(View.VISIBLE);
         recView.setHasFixedSize(true);
         recView.setItemViewCacheSize(10);
         recView.setDrawingCacheEnabled(true);
@@ -104,12 +111,8 @@ public class StockListActivity extends AppCompatActivity implements SearchView.O
 
 
 
-
-
-
-
-        FunctionsThread t = new FunctionsThread(this);
-        t.execute("ViewBag");
+        VolleyFunctions t = new VolleyFunctions(this);
+        t.viewBag("0","0");
         t.trigAsyncResponse(this);
 
 
@@ -177,12 +180,19 @@ public class StockListActivity extends AppCompatActivity implements SearchView.O
 
     @Override
     public void onComplete(String output) {
-        getData(output);
-        bagViewAdapter = new StockViewAdapter(bagData,bagColorQuantities, "bag", getBaseContext());
-        recView.setAdapter(bagViewAdapter);
+
+        progressBar.setVisibility(View.GONE);
+        if(output.equals("ERROR"))
+        {
+            Toast.makeText(this,"Network Error",Toast.LENGTH_SHORT).show();
+        }
+        else {
+            getData(output);
+            bagViewAdapter = new StockViewAdapter(bagData, bagColorQuantities, "bag", getBaseContext());
+            recView.setAdapter(bagViewAdapter);
 
 
-
+        }
 
     }
 

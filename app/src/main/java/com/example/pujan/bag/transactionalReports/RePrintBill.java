@@ -14,13 +14,9 @@ import android.view.View;
 import android.widget.Button;
 import android.widget.Toast;
 
-import com.example.pujan.bag.ActionListActivity;
-import com.example.pujan.bag.FunctionsThread;
 import com.example.pujan.bag.R;
-import com.example.pujan.bag.bagDetails.BagColorQuantity;
+import com.example.pujan.bag.VolleyFunctions;
 import com.example.pujan.bag.printPackage.DeviceListActivity;
-import com.example.pujan.bag.printPackage.PrintEntity;
-import com.google.gson.Gson;
 import com.zj.btsdk.BluetoothService;
 import com.zj.btsdk.PrintPic;
 
@@ -32,10 +28,9 @@ import java.text.DecimalFormat;
 import java.text.SimpleDateFormat;
 import java.util.ArrayList;
 import java.util.Date;
-import java.util.LinkedHashMap;
 
 
-public class RePrintBill extends Activity implements FunctionsThread.AsyncResponse {
+public class RePrintBill extends Activity implements VolleyFunctions.AsyncResponse {
     Button btnSearch;
     Button btnSendDraw,pendingBillBtn;
 
@@ -61,8 +56,8 @@ public class RePrintBill extends Activity implements FunctionsThread.AsyncRespon
         setContentView(R.layout.main);
 
         order_id= getIntent().getStringExtra("id");
-        FunctionsThread t = new FunctionsThread(this);
-        t.execute("RePrintBill",order_id);
+        VolleyFunctions t = new VolleyFunctions(this);
+        t.reprintBill(order_id);
         t.trigAsyncResponse(this);
 
 

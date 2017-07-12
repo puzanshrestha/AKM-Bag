@@ -2,16 +2,29 @@
 <LinearLayout xmlns:android="http://schemas.android.com/apk/res/android"
     android:layout_width="match_parent"
     android:layout_height="match_parent"
-    android:background="@drawable/gradient_main"
+    android:background="@color/white"
     android:orientation="vertical">
 
+    <TextView
+        android:background="@color/colorPrimary"
+        android:paddingLeft="15dp"
+        android:gravity="center_vertical"
+        android:id="@+id/titleBar"
+        android:layout_width="match_parent"
+        android:layout_height="50dp"
+        android:text="Select Option"
+        android:textSize="20sp"
+        android:textColor="@color/white"/>
+
     <Button
+        android:layout_marginTop="10dp"
         android:id="@+id/btnSearch"
         android:layout_width="match_parent"
         android:layout_height="wrap_content"
         android:text="Search Bluetooth Printer"></Button>
 
     <Button
+        android:layout_marginTop="10dp"
         android:id="@+id/btn_test"
         android:layout_width="match_parent"
         android:layout_height="wrap_content"
@@ -19,6 +32,7 @@
 
     </Button>
     <Button
+        android:layout_marginTop="10dp"
         android:id="@+id/pendingBillBtn"
         android:layout_width="match_parent"
         android:layout_height="wrap_content"

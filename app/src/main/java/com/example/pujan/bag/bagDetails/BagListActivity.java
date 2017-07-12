@@ -5,22 +5,23 @@ import android.graphics.Color;
 import android.graphics.drawable.ColorDrawable;
 import android.os.Bundle;
 import android.support.design.widget.FloatingActionButton;
+import android.support.v4.content.ContextCompat;
 import android.support.v4.view.MenuItemCompat;
-import android.support.v7.app.ActionBar;
 import android.support.v7.app.AppCompatActivity;
 import android.support.v7.widget.LinearLayoutManager;
 import android.support.v7.widget.RecyclerView;
 import android.support.v7.widget.SearchView;
 import android.support.v7.widget.Toolbar;
-import android.text.Html;
 import android.view.Menu;
 import android.view.MenuItem;
 import android.view.View;
+import android.widget.EditText;
+import android.widget.ProgressBar;
 import android.widget.Toast;
 
 import com.example.pujan.bag.ActionListActivity;
-import com.example.pujan.bag.FunctionsThread;
 import com.example.pujan.bag.R;
+import com.example.pujan.bag.VolleyFunctions;
 
 import org.json.JSONArray;
 import org.json.JSONException;
@@ -29,7 +30,7 @@ import org.json.JSONObject;
 import java.util.ArrayList;
 import java.util.LinkedHashMap;
 
-public class BagListActivity extends AppCompatActivity implements SearchView.OnQueryTextListener, FunctionsThread.AsyncResponse {
+public class BagListActivity extends AppCompatActivity implements SearchView.OnQueryTextListener, VolleyFunctions.AsyncResponse {
 
     RecyclerView recView;
     BagViewAdapter bagViewAdapter;
@@ -38,7 +39,13 @@ public class BagListActivity extends AppCompatActivity implements SearchView.OnQ
     ArrayList<BagColorQuantity> bagColorQuantities=new ArrayList<>();
     FloatingActionButton addNewBag;
 
+    ProgressBar progressBar;
 
+    int offset=0;
+    int difference=5;
+    boolean loading;
+    int position=0;
+    boolean loadComplete=false;
 
 
     @Override
@@ -46,6 +53,11 @@ public class BagListActivity extends AppCompatActivity implements SearchView.OnQ
         getMenuInflater().inflate(R.menu.search_action_bar, menu);
         MenuItem menuItem = menu.findItem(R.id.searchh);
         SearchView searchView = (SearchView) MenuItemCompat.getActionView(menuItem);
+        EditText searchEditText = (EditText) searchView.findViewById(android.support.v7.appcompat.R.id.search_src_text);
+        searchEditText.setTextColor(ContextCompat.getColor(this, R.color.colorPrimary));
+        searchEditText.setHintTextColor(ContextCompat.getColor(this, R.color.colorPrimary));
+        searchEditText.setHint("Search Bag");
+        searchEditText.setBackground(new ColorDrawable(Color.WHITE));
         searchView.setOnQueryTextListener(this);
 
         return true;
@@ -80,12 +92,14 @@ public class BagListActivity extends AppCompatActivity implements SearchView.OnQ
         super.onCreate(savedInstanceState);
         setContentView(R.layout.activity_view_bag);
 
-
-
         Toolbar actionBar = (Toolbar) findViewById(R.id.actionBar);
         setSupportActionBar(actionBar);
         getSupportActionBar().setTitle("Bag");
         getSupportActionBar().setDisplayHomeAsUpEnabled(true);
+
+        progressBar=(ProgressBar)findViewById(R.id.progressBar);
+        progressBar.setVisibility(View.VISIBLE);
+
 
         recView = (RecyclerView) findViewById(R.id.recView);
 
@@ -113,24 +127,58 @@ public class BagListActivity extends AppCompatActivity implements SearchView.OnQ
         recView.addOnScrollListener(new RecyclerView.OnScrollListener() {
             @Override
             public void onScrolled(RecyclerView recyclerView, int dx, int dy) {
-                if(dy>0|dy<0)
+                if(dy<0)
+                    addNewBag.show();
+
+                if(dy>0)
                     addNewBag.hide();
 
+/*
+                if(!loadComplete) {
+                    if (!loading) {
+                        if (isLastItemDisplaying(recView)) {
+                            offset += difference;
 
+                            FunctionsThread t = new FunctionsThread(BagListActivity.this);
+                            t.execute("ViewBag", String.valueOf(offset), String.valueOf(difference));
+                            t.trigAsyncResponse(BagListActivity.this);
+
+                            loading = true;
+
+                            position = ((LinearLayoutManager) recView.getLayoutManager()).findFirstCompletelyVisibleItemPosition();
+
+                            bagData.add(null);
+                            bagViewAdapter.notifyItemInserted(bagData.size() - 1);
+
+                        }
+                    }
+                }
+                */
             }
 
             @Override
             public void onScrollStateChanged(RecyclerView recyclerView, int newState) {
-                addNewBag.show();
+                //addNewBag.show();
             }
+
         });
 
 
-        FunctionsThread t = new FunctionsThread(this);
-        t.execute("ViewBag");
-        t.trigAsyncResponse(this);
+        VolleyFunctions volleyFunctions = new VolleyFunctions(this);
+        volleyFunctions.viewBag(String.valueOf(offset), String.valueOf(difference));
+        volleyFunctions.trigAsyncResponse(this);
+        loading=true;
 
 
+    }
+
+    private boolean isLastItemDisplaying(RecyclerView recyclerView) {
+        if (recyclerView.getAdapter().getItemCount() != 0) {
+            int lastVisibleItemPosition = ((LinearLayoutManager) recyclerView.getLayoutManager()).findLastCompletelyVisibleItemPosition();
+            if (lastVisibleItemPosition != RecyclerView.NO_POSITION && lastVisibleItemPosition == recyclerView.getAdapter().getItemCount() - 1)
+                return true;
+        }
+        return false;
     }
 
 
@@ -176,7 +224,11 @@ public class BagListActivity extends AppCompatActivity implements SearchView.OnQ
 
                 bagData.add(bagEntity);
 
+
             }
+            if(bagJsonArray.length()==0)
+                loadComplete=true;
+
 
             convertStockData(stockJsonArray);
 
@@ -195,9 +247,29 @@ public class BagListActivity extends AppCompatActivity implements SearchView.OnQ
 
     @Override
     public void onComplete(String output) {
-        getData(output);
-        bagViewAdapter = new BagViewAdapter(bagData,bagColorQuantities, "bag", getBaseContext());
-        recView.setAdapter(bagViewAdapter);
+
+        progressBar.setVisibility(View.GONE);
+        if(output.equals("ERROR"))
+        {
+            Toast.makeText(this,"Network Error",Toast.LENGTH_SHORT).show();
+        }
+        else {
+            if (offset > 0) {
+                if (bagData.get(bagData.size() - 1) == null) {
+                    bagData.remove(bagData.size() - 1);
+                }
+                bagViewAdapter.notifyItemRemoved(bagData.size() - 1);
+            }
+
+            getData(output);
+            bagViewAdapter = new BagViewAdapter(bagData, bagColorQuantities, "bag", getBaseContext());
+            recView.setAdapter(bagViewAdapter);
+            loading = false;
+            recView.getLayoutManager().scrollToPosition(position);
+
+
+        }
+
 
 
     }

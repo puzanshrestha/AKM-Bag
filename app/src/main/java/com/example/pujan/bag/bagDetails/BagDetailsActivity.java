@@ -1,14 +1,13 @@
 package com.example.pujan.bag.bagDetails;
 
+import android.app.ProgressDialog;
 import android.content.DialogInterface;
 import android.content.Intent;
 import android.database.Cursor;
-import android.graphics.Typeface;
 import android.net.Uri;
 import android.os.SystemClock;
 import android.provider.MediaStore;
 import android.support.design.widget.CollapsingToolbarLayout;
-import android.support.v4.content.ContextCompat;
 import android.support.v7.app.AlertDialog;
 import android.support.v7.app.AppCompatActivity;
 import android.os.Bundle;
@@ -23,16 +22,18 @@ import android.widget.ImageView;
 import android.widget.TextView;
 import android.widget.Toast;
 
-import com.example.pujan.bag.FunctionsThread;
+import com.example.pujan.bag.FileUpload;
 import com.example.pujan.bag.MainActivity;
 import com.example.pujan.bag.R;
+import com.example.pujan.bag.FunctionsThread;
+import com.example.pujan.bag.VolleyFunctions;
 import com.squareup.picasso.MemoryPolicy;
 import com.squareup.picasso.NetworkPolicy;
 import com.squareup.picasso.Picasso;
 
 import java.util.concurrent.ExecutionException;
 
-public class BagDetailsActivity extends AppCompatActivity implements FunctionsThread.AsyncResponse{
+public class BagDetailsActivity extends AppCompatActivity implements VolleyFunctions.AsyncResponse{
 
 
     Button editBtn,deleteBtn,saveBtn;
@@ -47,6 +48,8 @@ public class BagDetailsActivity extends AppCompatActivity implements FunctionsTh
     int selectedPic;
     String mediaSelect = "";
     String ext = "";
+
+
 
     @Override
     protected void onCreate(Bundle savedInstanceState) {
@@ -125,9 +128,11 @@ public class BagDetailsActivity extends AppCompatActivity implements FunctionsTh
             @Override
             public void onClick(View v) {
                 setEditable(false);
-                FunctionsThread t = new FunctionsThread(getBaseContext());
-                t.execute("AddBag", nameEditText.getText().toString(), typeEditText.getText().toString(), priceEditText.getText().toString(), companyEditText.getText().toString(), "update", bag_id, ext, "0");
+                VolleyFunctions t = new VolleyFunctions(getBaseContext());
+                t.addBag( nameEditText.getText().toString(), typeEditText.getText().toString(), priceEditText.getText().toString(), companyEditText.getText().toString(), "update", bag_id, ext, "0");
                 t.trigAsyncResponse(BagDetailsActivity.this);
+
+
             }
         });
 
@@ -263,9 +268,15 @@ public class BagDetailsActivity extends AppCompatActivity implements FunctionsTh
 
     @Override
     public void onComplete(String output) {
-        System.out.println(output+"is output");
-        if(output.equals("Updated"))
-        Toast.makeText(this,"Successfully Updated Bag Information",Toast.LENGTH_SHORT).show();
+
+
+        ProgressDialog pd = new ProgressDialog(this);
+
+        if(output.equals("Updated")) {
+            //Toast.makeText(this, "Successfully Updated Bag Information", Toast.LENGTH_SHORT).show();
+            new FileUpload(getBaseContext(),pd).execute(mediaSelect, bag_id, "b");
+            Toast.makeText(getBaseContext(), "Bag has been Updated", Toast.LENGTH_SHORT).show();
+        }
 
         else
             Toast.makeText(this,"Failed to Update Bag Information",Toast.LENGTH_SHORT).show();

@@ -12,8 +12,9 @@ import android.view.View;
 import android.view.ViewGroup;
 import android.widget.Toast;
 
-import com.example.pujan.bag.FunctionsThread;
 import com.example.pujan.bag.R;
+import com.example.pujan.bag.VolleyFunctions;
+import com.example.pujan.bag.database.DbHelper;
 import com.example.pujan.bag.orderDetailsFragment.OrderFragment;
 
 import org.json.JSONArray;
@@ -26,7 +27,7 @@ import java.util.ArrayList;
 /**
  * Created by puzan on 26-Mar-17.
  */
-public class PendingBillListFragment extends Fragment implements FunctionsThread.AsyncResponse {
+public class PendingBillListFragment extends Fragment implements VolleyFunctions.AsyncResponse {
 
 
     RecyclerView recView;
@@ -74,9 +75,11 @@ public class PendingBillListFragment extends Fragment implements FunctionsThread
 
         recView.setLayoutManager(lm);
 
+        DbHelper dbh = new DbHelper(getContext());
 
-        FunctionsThread thread = new FunctionsThread(getContext());
-        thread.execute("QueryPendingBillList");
+
+        VolleyFunctions thread = new VolleyFunctions(getContext());
+        thread.queryPendingBillList(dbh.getShop());
         thread.trigAsyncResponse(PendingBillListFragment.this);
 
 
@@ -120,7 +123,7 @@ public class PendingBillListFragment extends Fragment implements FunctionsThread
             e.printStackTrace();
             Toast.makeText(getContext(), "Error connecting with the Server..!", Toast.LENGTH_SHORT).show();
         }
-        pendingBillAdapter = new PendingBillAdapter(pBillList, getContext());
+        pendingBillAdapter = new PendingBillAdapter(pBillList, getContext(),recView);
         recView.setAdapter(pendingBillAdapter);
         pendingBillAdapter.notifyDataSetChanged();
     }

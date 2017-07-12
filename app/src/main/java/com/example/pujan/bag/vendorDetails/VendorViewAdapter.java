@@ -1,29 +1,17 @@
 package com.example.pujan.bag.vendorDetails;
 
 import android.content.Context;
-import android.content.DialogInterface;
 import android.content.Intent;
-import android.support.v7.app.AlertDialog;
-import android.support.v7.widget.PopupMenu;
 import android.support.v7.widget.RecyclerView;
 import android.text.Html;
 import android.view.LayoutInflater;
-import android.view.MenuItem;
 import android.view.View;
 import android.view.ViewGroup;
-import android.widget.Button;
-import android.widget.CheckBox;
 import android.widget.TextView;
-import android.widget.Toast;
 
-import com.example.pujan.bag.FunctionsThread;
 import com.example.pujan.bag.R;
-import com.example.pujan.bag.bagDetails.BagEntity;
-import com.example.pujan.bag.bagDetails.BagListActivity;
-import com.example.pujan.bag.customerDetails.CustomerEntity;
 
 import java.util.ArrayList;
-import java.util.concurrent.ExecutionException;
 
 /**
  * Created by ramse on 19/01/2017.
