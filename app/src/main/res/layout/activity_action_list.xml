@@ -2,71 +2,93 @@
 <LinearLayout xmlns:android="http://schemas.android.com/apk/res/android"
     android:layout_width="match_parent"
     android:layout_height="match_parent"
-    android:orientation="vertical"
-    android:background="@drawable/gradient_main"
-    android:paddingTop="20dp"
-    android:paddingRight="10dp"
-    android:paddingLeft="10dp"
-    android:gravity="center">
+    android:background="#f1f1f1"
+    android:gravity="center"
+    android:orientation="vertical">
+
+    <android.support.v7.widget.Toolbar
+        android:id="@+id/actionBar"
+        android:layout_width="match_parent"
+        android:layout_height="60dp"
+        android:fitsSystemWindows="true">
+
+    </android.support.v7.widget.Toolbar>
+
+    <FrameLayout
+        android:layout_width="match_parent"
+        android:layout_height="match_parent"
+        android:layout_margin="15dp"
+        android:id="@+id/mainWindow">
+        <LinearLayout
+            android:layout_width="match_parent"
+            android:layout_height="match_parent"
+            android:background="#f1f1f1"
+            android:gravity="center"
+            android:orientation="vertical">
+
+
     <LinearLayout
         android:layout_width="match_parent"
         android:layout_height="wrap_content"
         android:orientation="horizontal"
         android:paddingBottom="20dp"
         android:paddingTop="20dp">
+
         <LinearLayout
-            android:layout_width="wrap_content"
-            android:layout_height="wrap_content"
-            android:layout_gravity="center"
-            android:orientation="vertical"
-            android:paddingTop="10dp"
-            android:paddingBottom="10dp"
             android:id="@+id/bagDetailsBtn"
-            android:layout_weight="2">
+            android:layout_width="wrap_content"
+            android:layout_height="wrap_content"
+            android:layout_gravity="center"
+            android:layout_weight="1"
+            android:orientation="vertical"
+            android:paddingBottom="10dp"
+            android:paddingTop="10dp">
 
             <ImageView
+                android:id="@+id/imageView"
                 android:layout_width="80dp"
                 android:layout_height="80dp"
-                android:src="@drawable/bag"
                 android:layout_gravity="center"
-                android:id="@+id/imageView" />
+                android:padding="10dp"
+                android:src="@drawable/vector_drawable_bag" />
 
             <TextView
                 android:layout_width="wrap_content"
                 android:layout_height="wrap_content"
-                android:text="Bag Details"
                 android:layout_gravity="center"
-                android:textSize="20dp"
-                android:textColor="#000"
-                />
+                android:text="Bag"
+                android:layout_marginTop="5dp"
+                android:textSize="15dp"
+                android:textAllCaps="true"/>
         </LinearLayout>
 
         <LinearLayout
+            android:id="@+id/customerDetailsBtn"
             android:layout_width="wrap_content"
             android:layout_height="wrap_content"
-            android:id="@+id/customerDetailsBtn"
+            android:layout_weight="1"
             android:orientation="vertical"
-            android:paddingTop="10dp"
             android:paddingBottom="10dp"
-            android:layout_weight="1">
+            android:paddingTop="10dp">
 
             <ImageView
                 android:layout_width="80dp"
                 android:layout_height="80dp"
-                android:src="@drawable/customer"
                 android:layout_gravity="center"
-                />
+                android:padding="10dp"
+                android:src="@drawable/vector_drawable_customer" />
 
             <TextView
                 android:layout_width="wrap_content"
                 android:layout_height="wrap_content"
-                android:text="Customer Details"
                 android:layout_gravity="center"
-                android:textSize="20dp"
-                android:textColor="#000"
-                />
+                android:text="Customer"
+                android:textAllCaps="true"
+                android:layout_marginTop="5dp"
+                android:textSize="15dp" />
         </LinearLayout>
     </LinearLayout>
+
     <LinearLayout
         android:layout_width="match_parent"
         android:layout_height="wrap_content"
@@ -75,80 +97,139 @@
         android:paddingTop="20dp">
 
         <LinearLayout
-            android:orientation="vertical"
+            android:id="@+id/orderDetailsBtn"
             android:layout_width="wrap_content"
             android:layout_height="wrap_content"
-            android:id="@+id/orderDetailsBtn"
-            android:paddingTop="10dp"
+            android:layout_weight="1"
+            android:orientation="vertical"
             android:paddingBottom="10dp"
-            android:layout_weight="1">
+            android:paddingTop="10dp">
 
             <ImageView
                 android:layout_width="80dp"
                 android:layout_height="80dp"
-                android:src="@drawable/order"
-                android:layout_gravity="center"/>
+                android:layout_gravity="center"
+                android:padding="10dp"
+                android:src="@drawable/vector_drawable_order" />
 
             <TextView
                 android:layout_width="wrap_content"
                 android:layout_height="wrap_content"
-                android:text="Order Details"
                 android:layout_gravity="center"
-                android:textSize="20dp"
-                android:textColor="#000"
-                />
+                android:text="Order"
+                android:textAllCaps="true"
+                android:layout_marginTop="5dp"
+                android:textSize="15dp" />
         </LinearLayout>
 
         <LinearLayout
-            android:orientation="vertical"
+            android:id="@+id/vendorDetailsBtn"
             android:layout_width="wrap_content"
             android:layout_height="wrap_content"
-            android:id="@+id/vendorDetailsBtn"
-            android:paddingTop="10dp"
+            android:layout_weight="1"
+            android:orientation="vertical"
             android:paddingBottom="10dp"
-            android:layout_weight="1">
+            android:paddingTop="10dp">
+
             <ImageView
                 android:layout_width="80dp"
                 android:layout_height="80dp"
-                android:src="@drawable/vendor2"
-                android:layout_gravity="center"/>
+                android:layout_gravity="center"
+                android:padding="10dp"
+                android:src="@drawable/vector_drawable_vendor" />
 
             <TextView
                 android:layout_width="wrap_content"
                 android:layout_height="wrap_content"
-                android:text="Vendor Details"
                 android:layout_gravity="center"
-                android:textSize="20dp"
-                android:textColor="#000"
-                />
+                android:text="Vendor"
+                android:textAllCaps="true"
+                android:layout_marginTop="5dp"
+                android:textSize="15dp"/>
 
         </LinearLayout>
 
 
     </LinearLayout>
+
     <LinearLayout
-        android:orientation="vertical"
-        android:layout_width="wrap_content"
+        android:layout_width="match_parent"
         android:layout_height="wrap_content"
-        android:id="@+id/bagRecordsBtn"
-        android:paddingTop="10dp"
-        android:paddingBottom="10dp"
-        android:layout_weight="1">
-        <ImageView
-            android:layout_width="80dp"
-            android:layout_height="80dp"
-            android:src="@drawable/vendor2"
-            android:layout_gravity="center"/>
+        android:paddingBottom="20dp"
+        android:paddingTop="20dp">
 
-        <TextView
-            android:layout_width="wrap_content"
-            android:layout_height="wrap_content"
-            android:text="Bag Records"
-            android:layout_gravity="center"
-            android:textSize="20dp"
-            android:textColor="#000"
-            />
 
+
+        <LinearLayout
+            android:layout_width="0dp"
+            android:layout_height="match_parent"
+            android:layout_weight="1">
+            <LinearLayout
+                android:id="@+id/bagStockBtn"
+                android:layout_width="0dp"
+                android:layout_height="wrap_content"
+                android:layout_weight="1"
+                android:orientation="vertical">
+
+                <ImageView
+                    android:layout_width="80dp"
+                    android:layout_height="80dp"
+                    android:layout_gravity="center"
+                    android:src="@drawable/vector_drawable_inventory" />
+
+                <TextView
+                    android:layout_marginTop="5dp"
+                    android:textSize="15dp"
+                    android:layout_width="wrap_content"
+                    android:layout_height="wrap_content"
+                    android:layout_gravity="center"
+                    android:text="Inventory"
+                    android:textAllCaps="true"
+                    />
+
+            </LinearLayout>
+
+            <LinearLayout
+                android:id="@+id/bagRecordsBtn"
+                android:layout_width="0dp"
+                android:layout_height="wrap_content"
+                android:layout_weight="1"
+                android:orientation="vertical">
+
+                <ImageView
+                    android:layout_width="80dp"
+                    android:layout_height="80dp"
+                    android:layout_gravity="center"
+                    android:src="@drawable/vector_drawable_report" />
+
+                <TextView
+                    android:layout_width="wrap_content"
+                    android:layout_height="wrap_content"
+                    android:layout_gravity="center"
+                    android:text="Reports"
+                    android:textAllCaps="true"
+                    android:layout_marginTop="5dp"
+                    android:textSize="15dp"/>
+
+            </LinearLayout>
+
+        </LinearLayout>
     </LinearLayout>
+
+
+
+
+        </LinearLayout>
+        <RelativeLayout
+            android:layout_width="match_parent"
+            android:layout_height="match_parent">
+            <ImageView
+                android:layout_width="300dp"
+                android:layout_height="310dp"
+                android:layout_centerInParent="true"
+                android:src="@drawable/vector_drawable_logo"
+                android:alpha="0.05"/>
+        </RelativeLayout>
+    </FrameLayout>
 
 </LinearLayout>

@@ -1,116 +1,124 @@
 <?xml version="1.0" encoding="utf-8"?>
 <LinearLayout xmlns:android="http://schemas.android.com/apk/res/android"
-    android:orientation="vertical"
+    xmlns:card_view="http://schemas.android.com/apk/res-auto"
+    android:id="@+id/cont_root_item"
     android:layout_width="match_parent"
-    android:layout_height="match_parent"
+    android:layout_height="wrap_content"
+    android:layout_marginBottom="-5dp"
+    android:layout_marginTop="-5dp"
+    android:background="#f1f1f1"
+    android:orientation="vertical">
 
-    android:background="@drawable/gradient_main"
-    android:id="@+id/cont_root_item">
-
-    <LinearLayout
+    <android.support.v7.widget.CardView
         android:layout_width="match_parent"
         android:layout_height="150dp"
-        android:background="@drawable/second_background"
-        android:orientation="horizontal"
-        android:gravity="center">
-
+        android:layout_marginTop="0dp"
+        android:background="#ffffff"
+        card_view:cardCornerRadius="2dp"
+        card_view:cardElevation="8dp"
+        card_view:cardUseCompatPadding="true"
+        card_view:contentPadding="5dp">
 
         <LinearLayout
-            android:layout_width="0dp"
-            android:layout_height="wrap_content"
-            android:layout_weight="0.5">
-            <ImageView
+            android:layout_width="match_parent"
+            android:layout_height="match_parent"
+            android:gravity="center"
+            android:orientation="horizontal">
 
-                android:layout_width="wrap_content"
+            <LinearLayout
+                android:layout_width="0dp"
                 android:layout_height="wrap_content"
-                android:id="@+id/photo_box"
-                android:padding="5dp"
-                />
+                android:layout_margin="8dp"
+                android:layout_weight="0.23"
+                android:background="@drawable/order_rounded_back"
+                android:padding="12dp">
+
+                <ImageView
+
+                    android:id="@+id/photo_box"
+                    android:layout_width="wrap_content"
+                    android:layout_height="wrap_content"
+                    android:src="@drawable/vector_drawable_bag"
+
+
+                    />
+
+            </LinearLayout>
+
+            <LinearLayout
+                android:layout_width="0dp"
+                android:layout_height="wrap_content"
+                android:layout_weight="0.5"
+                android:orientation="vertical"
+
+                >
+
+                <TextView
+                    android:id="@+id/lbl_bag_id"
+                    android:layout_width="wrap_content"
+                    android:layout_height="wrap_content"
+                    android:text="id" />
+
+                <TextView
+                    android:id="@+id/lbl_bag_name"
+                    android:layout_width="wrap_content"
+                    android:layout_height="wrap_content"
+                    android:text="name" />
+
+                <TextView
+                    android:id="@+id/lbl_bag_category"
+                    android:layout_width="wrap_content"
+                    android:layout_height="wrap_content"
+                    android:text="category" />
+
+                <TextView
+                    android:id="@+id/lbl_bag_price"
+                    android:layout_width="wrap_content"
+                    android:layout_height="wrap_content"
+                    android:text="price" />
+
+                <TextView
+                    android:id="@+id/lbl_bag_quantity"
+                    android:layout_width="wrap_content"
+                    android:layout_height="wrap_content"
+                    android:text="quantity" />
+
+                <TextView
+                    android:id="@+id/lbl_bag_company"
+                    android:layout_width="wrap_content"
+                    android:layout_height="wrap_content"
+                    android:text="company" />
+
+            </LinearLayout>
+
+            <LinearLayout
+                android:layout_width="0dp"
+                android:layout_height="wrap_content"
+                android:layout_gravity="center"
+                android:layout_marginRight="5dp"
+                android:layout_weight="0.08">
+
+
+                <TextView
+                    android:id="@+id/optionsMenu"
+                    android:layout_width="wrap_content"
+                    android:layout_height="wrap_content"
+                    android:layout_alignParentEnd="true"
+                    android:layout_alignParentTop="true"
+                    android:background="@drawable/ic_keyboard_arrow_right_black_24dp"
+                    android:padding="10dp"
+                    android:text="       "
+                    android:textAppearance="?android:textAppearanceLarge"
+                    android:textSize="15dp" />
+
+            </LinearLayout>
 
         </LinearLayout>
 
-        <LinearLayout
-            android:layout_width="0dp"
-            android:layout_height="wrap_content"
-            android:orientation="vertical"
-            android:layout_weight="1"
 
-            >
-            <TextView
-                android:layout_width="wrap_content"
-                android:layout_height="wrap_content"
-                android:id="@+id/lbl_bag_id"
-                android:text="id"/>
-            <TextView
-                android:layout_width="wrap_content"
-                android:layout_height="wrap_content"
-                android:id="@+id/lbl_bag_name"
-                android:text="name"/>
-            <TextView
-                android:layout_width="wrap_content"
-                android:layout_height="wrap_content"
-                android:id="@+id/lbl_bag_category"
-                android:text="category"/>
-            <TextView
-                android:layout_width="wrap_content"
-                android:layout_height="wrap_content"
-                android:id="@+id/lbl_bag_price"
-                android:text="price"/>
-            <TextView
-                android:layout_width="wrap_content"
-                android:layout_height="wrap_content"
-                android:id="@+id/lbl_bag_quantity"
-                android:text="quantity"/>
-            <TextView
-                android:layout_width="wrap_content"
-                android:layout_height="wrap_content"
-                android:id="@+id/lbl_bag_company"
-                android:text="company"/>
-
-        </LinearLayout>
+    </android.support.v7.widget.CardView>
 
 
 
-        <CheckBox
-            android:layout_width="53dp"
-            android:layout_height="wrap_content"
-            android:id="@+id/bag_checkbox"/>
-
-        <LinearLayout
-            android:layout_width="0dp"
-            android:layout_height="wrap_content"
-            android:orientation="vertical"
-            android:layout_weight="0.5">
-
-
-            <Button
-                android:layout_width="80dp"
-                android:layout_height="40dp"
-                android:text="Edit"
-                android:id="@+id/bag_btn_up"/>
-            <TextView
-                android:layout_marginLeft="5dp"
-                android:layout_width="70dp"
-                android:layout_height="20dp"
-                android:background="@color/colorPrimary"
-                android:id="@+id/bag_qty_txt"/>
-
-            <Button
-                android:layout_width="80dp"
-                android:layout_height="40dp"
-                android:text="Delete"
-                android:id="@+id/bag_btn_down"/>
-
-        </LinearLayout>
-
-
-    </LinearLayout>
-
-
-
-    <View
-        android:layout_width="match_parent"
-        android:layout_height="20dp"
-        />
 
 </LinearLayout>

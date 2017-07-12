@@ -1,31 +1,25 @@
 package com.example.pujan.bag.orderDetails;
 
+import com.example.pujan.bag.bagStock.ColorQuantityEntity;
+
+import java.util.Date;
+import java.util.LinkedHashMap;
+
 /**
  * Created by Pujan on 1/8/2017.
  */
 public class OrderEntity {
 
-    private String bag_name;
-    private String customer_name;
-    private int quantity;
-    private Double rate;
-    private Double totalPrice;
+    private int bag_id, quantity;
+    private Date date;
+    private LinkedHashMap<String,Integer> colorQuantity;
 
-
-    public String getBag_name() {
-        return bag_name;
+    public int getBag_id() {
+        return bag_id;
     }
 
-    public void setBag_name(String bag_name) {
-        this.bag_name = bag_name;
-    }
-
-    public String getCustomer_name() {
-        return customer_name;
-    }
-
-    public void setCustomer_name(String customer_name) {
-        this.customer_name = customer_name;
+    public void setBag_id(int bag_id) {
+        this.bag_id = bag_id;
     }
 
     public int getQuantity() {
@@ -36,19 +30,19 @@ public class OrderEntity {
         this.quantity = quantity;
     }
 
-    public Double getRate() {
-        return rate;
+    public Date getDate() {
+        return date;
     }
 
-    public void setRate(Double rate) {
-        this.rate = rate;
+    public void setDate(Date date) {
+        this.date = date;
     }
 
-    public Double getTotalPrice() {
-        return totalPrice;
+    public LinkedHashMap<String, Integer> getColorQuantity() {
+        return colorQuantity;
     }
 
-    public void setTotalPrice(Double totalPrice) {
-        this.totalPrice = totalPrice;
+    public void setColorQuantity(LinkedHashMap<String, Integer> colorQuantity) {
+        this.colorQuantity = colorQuantity;
     }
 }

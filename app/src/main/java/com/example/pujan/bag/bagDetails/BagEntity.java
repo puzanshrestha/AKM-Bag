@@ -13,6 +13,15 @@ public class BagEntity implements Serializable{
     private String company;
     private int quantity;
     private String photo;
+    private int vendorId;
+
+    public int getVendorId() {
+        return vendorId;
+    }
+
+    public void setVendorId(int vendorId) {
+        this.vendorId = vendorId;
+    }
 
     public String getPhoto() {
         return photo;

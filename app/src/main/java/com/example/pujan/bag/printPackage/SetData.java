@@ -19,10 +19,7 @@ public class SetData {
         for(int i=0;i<5;i++)
         {
             PrintEntity printEntity = new PrintEntity();
-            printEntity.setId(id[i]);
-            printEntity.setProducts(products[i]);
-            printEntity.setQuantity(quantity[i]);
-            printEntity.setPrice(price[i]);
+
             data.add(printEntity);
         }
 

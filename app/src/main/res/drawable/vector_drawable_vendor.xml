@@ -1,0 +1,10 @@
+<?xml version="1.0" encoding="utf-8"?>
+<vector xmlns:android="http://schemas.android.com/apk/res/android" android:viewportWidth="419"
+    android:viewportHeight="471" android:width="150dp" android:height="160dp">
+    <group android:name="Vendor">
+        <path android:name="cls-1" android:fillColor="#41A7EB"
+            android:pathData="M209.37,185a92.5,92.5,0,1,0-92.5-92.5A92.6,92.6,0,0,0,209.37,185Zm0-170a77.5,77.5,0,1,1-77.5,77.5A77.59,77.59,0,0,1,209.37,15Z" />
+        <path android:name="cls-1" android:fillColor="#41A7EB"
+            android:pathData="M417.09,461.49c-16.79-60.51-44.75-111.34-80.84-147C299.52,278.19,255.81,259,209.87,259s-89.63,19.19-126.38,55.5C47.4,350.17,19.44,401,2.64,461.49L0,471H419.73Zm-180.2-185L221.1,307.21l13.65,92.64-20.88,13.68L193,399.85l13.65-92.64-16.37-31.93a149.94,149.94,0,0,1,46.63,1.17ZM19.85,456c29.21-96.52,86.47-161.35,155-177.85l16.22,31.63-14.35,97.36,37.12,24.32L251,407.15l-14.35-97.36L251.92,280c65.43,19.13,119.78,82.78,148,176Z" />
+    </group>
+</vector>

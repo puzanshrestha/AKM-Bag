@@ -7,10 +7,31 @@ import java.util.Date;
  */
 public class BagReportEntity {
 
+    private int order_id;
     private String bag_name;
+
+    public int getOrder_id() {
+        return order_id;
+    }
+
+    public void setOrder_id(int order_id) {
+        this.order_id = order_id;
+    }
+
     private String customer_name;
     private int quantity;
     private Date date;
+    private int price;
+    private String color;
+    private int discount;
+
+    public int getDiscount() {
+        return discount;
+    }
+
+    public void setDiscount(int discount) {
+        this.discount = discount;
+    }
 
     public String getBag_name() {
         return bag_name;
@@ -45,4 +66,19 @@ public class BagReportEntity {
     }
 
 
+    public int getPrice() {
+        return price;
+    }
+
+    public void setPrice(int price) {
+        this.price = price;
+    }
+
+    public String getColor() {
+        return color;
+    }
+
+    public void setColor(String color) {
+        this.color = color;
+    }
 }

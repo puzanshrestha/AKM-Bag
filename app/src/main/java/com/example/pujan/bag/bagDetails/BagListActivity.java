@@ -1,108 +1,105 @@
 package com.example.pujan.bag.bagDetails;
 
 import android.content.Intent;
-import android.support.v4.view.MenuItemCompat;
-import android.support.v4.widget.SearchViewCompat;
-import android.support.v7.app.AppCompatActivity;
+import android.graphics.Color;
+import android.graphics.drawable.ColorDrawable;
 import android.os.Bundle;
+import android.support.design.widget.FloatingActionButton;
+import android.support.v4.content.ContextCompat;
+import android.support.v4.view.MenuItemCompat;
+import android.support.v7.app.AppCompatActivity;
 import android.support.v7.widget.LinearLayoutManager;
 import android.support.v7.widget.RecyclerView;
-import android.text.InputType;
+import android.support.v7.widget.SearchView;
+import android.support.v7.widget.Toolbar;
 import android.view.Menu;
-import android.view.MenuInflater;
 import android.view.MenuItem;
 import android.view.View;
-import android.widget.SearchView;
+import android.widget.EditText;
+import android.widget.ProgressBar;
 import android.widget.Toast;
 
-
-import com.example.pujan.bag.FunctionsThread;
+import com.example.pujan.bag.ActionListActivity;
 import com.example.pujan.bag.R;
-
-import com.example.pujan.bag.orderDetails.OrderDisplayActivity;
+import com.example.pujan.bag.VolleyFunctions;
 
 import org.json.JSONArray;
 import org.json.JSONException;
 import org.json.JSONObject;
 
 import java.util.ArrayList;
-import java.util.concurrent.ExecutionException;
+import java.util.LinkedHashMap;
 
-public class BagListActivity extends AppCompatActivity implements BagViewAdapter.ItemClickCallback, SearchView.OnQueryTextListener {
+public class BagListActivity extends AppCompatActivity implements SearchView.OnQueryTextListener, VolleyFunctions.AsyncResponse {
 
     RecyclerView recView;
     BagViewAdapter bagViewAdapter;
-    String customer_id;
-    String source;
+
     ArrayList<BagEntity> bagData = new ArrayList<>();
+    ArrayList<BagColorQuantity> bagColorQuantities=new ArrayList<>();
+    FloatingActionButton addNewBag;
+
+    ProgressBar progressBar;
+
+    int offset=0;
+    int difference=5;
+    boolean loading;
+    int position=0;
+    boolean loadComplete=false;
 
 
+    @Override
     public boolean onCreateOptionsMenu(Menu menu) {
-
-
-        MenuInflater menuInflater = getMenuInflater();
-        if (source.equals("customer")) {
-            menuInflater.inflate(R.menu.order_menu_actionbar, menu);
-            menuInflater.inflate(R.menu.search_action_bar, menu);
-        } else
-            menuInflater.inflate(R.menu.search_action_bar, menu);
+        getMenuInflater().inflate(R.menu.search_action_bar, menu);
         MenuItem menuItem = menu.findItem(R.id.searchh);
         SearchView searchView = (SearchView) MenuItemCompat.getActionView(menuItem);
-        SearchViewCompat.setInputType(searchView, InputType.TYPE_CLASS_TEXT);
-        searchView.setOnQueryTextListener((SearchView.OnQueryTextListener) this);
+        EditText searchEditText = (EditText) searchView.findViewById(android.support.v7.appcompat.R.id.search_src_text);
+        searchEditText.setTextColor(ContextCompat.getColor(this, R.color.colorPrimary));
+        searchEditText.setHintTextColor(ContextCompat.getColor(this, R.color.colorPrimary));
+        searchEditText.setHint("Search Bag");
+        searchEditText.setBackground(new ColorDrawable(Color.WHITE));
+        searchView.setOnQueryTextListener(this);
+
         return true;
 
     }
 
     @Override
     public boolean onOptionsItemSelected(final MenuItem item) {
-        if (source.equals("customer")) {
-            switch (item.getItemId()) {
-                case R.id.searchh:
-                    Toast.makeText(getBaseContext(), "hello :D", Toast.LENGTH_LONG).show();
-                    return true;
-                case R.id.action_cart:
-                    Intent i = new Intent(this, OrderDisplayActivity.class);
-                    i.putExtra("cid", customer_id.toString());
-                    i.putExtra("bid", bagViewAdapter.getRecValues().getBag_id());
-                    i.putExtra("quantity", bagViewAdapter.getRecValues().getQuantity());
-                    startActivity(i);
-                    return true;
-            }
-        } else {
-            switch (item.getItemId()) {
-                case R.id.searchh:
-                    Toast.makeText(getBaseContext(), "hello :D", Toast.LENGTH_LONG).show();
-                    return true;
-
-            }
+        switch (item.getItemId()) {
+            case R.id.searchh:
+                return true;
+            case android.R.id.home:
+                Intent i = new Intent(getBaseContext(), ActionListActivity.class);
+                startActivity(i);
+                return true;
         }
+
 
         return super.onOptionsItemSelected(item);
     }
 
+    @Override
+    public void onBackPressed() {
+        Intent i = new Intent(getBaseContext(), ActionListActivity.class);
+        startActivity(i);
+
+
+    }
 
     @Override
     protected void onCreate(Bundle savedInstanceState) {
         super.onCreate(savedInstanceState);
         setContentView(R.layout.activity_view_bag);
-        source = getIntent().getStringExtra("source");
-        customer_id = getIntent().getStringExtra("customer_id");
-        if (customer_id != null) {
-            android.support.v7.app.ActionBar actionBar = getSupportActionBar();
-            actionBar.setLogo(R.drawable.bagsmall);
-            actionBar.setTitle(" Order Menu");
-            actionBar.setDisplayUseLogoEnabled(true);   // These two are for
-            actionBar.setDisplayShowHomeEnabled(true);  // displaying logo in the action bar
-            Toast.makeText(this, "Customer id is" + customer_id, Toast.LENGTH_SHORT).show();
-        } else {
-            android.support.v7.app.ActionBar actionBar = getSupportActionBar();
 
-            actionBar.setLogo(R.drawable.bagsmall);
-            actionBar.setTitle(" View Bag");
-            actionBar.setDisplayUseLogoEnabled(true);
-            actionBar.setDisplayShowHomeEnabled(true);
-        }
+        Toolbar actionBar = (Toolbar) findViewById(R.id.actionBar);
+        setSupportActionBar(actionBar);
+        getSupportActionBar().setTitle("Bag");
+        getSupportActionBar().setDisplayHomeAsUpEnabled(true);
+
+        progressBar=(ProgressBar)findViewById(R.id.progressBar);
+        progressBar.setVisibility(View.VISIBLE);
+
 
         recView = (RecyclerView) findViewById(R.id.recView);
 
@@ -117,58 +114,71 @@ public class BagListActivity extends AppCompatActivity implements BagViewAdapter
         recView.setLayoutManager(lm);
         //recView.setLayoutManager(new ScrollingLinearLayoutManager(this, LinearLayoutManager.VERTICAL, false, duration));
 
+        addNewBag = (FloatingActionButton)findViewById(R.id.addNewBagBtn);
 
-        String response = null;
+        addNewBag.setOnClickListener(new View.OnClickListener() {
+            @Override
+            public void onClick(View v) {
+                Intent i = new Intent(getBaseContext(),AddBagActivity.class);
+                startActivity(i);
+            }
+        });
 
-        try {
-            response = new FunctionsThread(this).execute("ViewBag").get();
-            JSONObject bagJson = new JSONObject(response);
-            JSONArray bagJsonArray = bagJson.getJSONArray("result");
-            System.out.println(response);
+        recView.addOnScrollListener(new RecyclerView.OnScrollListener() {
+            @Override
+            public void onScrolled(RecyclerView recyclerView, int dx, int dy) {
+                if(dy<0)
+                    addNewBag.show();
 
+                if(dy>0)
+                    addNewBag.hide();
 
-            for (int i = 0; i < bagJsonArray.length(); i++) {
-                JSONObject jObject = bagJsonArray.getJSONObject(i);
-                BagEntity bagEntity = new BagEntity();
-                bagEntity.setId(Integer.valueOf(jObject.getString("bag_id")));
-                bagEntity.setName(jObject.getString("bag_name"));
-                bagEntity.setCategory(jObject.getString("bag_category"));
-                bagEntity.setPrice(Integer.valueOf(jObject.getString("bag_price")));
-                bagEntity.setCompany(jObject.getString("bag_company"));
-                bagEntity.setQuantity(Integer.valueOf(jObject.getString("bag_quantity")));
-                bagEntity.setPhoto(jObject.getString("bag_photo"));
+/*
+                if(!loadComplete) {
+                    if (!loading) {
+                        if (isLastItemDisplaying(recView)) {
+                            offset += difference;
 
-                bagData.add(bagEntity);
+                            FunctionsThread t = new FunctionsThread(BagListActivity.this);
+                            t.execute("ViewBag", String.valueOf(offset), String.valueOf(difference));
+                            t.trigAsyncResponse(BagListActivity.this);
 
+                            loading = true;
+
+                            position = ((LinearLayoutManager) recView.getLayoutManager()).findFirstCompletelyVisibleItemPosition();
+
+                            bagData.add(null);
+                            bagViewAdapter.notifyItemInserted(bagData.size() - 1);
+
+                        }
+                    }
+                }
+                */
             }
 
+            @Override
+            public void onScrollStateChanged(RecyclerView recyclerView, int newState) {
+                //addNewBag.show();
+            }
 
-        } catch (InterruptedException e) {
-            e.printStackTrace();
-        } catch (ExecutionException e) {
-            e.printStackTrace();
-        } catch (JSONException e) {
-            e.printStackTrace();
-        }
+        });
 
 
-        bagViewAdapter = new BagViewAdapter(bagData, getIntent().getStringExtra("source"), this);
-
-        recView.setAdapter(bagViewAdapter);
-        bagViewAdapter.onItemClickCallback(this);
-
-        bagViewAdapter.notifyDataSetChanged();
+        VolleyFunctions volleyFunctions = new VolleyFunctions(this);
+        volleyFunctions.viewBag(String.valueOf(offset), String.valueOf(difference));
+        volleyFunctions.trigAsyncResponse(this);
+        loading=true;
 
 
     }
 
-    @Override
-    public void onItemClick(int p) {
-
-        RecValue recValue = bagViewAdapter.getRecValues();
-        int a[], b[];
-
-
+    private boolean isLastItemDisplaying(RecyclerView recyclerView) {
+        if (recyclerView.getAdapter().getItemCount() != 0) {
+            int lastVisibleItemPosition = ((LinearLayoutManager) recyclerView.getLayoutManager()).findLastCompletelyVisibleItemPosition();
+            if (lastVisibleItemPosition != RecyclerView.NO_POSITION && lastVisibleItemPosition == recyclerView.getAdapter().getItemCount() - 1)
+                return true;
+        }
+        return false;
     }
 
 
@@ -182,11 +192,141 @@ public class BagListActivity extends AppCompatActivity implements BagViewAdapter
         ArrayList<BagEntity> newbag = new ArrayList<>();
         for (BagEntity bagEntity : bagData) {
             String name = bagEntity.getName().toLowerCase();
-            if (name.contains(newText)) {
+            if (name.contains(newText.toLowerCase())) {
                 newbag.add(bagEntity);
             }
         }
         bagViewAdapter.setFilter(newbag);
         return false;
     }
+
+    public void getData(String response) {
+        try {
+
+            if (response == "Error") {
+                Toast.makeText(this, "Connection Error... Please check your connection !", Toast.LENGTH_SHORT).show();
+            }
+            JSONObject bagJson = new JSONObject(response);
+            JSONArray bagJsonArray = bagJson.getJSONArray("result");
+            JSONArray stockJsonArray=bagJson.getJSONArray("stockData");
+
+
+            for (int i = 0; i < bagJsonArray.length(); i++) {
+                JSONObject jObject = bagJsonArray.getJSONObject(i);
+                BagEntity bagEntity = new BagEntity();
+                bagEntity.setId(Integer.valueOf(jObject.getString("bag_id")));
+                bagEntity.setName(jObject.getString("bag_name"));
+                bagEntity.setCategory(jObject.getString("bag_category"));
+                bagEntity.setPrice(Integer.valueOf(jObject.getString("bag_price")));
+                bagEntity.setCompany(jObject.getString("bag_company"));
+                bagEntity.setVendorId(Integer.valueOf(jObject.getString("vendor_id")));
+                bagEntity.setPhoto(jObject.getString("bag_photo"));
+
+                bagData.add(bagEntity);
+
+
+            }
+            if(bagJsonArray.length()==0)
+                loadComplete=true;
+
+
+            convertStockData(stockJsonArray);
+
+
+
+
+
+        } catch (Exception e) {
+            e.printStackTrace();
+            Toast.makeText(this, "Error With Database Connection..!!", Toast.LENGTH_SHORT).show();
+        }
+
+
+    }
+
+
+    @Override
+    public void onComplete(String output) {
+
+        progressBar.setVisibility(View.GONE);
+        if(output.equals("ERROR"))
+        {
+            Toast.makeText(this,"Network Error",Toast.LENGTH_SHORT).show();
+        }
+        else {
+            if (offset > 0) {
+                if (bagData.get(bagData.size() - 1) == null) {
+                    bagData.remove(bagData.size() - 1);
+                }
+                bagViewAdapter.notifyItemRemoved(bagData.size() - 1);
+            }
+
+            getData(output);
+            bagViewAdapter = new BagViewAdapter(bagData, bagColorQuantities, "bag", getBaseContext());
+            recView.setAdapter(bagViewAdapter);
+            loading = false;
+            recView.getLayoutManager().scrollToPosition(position);
+
+
+        }
+
+
+
+    }
+
+
+    private void convertStockData(JSONArray bag) {
+
+
+        try {
+
+
+            LinkedHashMap<String, Integer> cqe = new LinkedHashMap<>();
+
+            BagColorQuantity bcqEntity = new BagColorQuantity();
+            JSONObject jObject2 = null;
+            for (int i = 0; i < bag.length(); i++) {
+                JSONObject jObject = bag.getJSONObject(i);
+                bcqEntity.setBag_id(Integer.valueOf(jObject.getString("bag_id")));
+
+                if (i + 1 < bag.length()) {
+                    jObject2 = bag.getJSONObject(i + 1);
+
+                }
+                else
+                    jObject2=jObject;
+                if ((jObject2.getString("bag_id")).equals(jObject.getString("bag_id"))) {
+
+
+                    cqe.put(jObject.getString("color"), Integer.valueOf(jObject.getString("quantityColor")));
+
+                } else {
+
+                    cqe.put(jObject.getString("color"), Integer.valueOf(jObject.getString("quantityColor")));
+                    bcqEntity.setQuantityColor(cqe);
+                    bagColorQuantities.add(bcqEntity);
+                    bcqEntity = new BagColorQuantity();
+                    cqe = new LinkedHashMap<>();
+
+                }
+
+
+
+
+            }
+
+
+            bcqEntity.setQuantityColor(cqe);
+            if(cqe.size()>0)
+                bagColorQuantities.add(bcqEntity);
+
+
+        } catch (JSONException e) {
+            e.printStackTrace();
+        }
+
+
+
+    }
+
 }

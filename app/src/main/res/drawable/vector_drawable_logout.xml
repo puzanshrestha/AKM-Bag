@@ -1,0 +1,10 @@
+<?xml version="1.0" encoding="utf-8"?>
+<vector xmlns:android="http://schemas.android.com/apk/res/android" android:viewportWidth="411"
+    android:viewportHeight="512" android:width="64dp" android:height="68dp">
+    <group android:name="logout">
+        <path android:name="cls-1" android:fillColor="#41A7EB"
+            android:pathData="M30,30 L232,30 L232,0 L0,0 L0,512 L232,512 L232,482 L30,482 L30,30z" />
+        <path android:name="cls-1" android:fillColor="#41A7EB"
+            android:pathData="M411,256c-41.18-15.26-92.27-41.33-123.94-68.95l19.7,54.45H99v29H306.76L287.06,325C318.73,297.35,369.82,271.28,411,256Z" />
+    </group>
+</vector>

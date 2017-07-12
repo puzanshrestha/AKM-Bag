@@ -1,32 +1,52 @@
 <?xml version="1.0" encoding="utf-8"?>
 <LinearLayout xmlns:android="http://schemas.android.com/apk/res/android"
+    xmlns:card_view="http://schemas.android.com/apk/res-auto"
     android:orientation="vertical"
     android:layout_width="match_parent"
-    android:layout_height="match_parent"
-    android:background="@drawable/gradient_main"
+    android:layout_height="wrap_content"
+    android:background="#f1f1f1"
     android:id="@+id/cont_cust_item">
+
+    <android.support.v7.widget.CardView
+        android:layout_marginTop="0dp"
+        card_view:cardCornerRadius="2dp"
+        card_view:cardElevation="8dp"
+        card_view:cardUseCompatPadding="true"
+        card_view:contentPadding="5dp"
+        android:layout_height="wrap_content"
+        android:layout_width="match_parent"
+        android:background="#ffffff"
+
+        >
 
     <LinearLayout
         android:layout_width="match_parent"
         android:layout_height="100dp"
         android:background="@color/cardview_shadow_end_color"
         android:orientation="horizontal"
-        android:gravity="center">
+        android:gravity="center"
+        >
 
 
         <LinearLayout
+            android:layout_margin="8dp"
             android:layout_width="0dp"
             android:layout_height="wrap_content"
-            android:layout_weight="0.5"
-            android:orientation="vertical">
+            android:layout_weight="0.23"
+           android:padding="12dp"
+            android:background="@drawable/order_rounded_back">
+
             <ImageView
-                android:layout_marginLeft="10dp"
+
+                android:id="@+id/photo_box"
                 android:layout_width="wrap_content"
                 android:layout_height="wrap_content"
-                android:src="@android:drawable/sym_def_app_icon"
-                android:id="@+id/imageView"
-                />
+                android:src="@drawable/vector_drawable_customer"
 
+
+
+
+                />
 
         </LinearLayout>
 
@@ -34,7 +54,7 @@
             android:layout_width="0dp"
             android:layout_height="wrap_content"
             android:orientation="vertical"
-            android:layout_weight="1"
+            android:layout_weight="0.7"
 
             >
             <TextView
@@ -58,8 +78,8 @@
                 android:layout_width="wrap_content"
                 android:layout_height="wrap_content"
                 android:id="@+id/lbl_cust_phone"
-                android:drawableLeft="@drawable/call"
-                android:drawablePadding="5dp"
+                android:drawableLeft="@drawable/ic_call_black_24dp"
+                android:drawablePadding="3dp"
                 android:gravity="center_vertical"
                 android:text="phone"/>
 
@@ -71,30 +91,26 @@
 
 
 
-        <CheckBox
-            android:layout_width="53dp"
-            android:layout_height="wrap_content"
-            android:id="@+id/cust_checkbox"/>
+
 
         <LinearLayout
             android:layout_width="0dp"
             android:layout_height="wrap_content"
-            android:orientation="vertical"
-            android:layout_weight="0.5">
+            android:orientation="horizontal"
+            android:layout_weight="0.1">
 
 
-            <Button
-                android:layout_width="80dp"
-                android:layout_height="40dp"
-                android:text="edit"
-                android:id="@+id/cust_btn_edit"/>
-
-
-            <Button
-                android:layout_width="80dp"
-                android:layout_height="40dp"
-                android:text="Delete"
-                android:id="@+id/cust_btn_delete"/>
+            <TextView
+                android:id="@+id/optionsMenu"
+                android:layout_width="wrap_content"
+                android:layout_height="wrap_content"
+                android:textSize="15dp"
+                android:padding="10dp"
+                android:text="       "
+                android:background="@drawable/ic_keyboard_arrow_right_black_24dp"
+                android:textAppearance="?android:textAppearanceLarge"
+                android:layout_alignParentTop="true"
+                android:layout_alignParentEnd="true" />
 
         </LinearLayout>
 
@@ -103,8 +119,8 @@
 
 
 
-    <ImageView
-        android:layout_width="match_parent"
-        android:layout_height="20dp" />
+
+
+    </android.support.v7.widget.CardView>
 
 </LinearLayout>
