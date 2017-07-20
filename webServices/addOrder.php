@@ -11,6 +11,7 @@ $discount=$_POST['discount'];
 
 $source=$_POST['source'];
 $shop_number=$_POST['shop_number'];
+$receipt_no=$_POST['receipt_no'];
 
 $test =array();
 $test= json_decode($jsonOrder,true);
@@ -51,7 +52,7 @@ else
 
 $orderId=-1;
 $date = date("Y-m-d");
-$sql_query="INSERT INTO orders(customer_id,customer_name,discount,date,shop_number) OUTPUT INSERTED.order_id VALUES($customer_id,'$customer_name',$discount,'$date','$shop_number')";
+$sql_query="INSERT INTO orders(customer_id,customer_name,discount,date,shop_number,receipt_no) OUTPUT INSERTED.order_id VALUES($customer_id,'$customer_name',$discount,'$date','$shop_number','$receipt_no')";
 $result=sqlsrv_query($conn,$sql_query);
 if($row=sqlsrv_fetch_array($result))
 {	
