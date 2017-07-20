@@ -166,10 +166,7 @@ public class OrderActivity extends AppCompatActivity implements BagListFragment.
 
             }
         });
-
-
-
-        //
+  //
         setupViewPager(viewPager);
 
         tabLayout = (TabLayout) findViewById(R.id.tabs);
@@ -235,16 +232,12 @@ public class OrderActivity extends AppCompatActivity implements BagListFragment.
                 {
                     if(!discountPercentEditText.getText().toString().equals(""))
                     discount=total*Integer.parseInt(discountPercentEditText.getText().toString())/100;
-
-
-                }
+    }
                 else if(radioDiscountAmount.isChecked())
                 {
                     if(!discountAmountEditText.getText().toString().equals(""))
                     discount=Integer.parseInt(discountAmountEditText.getText().toString());
-
-
-                }
+     }
                 else
                 {
                     Toast.makeText(getBaseContext(),"Unkown Item Selected",Toast.LENGTH_SHORT);
@@ -308,7 +301,8 @@ public class OrderActivity extends AppCompatActivity implements BagListFragment.
 
                     cqe.put(jObject.getString("color"), Integer.valueOf(jObject.getString("quantityColor")));
 
-                } else {
+                }
+                else {
 
                     cqe.put(jObject.getString("color"), Integer.valueOf(jObject.getString("quantityColor")));
                     bcqEntity.setColorQuantity(cqe);
@@ -375,7 +369,6 @@ public class OrderActivity extends AppCompatActivity implements BagListFragment.
 
                     orderDoneBtn.setText("ORDER NOW");
                     currentOrderListFragment.receiveData(bagColorQuantities);
-
 
                 }
             }

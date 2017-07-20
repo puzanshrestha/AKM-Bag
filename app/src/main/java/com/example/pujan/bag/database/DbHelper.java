@@ -6,13 +6,17 @@ import android.database.Cursor;
 import android.database.sqlite.SQLiteDatabase;
 import android.database.sqlite.SQLiteOpenHelper;
 
+import com.example.pujan.bag.orderDetailsFragment.printPackageFragment.FragmentPrintDemo;
+
 /**
  * Created by Pujan on 1/7/2017.
  */
+/*saajan added the recipt no and date for the receipt no*/
+
 public class DbHelper extends SQLiteOpenHelper {
 
     static private String dbname = "bagDb";
-    static int version =1;
+    static int version = 1;
 
     String createTableSql = "CREATE TABLE IF NOT EXISTS IPPOOL ("
             +" ipid    TEXT,"
@@ -20,21 +24,28 @@ public class DbHelper extends SQLiteOpenHelper {
     String createShopTableSql = "CREATE TABLE IF NOT EXISTS SHOP ("
             + "shop_id  TEXT,"
             +" shop_number  TEXT)";
+    String createShopReceipt ="CREATE TABLE IF NOT EXISTS Receipts ("    /*saajan*/
+            + "receipt_id  TEXT,"
+            + "date_today TEXT)";
+
 
     public DbHelper(Context context) {
         super(context, dbname, null, version);
 
-
         getWritableDatabase().execSQL(createTableSql);
-        String query2 = "insert into IPPOOL values('1','192.168.1.12')";
-        getWritableDatabase().execSQL(query2);
+        String query1 = "insert into IPPOOL values('1','192.168.1.12')";
+        getWritableDatabase().execSQL(query1);
 
         getWritableDatabase().execSQL(createShopTableSql);
-        String query = "insert into SHOP values('1','1')";
-        getWritableDatabase().execSQL(query);
+        String query2 = "insert into SHOP values('1','1')";
+        getWritableDatabase().execSQL(query2);
 
-
+        getWritableDatabase().execSQL(createShopReceipt);
+        String query3 = "insert into Receipts values('1','123')";
+        getWritableDatabase().execSQL(query3);
     }
+
+
 
     public void setIP(String ip)
     {
@@ -51,10 +62,26 @@ public class DbHelper extends SQLiteOpenHelper {
         String ip="";
         c.moveToFirst();
         ip=c.getString(c.getColumnIndex("ip"));
-
-
         return ip;
-
+    }
+    public void setReceipt(String receipt_no,String dateToday,String Receipt_prev_no) /*saajan*/
+    {
+        SQLiteDatabase db = getWritableDatabase();
+        ContentValues values = new ContentValues();
+        values.put("receipt_id", receipt_no);
+        values.put("date_today",dateToday);
+        db.update("Receipts", values, "receipt_id" + "=" + Receipt_prev_no, null);
+        db.close();
+    }
+    public String getReceipt()  /*saajan*/
+    {
+        String sql = "SELECT * from Receipts";
+        Cursor c = getWritableDatabase().rawQuery(sql,null);
+        String receipt_id="",dateToday="";
+        c.moveToFirst();
+        receipt_id = c.getString(0);
+        dateToday =  c.getString(1);
+        return receipt_id + ',' + dateToday;
     }
 
     public void setShop(String n)
@@ -72,7 +99,6 @@ public class DbHelper extends SQLiteOpenHelper {
         String shop_number=" ";
         c.moveToFirst();
         shop_number=c.getString(c.getColumnIndex("shop_number"));
-
         return shop_number;
 
     }

@@ -33,7 +33,7 @@ public class PendingBillListFragment extends Fragment implements VolleyFunctions
     RecyclerView recView;
 
     FloatingActionButton addOrderFab;
-    PendingBillAdapter pendingBillAdapter;
+    com.example.pujan.bag.pendingBill.pendingBillAdapter pendingBillAdapter;
     ArrayList<PendingBillListEntity> pBillList;
 
 
@@ -123,7 +123,7 @@ public class PendingBillListFragment extends Fragment implements VolleyFunctions
             e.printStackTrace();
             Toast.makeText(getContext(), "Error connecting with the Server..!", Toast.LENGTH_SHORT).show();
         }
-        pendingBillAdapter = new PendingBillAdapter(pBillList, getContext(),recView);
+        pendingBillAdapter = new pendingBillAdapter(pBillList, getContext(),recView);
         recView.setAdapter(pendingBillAdapter);
         pendingBillAdapter.notifyDataSetChanged();
     }

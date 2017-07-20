@@ -15,7 +15,6 @@ import android.widget.TextView;
 
 import com.example.pujan.bag.R;
 import com.example.pujan.bag.FunctionsThread;
-import com.example.pujan.bag.VolleyFunctions;
 import com.example.pujan.bag.orderDetailsFragment.OrderActivity;
 
 import net.cachapa.expandablelayout.ExpandableLayout;
@@ -26,7 +25,7 @@ import java.util.concurrent.ExecutionException;
 /**
  * Created by Pujan on 1/3/2017.
  */
-public class PendingBillAdapter extends RecyclerView.Adapter<PendingBillAdapter.TestHolder>{
+public class pendingBillAdapter extends RecyclerView.Adapter<pendingBillAdapter.TestHolder>{
 
     private ArrayList<PendingBillListEntity> listData;
     private LayoutInflater inflater;
@@ -39,7 +38,7 @@ public class PendingBillAdapter extends RecyclerView.Adapter<PendingBillAdapter.
 
 
 
-    public PendingBillAdapter(ArrayList<PendingBillListEntity> listData, Context c, RecyclerView recyclerView) {
+    public pendingBillAdapter(ArrayList<PendingBillListEntity> listData, Context c, RecyclerView recyclerView) {
         this.listData = listData;
         this.inflater = LayoutInflater.from(c);
         this.context = c;

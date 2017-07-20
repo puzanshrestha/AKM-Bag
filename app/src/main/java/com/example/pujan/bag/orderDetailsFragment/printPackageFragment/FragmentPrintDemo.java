@@ -77,6 +77,8 @@ public class FragmentPrintDemo extends DialogFragment implements VolleyFunctions
 
         Window window = getDialog().getWindow();
         window.setBackgroundDrawableResource(R.color.colorPrimary);
+
+
     }
 
     @Override
@@ -126,7 +128,32 @@ public class FragmentPrintDemo extends DialogFragment implements VolleyFunctions
         return  view;
     }
 
+     public String getreceipt ()
+        {
+            DbHelper dbh = new DbHelper(getContext());
+            String Receipt_No = dbh.getReceipt().split(",")[0];
 
+            return Receipt_No;
+        }
+    public String getdatereceipt()
+    {
+        DbHelper dbh = new DbHelper(getContext());
+        String dateReceipt = dbh.getReceipt().split(",")[1];
+        return dateReceipt;
+    }
+
+    public void setReceiptAll(String receipt_no,String dateToday,String Receipt_prev_no)
+    {
+        DbHelper dbh = new DbHelper(getContext());
+        dbh.setReceipt(receipt_no,dateToday,Receipt_prev_no);
+    }
+public String date()
+{
+    SimpleDateFormat sdf = new SimpleDateFormat("yyyy/MM/dd");
+    Date date = new Date();
+    String sDate = sdf.format(date);
+    return sDate;
+}
 
 
     String alignMiddle(String input) {
@@ -140,16 +167,10 @@ public class FragmentPrintDemo extends DialogFragment implements VolleyFunctions
 
     }
 
-
-
-
-
     @Override
     public void onComplete(String output) {
 
-
-
-        if (output.equals("addedPendingBill")) {
+ if (output.equals("addedPendingBill")) {
             Toast.makeText(getContext(), "Added To Pending Bill List", Toast.LENGTH_SHORT).show();
             String msg = "";
             String lang = getString(R.string.strLang);
@@ -164,9 +185,6 @@ public class FragmentPrintDemo extends DialogFragment implements VolleyFunctions
                 //cmd[2] |= 0x10;   //Bigger Text
                 cmd[2] &= 0xEF;
                 mService.write(cmd);
-                SimpleDateFormat sdf = new SimpleDateFormat("yyyy/MM/dd");
-                Date date = new Date();
-                String sDate = sdf.format(date);
 
               /*  msg += alignMiddle("PBRS Enterprises") + "\n";
 
@@ -175,7 +193,9 @@ public class FragmentPrintDemo extends DialogFragment implements VolleyFunctions
                 msg += alignMiddle("Phone:+977-1-5589330") + "\n\n";
                 */
 
-                msg += "               " + "Date : " + sDate + "\n\n";
+                msg += "               " + "Date : " + date() + "\n\n";
+                msg +="Receipt No : " + getreceipt() + "\n";
+
 
 
                 cmd[2] &= 0xEF;
@@ -195,7 +215,7 @@ public class FragmentPrintDemo extends DialogFragment implements VolleyFunctions
                     }
                     int Tprice;
                     Tprice = subQty * getData.get(i).getPrice();
-                    String SNspace = new String();
+                    String SNspace  = new String();
                     String PROspace = new String();
                     String RATspace = new String();
                     String QTYspace = new String();
@@ -308,9 +328,6 @@ public class FragmentPrintDemo extends DialogFragment implements VolleyFunctions
                 //cmd[2] |= 0x10;   //Bigger Text
                 cmd[2] &= 0xEF;
                 mService.write(cmd);
-                SimpleDateFormat sdf = new SimpleDateFormat("yyyy/MM/dd");
-                Date date = new Date();
-                String sDate = sdf.format(date);
 
               /*  msg += alignMiddle("PBRS Enterprises") + "\n";
 
@@ -319,9 +336,8 @@ public class FragmentPrintDemo extends DialogFragment implements VolleyFunctions
                 msg += alignMiddle("Phone:+977-1-5589330") + "\n\n";
 
                 */
-                msg += "               " + "Date : " + sDate + "\n\n";
-
-
+                msg += "               " + "Date : " + date() + "\n\n";
+                msg +="Receipt No : " + getreceipt() + "\n";
                 cmd[2] &= 0xEF;
                 mService.write(cmd);
 
@@ -432,35 +448,43 @@ public class FragmentPrintDemo extends DialogFragment implements VolleyFunctions
 
                 mService.sendMessage(msg, "GBK");
 
-                System.out.println(msg);
-
             }
             Intent i = new Intent(getContext(), ActionListActivity.class);
             startActivity(i);
-        } else {
-            Toast.makeText(getContext(), "Failed to insert record", Toast.LENGTH_SHORT).show();
         }
+        else
+            {
+            Toast.makeText(getContext(), "Failed to insert record", Toast.LENGTH_SHORT).show();
+            }
     }
 
     class ClickEvent implements View.OnClickListener {
         public void onClick(View v) {
-            if (v == btnSearch) {
+
+            String receipt;
+
+            if (v == btnSearch)
+            {
                 Intent serverIntent = new Intent(getContext(), FragmentDeviceListActivity.class);
                 startActivityForResult(serverIntent, REQUEST_CONNECT_DEVICE);
 
+            }
+            else if (v == btnSendDraw)
+            {
 
+                if (getdatereceipt().equals(date()))
+                    {
+                        setReceiptAll(String.valueOf(Integer.parseInt(getreceipt()) + 1), date(), getreceipt());
+                    }
+                else
+                    {
+                        setReceiptAll("1",date(),getreceipt());
+                    }
+                receipt = getreceipt();
                 Gson test = new Gson();
                 String jsonData = test.toJson(getData);
                 VolleyFunctions t = new VolleyFunctions(getContext());
-                t.addOrder( jsonData, customer_id, customer_name, discount,source,shop_number);
-                t.trigAsyncResponse(FragmentPrintDemo.this);
-
-            } else if (v == btnSendDraw) {
-
-                Gson test = new Gson();
-                String jsonData = test.toJson(getData);
-                VolleyFunctions t = new VolleyFunctions(getContext());
-                t.addOrder( jsonData, customer_id, customer_name, discount,source,shop_number);
+                t.addOrder( jsonData, customer_id, customer_name, discount,source,shop_number,receipt);
                 t.trigAsyncResponse(FragmentPrintDemo.this);
 
 
@@ -468,7 +492,6 @@ public class FragmentPrintDemo extends DialogFragment implements VolleyFunctions
 
                 Gson test = new Gson();
                 String jsonData = test.toJson(getData);
-                System.out.println(jsonData);
                 VolleyFunctions t = new VolleyFunctions(getContext());
                 t.addPendingBill( jsonData, customer_id, customer_name,String.valueOf(total), address,shop_number);
                 t.trigAsyncResponse(FragmentPrintDemo.this);

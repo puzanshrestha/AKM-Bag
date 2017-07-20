@@ -50,6 +50,13 @@ public class PrintDemo extends Activity implements VolleyFunctions.AsyncResponse
     String customer_name = "";
     String discount,source,shop_number;
 
+    SimpleDateFormat sdf = new SimpleDateFormat("yyyy/MM/dd");
+    Date date = new Date();
+    String sDate = sdf.format(date);
+    DbHelper dbh = new DbHelper(this);
+    String Receipt_No = dbh.getReceipt().split(",")[0];
+    String dateReceipt = dbh.getReceipt().split(",")[1];
+
     @Override
     public void onCreate(Bundle savedInstanceState) {
         super.onCreate(savedInstanceState);
@@ -101,7 +108,6 @@ public class PrintDemo extends Activity implements VolleyFunctions.AsyncResponse
             btnSearch = (Button) this.findViewById(R.id.btnSearch);
             btnSearch.setOnClickListener(new ClickEvent());
             btnSendDraw.setEnabled(false);
-
             btnPendingBill = (Button) this.findViewById(R.id.pendingBillBtn);
             btnPendingBill.setOnClickListener(new ClickEvent());
         } catch (Exception ex) {
@@ -132,14 +138,10 @@ public class PrintDemo extends Activity implements VolleyFunctions.AsyncResponse
             cmd[0] = 0x1b;
             cmd[1] = 0x21;
             if ((lang.compareTo("en")) == 0) {
-
-
                 //cmd[2] |= 0x10;   //Bigger Text
                 cmd[2] &= 0xEF;
                 mService.write(cmd);
-                SimpleDateFormat sdf = new SimpleDateFormat("yyyy/MM/dd");
-                Date date = new Date();
-                String sDate = sdf.format(date);
+
 
                 msg += alignMiddle("PBRS Enterprises") + "\n";
 
@@ -147,7 +149,7 @@ public class PrintDemo extends Activity implements VolleyFunctions.AsyncResponse
 
                 msg += alignMiddle("Phone:+977-1-5589330") + "\n\n";
                 msg += "               " + "Date : " + sDate + "\n\n";
-
+                msg +="Receipt No : " + Receipt_No + "\n";
 
                 cmd[2] &= 0xEF;
                 mService.write(cmd);
@@ -413,6 +415,8 @@ public class PrintDemo extends Activity implements VolleyFunctions.AsyncResponse
 
     class ClickEvent implements View.OnClickListener {
         public void onClick(View v) {
+            String receipt;
+
             if (v == btnSearch) {
                 Intent serverIntent = new Intent(PrintDemo.this, DeviceListActivity.class);
                 startActivityForResult(serverIntent, REQUEST_CONNECT_DEVICE);
@@ -421,11 +425,19 @@ public class PrintDemo extends Activity implements VolleyFunctions.AsyncResponse
 
 
             } else if (v == btnSendDraw) {
-
+                if (dateReceipt != sDate)
+                {
+                    dbh.setReceipt("1",sDate,Receipt_No);
+                }
+                else
+                {
+                    dbh.setReceipt(String.valueOf(Integer.parseInt(Receipt_No) + 1), sDate, Receipt_No);
+                }
+                receipt = dbh.getReceipt().split(",")[0];
                 Gson test = new Gson();
                 String jsonData = test.toJson(getData);
                 VolleyFunctions t = new VolleyFunctions(PrintDemo.this);
-                t.addOrder( jsonData, customer_id, customer_name, discount,source,shop_number);
+                t.addOrder( jsonData, customer_id, customer_name, discount,source,shop_number,receipt);
                 t.trigAsyncResponse(PrintDemo.this);
 
 

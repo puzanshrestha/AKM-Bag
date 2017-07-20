@@ -22,8 +22,7 @@ import com.example.pujan.bag.orderDetailsFragment.BagListFragment;
 import com.example.pujan.bag.orderDetailsFragment.OrderActivity;
 import com.example.pujan.bag.orderDetailsFragment.customerSelectFragment.SelectCustomerFragment;
 import com.example.pujan.bag.orderDetailsFragment.printPackageFragment.FragmentPrintDemo;
-import com.example.pujan.bag.pendingBill.PendingBillAdapter;
-import com.example.pujan.bag.pendingBill.PendingBillList;
+import com.example.pujan.bag.pendingBill.pendingBillList;
 import com.example.pujan.bag.pendingBill.PendingBillListFragment;
 import com.example.pujan.bag.printPackage.PrintDemo;
 import com.example.pujan.bag.transactionalReports.BagReports;
@@ -138,7 +137,7 @@ public class VolleyFunctions {
         this.callback = activity;
     }
 
-    public void trigAsyncResponse(PendingBillList activity) {
+    public void trigAsyncResponse(pendingBillList activity) {
         this.callback = activity;
     }
 
@@ -521,7 +520,7 @@ public class VolleyFunctions {
     }
 
 
-    public void addOrder(final String orderJson, final String customer_id, final String customer_name, final String discount, final String source, final String shop_number) {
+    public void addOrder(final String orderJson, final String customer_id, final String customer_name, final String discount, final String source, final String shop_number,final String receipt) {
 
         StringRequest stringRequest = new StringRequest(Request.Method.POST, ip + "addOrder.php",
                 new Response.Listener<String>() {
@@ -554,6 +553,7 @@ public class VolleyFunctions {
                 params.put("source", source);
                 params.put("discount", discount);
                 params.put("shop_number", shop_number);
+                params.put("receipt_no",receipt);
                 //returning parameter
                 return params;
             }

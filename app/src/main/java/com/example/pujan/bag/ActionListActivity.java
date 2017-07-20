@@ -5,8 +5,6 @@ import android.content.Intent;
 import android.content.SharedPreferences;
 import android.graphics.Color;
 import android.graphics.drawable.ColorDrawable;
-import android.support.design.widget.AppBarLayout;
-import android.support.v7.app.ActionBar;
 import android.support.v7.app.AppCompatActivity;
 import android.os.Bundle;
 import android.support.v7.widget.Toolbar;
@@ -18,14 +16,11 @@ import android.view.View;
 import android.widget.LinearLayout;
 
 import com.example.pujan.bag.bagDetails.BagListActivity;
-import com.example.pujan.bag.bagStock.StockDetailsActivity;
 import com.example.pujan.bag.bagStock.StockListActivity;
-import com.example.pujan.bag.customerDetails.CustomerDetailsActivity;
 
 import com.example.pujan.bag.customerDetails.CustomerListActivity;
-import com.example.pujan.bag.pendingBill.PendingBillList;
+import com.example.pujan.bag.pendingBill.pendingBillList;
 import com.example.pujan.bag.transactionalReports.BagReports;
-import com.example.pujan.bag.vendorDetails.VendorDetailsActivity;
 import com.example.pujan.bag.vendorDetails.VendorListActivity;
 
 public class ActionListActivity extends AppCompatActivity {
@@ -84,7 +79,7 @@ public class ActionListActivity extends AppCompatActivity {
             @Override
             public void onClick(View v) {
 
-                Intent i = new Intent(getBaseContext(), PendingBillList.class);
+                Intent i = new Intent(getBaseContext(), pendingBillList.class);
                 startActivity(i);
 
             }

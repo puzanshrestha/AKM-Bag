@@ -36,13 +36,10 @@ public class CurrentOrderListFragment extends Fragment {
 
         View view = inflater.inflate(R.layout.fragment_current_orders, null);
 
-
         ListView listView = (ListView) view.findViewById(R.id.listView);
-
 
         adapter = new CurrentOrderArrayAdapter(getContext(),bagColorQuantities);
         listView.setAdapter(adapter);
-
 
         listView.setOnItemClickListener(new AdapterView.OnItemClickListener() {
 
@@ -54,20 +51,11 @@ public class CurrentOrderListFragment extends Fragment {
         });
 
         return view;
-
-
-
-    }
+   }
 
     public void receiveData(ArrayList<PrintEntity> colorQuantities)
     {
         this.bagColorQuantities=colorQuantities;
         adapter.updateValue(bagColorQuantities);
-
-
-
-
-
-
     }
 }

@@ -74,10 +74,6 @@ public class BagViewFragmentAdapter extends RecyclerView.Adapter<BagViewFragment
         void onItemClick(ArrayList<PrintEntity> p);
     }
 
-
-
-
-
     public BagViewFragmentAdapter(ArrayList<BagEntity> listData, ArrayList<BagColorQuantity> stockList,Context c, RecyclerView recyclerView) {
         this.recyclerView = recyclerView;
         this.listData = listData;

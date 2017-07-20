@@ -218,7 +218,7 @@ public class MainActivity extends AppCompatActivity implements VolleyFunctions.A
             } else if (check.equals("incorrect")) {
                 Toast.makeText(getBaseContext(), "Invalid username Password", Toast.LENGTH_SHORT).show();
             } else {
-                Toast.makeText(getBaseContext(), "Network error, please check server's IP !", Toast.LENGTH_SHORT).show();
+               Toast.makeText(getBaseContext(), "Network error, please check server's IP !", Toast.LENGTH_SHORT).show();
 
             }
         } catch (Exception e) {

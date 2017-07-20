@@ -63,11 +63,7 @@ public class CurrentOrderArrayAdapter extends ArrayAdapter<PrintEntity> {
         String qtyColor="";
         for (LinkedHashMap.Entry<String, Integer> entry : orderValues.get(position).getColorQuantity().entrySet())
             qtyColor+=entry.getKey().toString()+" - "+entry.getValue().toString()+"\n";
-
             holder.colorQty.setText(qtyColor);
-
-
-
             return convertView;
     }
 
@@ -77,9 +73,5 @@ public class CurrentOrderArrayAdapter extends ArrayAdapter<PrintEntity> {
         this.orderValues.addAll(orderValues);
         if(orderValues.size()!=0)
         this.notifyDataSetChanged();
-
-
     }
-
-
 }

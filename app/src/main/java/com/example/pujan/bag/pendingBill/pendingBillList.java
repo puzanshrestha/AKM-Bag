@@ -29,7 +29,7 @@ import java.util.ArrayList;
 /**
  * Created by puzan on 26-Mar-17.
  */
-public class PendingBillList extends AppCompatActivity implements VolleyFunctions.AsyncResponse {
+public class pendingBillList extends AppCompatActivity implements VolleyFunctions.AsyncResponse {
 
 
     @Override
@@ -43,7 +43,7 @@ public class PendingBillList extends AppCompatActivity implements VolleyFunction
 
     RecyclerView recView;
     FloatingActionButton addOrderFab;
-    PendingBillAdapter pendingBillAdapter;
+    com.example.pujan.bag.pendingBill.pendingBillAdapter pendingBillAdapter;
     ArrayList<PendingBillListEntity> pBillList;
     ProgressBar progressBar;
 
@@ -80,7 +80,7 @@ public class PendingBillList extends AppCompatActivity implements VolleyFunction
 
         VolleyFunctions thread = new VolleyFunctions(this);
         thread.queryPendingBillList(dbh.getShop());
-        thread.trigAsyncResponse(PendingBillList.this);
+        thread.trigAsyncResponse(pendingBillList.this);
 
         addOrderFab.setOnClickListener(new View.OnClickListener() {
             @Override
@@ -145,7 +145,7 @@ public class PendingBillList extends AppCompatActivity implements VolleyFunction
                 e.printStackTrace();
                 Toast.makeText(this, "Error connecting with the Server..!", Toast.LENGTH_SHORT).show();
             }
-            pendingBillAdapter = new PendingBillAdapter(pBillList, this, recView);
+            pendingBillAdapter = new pendingBillAdapter(pBillList, this, recView);
             recView.setAdapter(pendingBillAdapter);
         }
     }
