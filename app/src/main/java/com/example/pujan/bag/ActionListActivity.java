@@ -19,7 +19,7 @@ import com.example.pujan.bag.bagDetails.BagListActivity;
 import com.example.pujan.bag.bagStock.StockListActivity;
 
 import com.example.pujan.bag.customerDetails.CustomerListActivity;
-import com.example.pujan.bag.pendingBill.pendingBillList;
+import com.example.pujan.bag.pendingBill.PendingBillList;
 import com.example.pujan.bag.transactionalReports.BagReports;
 import com.example.pujan.bag.vendorDetails.VendorListActivity;
 
@@ -79,7 +79,7 @@ public class ActionListActivity extends AppCompatActivity {
             @Override
             public void onClick(View v) {
 
-                Intent i = new Intent(getBaseContext(), pendingBillList.class);
+                Intent i = new Intent(getBaseContext(), PendingBillList.class);
                 startActivity(i);
 
             }

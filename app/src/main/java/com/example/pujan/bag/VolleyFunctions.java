@@ -22,7 +22,7 @@ import com.example.pujan.bag.orderDetailsFragment.BagListFragment;
 import com.example.pujan.bag.orderDetailsFragment.OrderActivity;
 import com.example.pujan.bag.orderDetailsFragment.customerSelectFragment.SelectCustomerFragment;
 import com.example.pujan.bag.orderDetailsFragment.printPackageFragment.FragmentPrintDemo;
-import com.example.pujan.bag.pendingBill.pendingBillList;
+import com.example.pujan.bag.pendingBill.PendingBillList;
 import com.example.pujan.bag.pendingBill.PendingBillListFragment;
 import com.example.pujan.bag.printPackage.PrintDemo;
 import com.example.pujan.bag.transactionalReports.BagReports;
@@ -66,53 +66,42 @@ public class VolleyFunctions {
     public void trigAsyncResponse(BagListActivity activity) {
         this.callback = activity;
     }
-
     public void trigAsyncResponse(BagListFragment activity) {
         this.callback = activity;
     }
     public void trigAsyncResponse(VendorSelectFragment activity) {
         this.callback = activity;
     }
-
     public void trigAsyncResponse(CustomerListActivity activity) {
         this.callback = activity;
     }
-
     public void trigAsyncResponse(VendorListActivity activity) {
         this.callback = activity;
     }
-
     public void trigAsyncResponse(AddBagActivity activity) {
         this.callback = activity;
     }
-
     public void trigAsyncResponse(AddCustomerActivity activity) {
         this.callback = activity;
     }
-
     public void trigAsyncResponse(AddVendorActivity activity) {
         this.callback = activity;
     }
     public void trigAsyncResponse(VendorDetailsActivity activity) {
         this.callback = activity;
     }
-
     public void trigAsyncResponse(BagReports activity) {
         this.callback = activity;
     }
-
     public void trigAsyncResponse(StockListActivity activity) {
         this.callback = activity;
     }
-
     public void trigAsyncResponse(CustomerDetailsActivity activity) {
         this.callback = activity;
     }
     public void trigAsyncResponse(SelectCustomerFragment activity) {
         this.callback = activity;
     }
-
-
     public void trigAsyncResponse(FragmentPrintDemo activity) {
         this.callback = activity;
     }
@@ -122,30 +111,21 @@ public class VolleyFunctions {
     public void trigAsyncResponse(PendingBillListFragment activity) {
         this.callback = activity;
     }
-
     public void trigAsyncResponse(StockDetailsActivity activity) {
         this.callback = activity;
     }
-
-
-
     public void trigAsyncResponse(MainActivity activity) {
         this.callback = activity;
     }
-
     public void trigAsyncResponse(PrintDemo activity) {
         this.callback = activity;
     }
-
-    public void trigAsyncResponse(pendingBillList activity) {
+    public void trigAsyncResponse(PendingBillList activity) {
         this.callback = activity;
     }
-
     public void trigAsyncResponse(RePrintBill activity) {
         this.callback = activity;
     }
-
-
     public void trigAsyncResponse(BagDetailsActivity activity) {
         this.callback = activity;
     }
@@ -383,55 +363,50 @@ public class VolleyFunctions {
 
     public void viewCustomer() {
 
-            StringRequest stringRequest = new StringRequest(Request.Method.POST, ip + "viewCustomer.php",
-                    new Response.Listener<String>() {
-                        @Override
-                        public void onResponse(String response) {
-                            //If we are getting success from server
+        StringRequest stringRequest = new StringRequest(Request.Method.POST, ip + "viewCustomer.php",
+                new Response.Listener<String>() {
+                    @Override
+                    public void onResponse(String response) {
+                        //If we are getting success from server
 
-                            try {
-                                responseRet = response.trim().toString();
-                                callback.onComplete(responseRet);
-                            }catch (Exception e)
-                            {
-                                System.out.println("error");
-                            }
+                        try {
+                            responseRet = response.trim().toString();
+                            callback.onComplete(responseRet);
+                        } catch (Exception e) {
+                            System.out.println("error");
                         }
-                    },
-                    new Response.ErrorListener() {
-                        @Override
-                        public void onErrorResponse(VolleyError error) {
-                            //You can handle error here if you want
+                    }
+                },
+                new Response.ErrorListener() {
+                    @Override
+                    public void onErrorResponse(VolleyError error) {
+                        //You can handle error here if you want
 
-                            try {
+                        try {
 
-                                callback.onComplete("ERROR");
-                                responseRet = error.toString();
-                                System.out.println("ERROR HAS BEEN OCCURERD");
+                            callback.onComplete("ERROR");
+                            responseRet = error.toString();
+                            System.out.println("ERROR HAS BEEN OCCURERD");
 
-                            }
-                            catch (Exception e)
-                            {
-                                System.out.println("ERror");
-                            }
+                        } catch (Exception e) {
+                            System.out.println("ERror");
                         }
-                    }) {
-                @Override
-                protected Map<String, String> getParams() throws AuthFailureError {
-                    Map<String, String> params = new HashMap<>();
-                    //Adding parameters to request
+                    }
+                }) {
+            @Override
+            protected Map<String, String> getParams() throws AuthFailureError {
+                Map<String, String> params = new HashMap<>();
+                //Adding parameters to request
 
 
-                    //returning parameter
-                    return params;
-                }
-            };
+                //returning parameter
+                return params;
+            }
+        };
 
-            //Adding the string request to the queue
-            RequestQueue requestQueue = com.android.volley.toolbox.Volley.newRequestQueue(c);
-            requestQueue.add(stringRequest);
-
-
+        //Adding the string request to the queue
+        RequestQueue requestQueue = com.android.volley.toolbox.Volley.newRequestQueue(c);
+        requestQueue.add(stringRequest);
 
 
     }
@@ -520,7 +495,7 @@ public class VolleyFunctions {
     }
 
 
-    public void addOrder(final String orderJson, final String customer_id, final String customer_name, final String discount, final String source, final String shop_number,final String receipt) {
+    public void addOrder(final String orderJson, final String customer_id, final String customer_name, final String discount, final String source, final String shop_number, final String receipt) {
 
         StringRequest stringRequest = new StringRequest(Request.Method.POST, ip + "addOrder.php",
                 new Response.Listener<String>() {
@@ -553,7 +528,7 @@ public class VolleyFunctions {
                 params.put("source", source);
                 params.put("discount", discount);
                 params.put("shop_number", shop_number);
-                params.put("receipt_no",receipt);
+                params.put("receipt_no", receipt);
                 //returning parameter
                 return params;
             }
@@ -761,7 +736,7 @@ public class VolleyFunctions {
             protected Map<String, String> getParams() throws AuthFailureError {
                 Map<String, String> params = new HashMap<>();
                 //Adding parameters to request
-                    params.put("shop_number",shop_number);
+                params.put("shop_number", shop_number);
 
                 //returning parameter
                 return params;
@@ -777,7 +752,7 @@ public class VolleyFunctions {
 
     public void viewRecords(final String dateTo, final String dateFrom, final String shop_number) {
 
-        System.out.println(shop_number+"is the shop number");
+        System.out.println(shop_number + "is the shop number");
         StringRequest stringRequest = new StringRequest(Request.Method.POST, ip + "viewRecords.php",
                 new Response.Listener<String>() {
                     @Override
@@ -805,7 +780,7 @@ public class VolleyFunctions {
 
                 params.put("dateTo", dateTo);
                 params.put("dateFrom", dateFrom);
-                params.put("shop_number",shop_number);
+                params.put("shop_number", shop_number);
 
 
                 //returning parameter
