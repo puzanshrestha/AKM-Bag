@@ -2,8 +2,8 @@
 <project version="4">
   <component name="ProjectModuleManager">
     <modules>
+      <module fileurl="file://$PROJECT_DIR$/AKM-Bag.iml" filepath="$PROJECT_DIR$/AKM-Bag.iml" />
       <module fileurl="file://$PROJECT_DIR$/app/app.iml" filepath="$PROJECT_DIR$/app/app.iml" />
-      <module fileurl="file://$PROJECT_DIR$/bag_v3.0.iml" filepath="$PROJECT_DIR$/bag_v3.0.iml" />
     </modules>
   </component>
 </project>

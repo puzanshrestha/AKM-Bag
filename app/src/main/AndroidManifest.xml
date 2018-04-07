@@ -48,7 +48,7 @@
         <activity android:name=".orderDetailsFragment.OrderActivity" />
         <activity android:name=".orderDetailsFragment.printPackageFragment.FragmentDeviceListActivity" />
         <activity android:name=".bagDetails.BagDetailsActivity" />
-        <activity android:name=".orderDetailsFragment.customerSelectFragment.SelectCustomerFragment"></activity>
+        <activity android:name=".pendingBill.PendingBillList"/>
     </application>
 
 </manifest>

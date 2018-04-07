@@ -36,16 +36,16 @@ public class BagListActivity extends AppCompatActivity implements SearchView.OnQ
     BagViewAdapter bagViewAdapter;
 
     ArrayList<BagEntity> bagData = new ArrayList<>();
-    ArrayList<BagColorQuantity> bagColorQuantities=new ArrayList<>();
+    ArrayList<BagColorQuantity> bagColorQuantities = new ArrayList<>();
     FloatingActionButton addNewBag;
 
     ProgressBar progressBar;
 
-    int offset=0;
-    int difference=5;
+    int offset = 0;
+    int difference = 5;
     boolean loading;
-    int position=0;
-    boolean loadComplete=false;
+    int position = 0;
+    boolean loadComplete = false;
 
 
     @Override
@@ -97,7 +97,7 @@ public class BagListActivity extends AppCompatActivity implements SearchView.OnQ
         getSupportActionBar().setTitle("Bag");
         getSupportActionBar().setDisplayHomeAsUpEnabled(true);
 
-        progressBar=(ProgressBar)findViewById(R.id.progressBar);
+        progressBar = (ProgressBar) findViewById(R.id.progressBar);
         progressBar.setVisibility(View.VISIBLE);
 
 
@@ -114,12 +114,12 @@ public class BagListActivity extends AppCompatActivity implements SearchView.OnQ
         recView.setLayoutManager(lm);
         //recView.setLayoutManager(new ScrollingLinearLayoutManager(this, LinearLayoutManager.VERTICAL, false, duration));
 
-        addNewBag = (FloatingActionButton)findViewById(R.id.addNewBagBtn);
+        addNewBag = (FloatingActionButton) findViewById(R.id.addNewBagBtn);
 
         addNewBag.setOnClickListener(new View.OnClickListener() {
             @Override
             public void onClick(View v) {
-                Intent i = new Intent(getBaseContext(),AddBagActivity.class);
+                Intent i = new Intent(getBaseContext(), AddBagActivity.class);
                 startActivity(i);
             }
         });
@@ -127,10 +127,10 @@ public class BagListActivity extends AppCompatActivity implements SearchView.OnQ
         recView.addOnScrollListener(new RecyclerView.OnScrollListener() {
             @Override
             public void onScrolled(RecyclerView recyclerView, int dx, int dy) {
-                if(dy<0)
+                if (dy < 0)
                     addNewBag.show();
 
-                if(dy>0)
+                if (dy > 0)
                     addNewBag.hide();
 
 /*
@@ -167,7 +167,7 @@ public class BagListActivity extends AppCompatActivity implements SearchView.OnQ
         VolleyFunctions volleyFunctions = new VolleyFunctions(this);
         volleyFunctions.viewBag(String.valueOf(offset), String.valueOf(difference));
         volleyFunctions.trigAsyncResponse(this);
-        loading=true;
+        loading = true;
 
 
     }
@@ -189,14 +189,23 @@ public class BagListActivity extends AppCompatActivity implements SearchView.OnQ
 
     @Override
     public boolean onQueryTextChange(String newText) {
-        ArrayList<BagEntity> newbag = new ArrayList<>();
+        ArrayList<BagEntity> listStartsWith = new ArrayList<>();
+        ArrayList<BagEntity> listContains = new ArrayList<>();
+
+        for (BagEntity bagEntity : bagData) {
+            String name = bagEntity.getName().toLowerCase();
+            if (name.startsWith(newText.toLowerCase())) {
+                listStartsWith.add(bagEntity);
+            }
+        }
         for (BagEntity bagEntity : bagData) {
             String name = bagEntity.getName().toLowerCase();
             if (name.contains(newText.toLowerCase())) {
-                newbag.add(bagEntity);
+                listContains.add(bagEntity);
             }
         }
-        bagViewAdapter.setFilter(newbag);
+        listStartsWith.addAll(listContains);
+        bagViewAdapter.setFilter(listStartsWith);
         return false;
     }
 
@@ -208,7 +217,7 @@ public class BagListActivity extends AppCompatActivity implements SearchView.OnQ
             }
             JSONObject bagJson = new JSONObject(response);
             JSONArray bagJsonArray = bagJson.getJSONArray("result");
-            JSONArray stockJsonArray=bagJson.getJSONArray("stockData");
+            JSONArray stockJsonArray = bagJson.getJSONArray("stockData");
 
 
             for (int i = 0; i < bagJsonArray.length(); i++) {
@@ -226,14 +235,11 @@ public class BagListActivity extends AppCompatActivity implements SearchView.OnQ
 
 
             }
-            if(bagJsonArray.length()==0)
-                loadComplete=true;
+            if (bagJsonArray.length() == 0)
+                loadComplete = true;
 
 
             convertStockData(stockJsonArray);
-
-
-
 
 
         } catch (Exception e) {
@@ -249,11 +255,9 @@ public class BagListActivity extends AppCompatActivity implements SearchView.OnQ
     public void onComplete(String output) {
 
         progressBar.setVisibility(View.GONE);
-        if(output.equals("ERROR"))
-        {
-            Toast.makeText(this,"Network Error",Toast.LENGTH_SHORT).show();
-        }
-        else {
+        if (output.equals("ERROR")) {
+            Toast.makeText(this, "Network Error", Toast.LENGTH_SHORT).show();
+        } else {
             if (offset > 0) {
                 if (bagData.get(bagData.size() - 1) == null) {
                     bagData.remove(bagData.size() - 1);
@@ -271,16 +275,11 @@ public class BagListActivity extends AppCompatActivity implements SearchView.OnQ
         }
 
 
-
     }
 
 
     private void convertStockData(JSONArray bag) {
-
-
         try {
-
-
             LinkedHashMap<String, Integer> cqe = new LinkedHashMap<>();
 
             BagColorQuantity bcqEntity = new BagColorQuantity();
@@ -292,9 +291,8 @@ public class BagListActivity extends AppCompatActivity implements SearchView.OnQ
                 if (i + 1 < bag.length()) {
                     jObject2 = bag.getJSONObject(i + 1);
 
-                }
-                else
-                    jObject2=jObject;
+                } else
+                    jObject2 = jObject;
                 if ((jObject2.getString("bag_id")).equals(jObject.getString("bag_id"))) {
 
 
@@ -311,20 +309,17 @@ public class BagListActivity extends AppCompatActivity implements SearchView.OnQ
                 }
 
 
-
-
             }
 
 
             bcqEntity.setQuantityColor(cqe);
-            if(cqe.size()>0)
+            if (cqe.size() > 0)
                 bagColorQuantities.add(bcqEntity);
 
 
         } catch (JSONException e) {
             e.printStackTrace();
         }
-
 
 
     }
