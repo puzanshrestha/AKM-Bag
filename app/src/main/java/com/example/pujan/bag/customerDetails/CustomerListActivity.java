@@ -32,6 +32,8 @@ import org.json.JSONArray;
 import org.json.JSONObject;
 
 import java.util.ArrayList;
+import java.util.Collections;
+import java.util.Comparator;
 
 public class CustomerListActivity extends AppCompatActivity implements VolleyFunctions.AsyncResponse, CustomerViewAdapter.ItemClickCallback, SearchView.OnQueryTextListener {
 
@@ -126,14 +128,28 @@ public class CustomerListActivity extends AppCompatActivity implements VolleyFun
     @Override
 
     public boolean onQueryTextChange(String newText) {
-        ArrayList<CustomerEntity> newlist = new ArrayList<>();
-        for (CustomerEntity customer : customerData) {
-            String name = customer.getName().toLowerCase();
-            if (name.contains(newText.toLowerCase())) {
-                newlist.add(customer);
+        ArrayList<CustomerEntity> listStartsWith = new ArrayList<>();
+        ArrayList<CustomerEntity> listContains = new ArrayList<>();
+
+        for (CustomerEntity customerEntity : customerData) {
+            String name = customerEntity.getName().toLowerCase();
+            if (name.startsWith(newText.toLowerCase())) {
+                listStartsWith.add(customerEntity);
             }
         }
-        customerViewAdapter.setFilter(newlist);
+        Collections.sort(listStartsWith, new Comparator<CustomerEntity>() {
+            public int compare(CustomerEntity obj1, CustomerEntity obj2) {
+                return (obj1.getName()).compareTo(obj2.getName());
+            }
+        });
+        for (CustomerEntity customerEntity : customerData) {
+            String name = customerEntity.getName().toLowerCase();
+            if ((name.contains(newText.toLowerCase()))&(!listStartsWith.contains(customerEntity))) {
+                listContains.add(customerEntity);
+            }
+        }
+        listStartsWith.addAll(listContains);
+        customerViewAdapter.setFilter(listStartsWith);
         return false;
     }
 

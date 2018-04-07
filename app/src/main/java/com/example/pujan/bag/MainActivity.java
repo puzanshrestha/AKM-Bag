@@ -277,7 +277,7 @@ public class MainActivity extends AppCompatActivity implements VolleyFunctions.A
 
         Runtime runtime = Runtime.getRuntime();
         try {
-            Process mIpAddrProcess = runtime.exec("/system/bin/ping -c 1 " + ip);
+            Process mIpAddrProcess = runtime.exec("/system/bin/ping -context 1 " + ip);
             int mExitValue = mIpAddrProcess.waitFor();
             System.out.println(ip + "---" + mExitValue);
             if (mExitValue == 0) {

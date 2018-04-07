@@ -62,7 +62,7 @@ class IpList extends AsyncTask<String, Void, Boolean> {
 
         Runtime runtime = Runtime.getRuntime();
         try {
-            Process mIpAddrProcess = runtime.exec("/system/bin/ping -w 1 -c 1 " + ip);
+            Process mIpAddrProcess = runtime.exec("/system/bin/ping -w 1 -context 1 " + ip);
             int mExitValue = mIpAddrProcess.waitFor();
             System.out.println(ip + "---" + mExitValue);
             if (mExitValue == 0) {

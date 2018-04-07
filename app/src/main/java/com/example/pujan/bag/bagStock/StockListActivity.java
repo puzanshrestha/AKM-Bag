@@ -29,6 +29,8 @@ import org.json.JSONException;
 import org.json.JSONObject;
 
 import java.util.ArrayList;
+import java.util.Collections;
+import java.util.Comparator;
 import java.util.LinkedHashMap;
 
 public class StockListActivity extends AppCompatActivity implements SearchView.OnQueryTextListener, VolleyFunctions.AsyncResponse {
@@ -126,14 +128,28 @@ public class StockListActivity extends AppCompatActivity implements SearchView.O
 
     @Override
     public boolean onQueryTextChange(String newText) {
-        ArrayList<BagEntity> newbag = new ArrayList<>();
+        ArrayList<BagEntity> listStartsWith = new ArrayList<>();
+        ArrayList<BagEntity> listContains = new ArrayList<>();
+
         for (BagEntity bagEntity : bagData) {
             String name = bagEntity.getName().toLowerCase();
-            if (name.contains(newText.toLowerCase())) {
-                newbag.add(bagEntity);
+            if (name.startsWith(newText.toLowerCase())) {
+                listStartsWith.add(bagEntity);
             }
         }
-        bagViewAdapter.setFilter(newbag);
+        Collections.sort(listStartsWith, new Comparator<BagEntity>() {
+            public int compare(BagEntity obj1, BagEntity obj2) {
+                return (obj1.getName()).compareTo(obj2.getName());
+            }
+        });
+        for (BagEntity bagEntity : bagData) {
+            String name = bagEntity.getName().toLowerCase();
+            if ((name.contains(newText.toLowerCase()))&(!listStartsWith.contains(bagEntity))) {
+                listContains.add(bagEntity);
+            }
+        }
+        listStartsWith.addAll(listContains);
+        bagViewAdapter.setFilter(listStartsWith);
         return false;
     }
 

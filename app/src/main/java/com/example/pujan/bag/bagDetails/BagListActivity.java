@@ -28,6 +28,8 @@ import org.json.JSONException;
 import org.json.JSONObject;
 
 import java.util.ArrayList;
+import java.util.Collections;
+import java.util.Comparator;
 import java.util.LinkedHashMap;
 
 public class BagListActivity extends AppCompatActivity implements SearchView.OnQueryTextListener, VolleyFunctions.AsyncResponse {
@@ -198,9 +200,14 @@ public class BagListActivity extends AppCompatActivity implements SearchView.OnQ
                 listStartsWith.add(bagEntity);
             }
         }
+        Collections.sort(listStartsWith, new Comparator<BagEntity>() {
+            public int compare(BagEntity obj1, BagEntity obj2) {
+                return (obj1.getName()).compareTo(obj2.getName());
+            }
+        });
         for (BagEntity bagEntity : bagData) {
             String name = bagEntity.getName().toLowerCase();
-            if (name.contains(newText.toLowerCase())) {
+            if ((name.contains(newText.toLowerCase()))&(!listStartsWith.contains(bagEntity))) {
                 listContains.add(bagEntity);
             }
         }

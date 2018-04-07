@@ -23,12 +23,15 @@ import android.widget.Toast;
 import com.example.pujan.bag.ActionListActivity;
 import com.example.pujan.bag.R;
 import com.example.pujan.bag.VolleyFunctions;
+import com.example.pujan.bag.bagDetails.BagEntity;
 
 import org.json.JSONArray;
 import org.json.JSONException;
 import org.json.JSONObject;
 
 import java.util.ArrayList;
+import java.util.Collections;
+import java.util.Comparator;
 
 public class VendorListActivity extends AppCompatActivity implements VolleyFunctions.AsyncResponse, SearchView.OnQueryTextListener {
     RecyclerView recyclerView;
@@ -106,14 +109,28 @@ public class VendorListActivity extends AppCompatActivity implements VolleyFunct
 
     @Override
     public boolean onQueryTextChange(String newText) {
-        ArrayList<VendorEntity> newVendor = new ArrayList<>();
-        for (VendorEntity vendorEntity : vendorData) {
-            String name = vendorEntity.getName().toLowerCase();
-            if (name.contains(newText.toLowerCase())) {
-                newVendor.add(vendorEntity);
+        ArrayList<VendorEntity> listStartsWith = new ArrayList<>();
+        ArrayList<VendorEntity> listContains = new ArrayList<>();
+
+        for (VendorEntity bagEntity : vendorData) {
+            String name = bagEntity.getName().toLowerCase();
+            if (name.startsWith(newText.toLowerCase())) {
+                listStartsWith.add(bagEntity);
             }
         }
-        viewAdapter.setFilter(newVendor);
+        Collections.sort(listStartsWith, new Comparator<VendorEntity>() {
+            public int compare(VendorEntity obj1, VendorEntity obj2) {
+                return (obj1.getName()).compareTo(obj2.getName());
+            }
+        });
+        for (VendorEntity bagEntity : vendorData) {
+            String name = bagEntity.getName().toLowerCase();
+            if ((name.contains(newText.toLowerCase()))&(!listStartsWith.contains(bagEntity))) {
+                listContains.add(bagEntity);
+            }
+        }
+        listStartsWith.addAll(listContains);
+        viewAdapter.setFilter(listStartsWith);
         return false;
     }
 

@@ -1,6 +1,8 @@
 package com.example.pujan.bag;
 
+import android.app.ProgressDialog;
 import android.content.Context;
+import android.widget.ProgressBar;
 
 import com.android.volley.AuthFailureError;
 import com.android.volley.Request;
@@ -39,14 +41,15 @@ import java.util.Map;
  */
 
 public class VolleyFunctions {
-    Context c;
+    Context context;
     String ip;
 
     String responseRet;
+    ProgressDialog progressDialog;
 
-    public VolleyFunctions(Context c) {
-        this.c = c;
-        DbHelper db = new DbHelper(c);
+    public VolleyFunctions(Context context) {
+        this.context = context;
+        DbHelper db = new DbHelper(context);
 
         try {
             ip = "http://" + db.getIP() + "/BagWebServices/";
@@ -54,6 +57,10 @@ public class VolleyFunctions {
         } finally {
             db.close();
         }
+
+        progressDialog = new ProgressDialog(context);
+        progressDialog.setCancelable(true);
+        progressDialog.setMessage("Loading please wait...");
 
     }
 
@@ -169,7 +176,7 @@ public class VolleyFunctions {
         };
 
         //Adding the string request to the queue
-        RequestQueue requestQueue = com.android.volley.toolbox.Volley.newRequestQueue(c);
+        RequestQueue requestQueue = com.android.volley.toolbox.Volley.newRequestQueue(context);
         requestQueue.add(stringRequest);
 
 
@@ -221,7 +228,7 @@ public class VolleyFunctions {
         };
 
         //Adding the string request to the queue
-        RequestQueue requestQueue = com.android.volley.toolbox.Volley.newRequestQueue(c);
+        RequestQueue requestQueue = com.android.volley.toolbox.Volley.newRequestQueue(context);
         requestQueue.add(stringRequest);
 
 
@@ -268,7 +275,7 @@ public class VolleyFunctions {
         };
 
         //Adding the string request to the queue
-        RequestQueue requestQueue = com.android.volley.toolbox.Volley.newRequestQueue(c);
+        RequestQueue requestQueue = com.android.volley.toolbox.Volley.newRequestQueue(context);
         requestQueue.add(stringRequest);
 
 
@@ -312,7 +319,7 @@ public class VolleyFunctions {
         };
 
         //Adding the string request to the queue
-        RequestQueue requestQueue = com.android.volley.toolbox.Volley.newRequestQueue(c);
+        RequestQueue requestQueue = com.android.volley.toolbox.Volley.newRequestQueue(context);
         requestQueue.add(stringRequest);
 
 
@@ -354,7 +361,7 @@ public class VolleyFunctions {
         };
 
         //Adding the string request to the queue
-        RequestQueue requestQueue = com.android.volley.toolbox.Volley.newRequestQueue(c);
+        RequestQueue requestQueue = com.android.volley.toolbox.Volley.newRequestQueue(context);
         requestQueue.add(stringRequest);
 
 
@@ -405,7 +412,7 @@ public class VolleyFunctions {
         };
 
         //Adding the string request to the queue
-        RequestQueue requestQueue = com.android.volley.toolbox.Volley.newRequestQueue(c);
+        RequestQueue requestQueue = com.android.volley.toolbox.Volley.newRequestQueue(context);
         requestQueue.add(stringRequest);
 
 
@@ -445,7 +452,7 @@ public class VolleyFunctions {
         };
 
         //Adding the string request to the queue
-        RequestQueue requestQueue = com.android.volley.toolbox.Volley.newRequestQueue(c);
+        RequestQueue requestQueue = com.android.volley.toolbox.Volley.newRequestQueue(context);
         requestQueue.add(stringRequest);
 
 
@@ -488,7 +495,7 @@ public class VolleyFunctions {
         };
 
         //Adding the string request to the queue
-        RequestQueue requestQueue = com.android.volley.toolbox.Volley.newRequestQueue(c);
+        RequestQueue requestQueue = com.android.volley.toolbox.Volley.newRequestQueue(context);
         requestQueue.add(stringRequest);
 
 
@@ -496,13 +503,13 @@ public class VolleyFunctions {
 
 
     public void addOrder(final String orderJson, final String customer_id, final String customer_name, final String discount, final String source, final String shop_number, final String receipt) {
-
+        progressDialog.show();
         StringRequest stringRequest = new StringRequest(Request.Method.POST, ip + "addOrder.php",
                 new Response.Listener<String>() {
                     @Override
                     public void onResponse(String response) {
                         //If we are getting success from server
-
+                        progressDialog.dismiss();
                         responseRet = response.trim().toString();
                         callback.onComplete(responseRet);
                     }
@@ -511,8 +518,7 @@ public class VolleyFunctions {
                     @Override
                     public void onErrorResponse(VolleyError error) {
                         //You can handle error here if you want
-
-
+                        progressDialog.dismiss();
                         responseRet = error.toString();
                         System.out.println("ERROR HAS BEEN OCCURERD");
                     }
@@ -535,7 +541,7 @@ public class VolleyFunctions {
         };
 
         //Adding the string request to the queue
-        RequestQueue requestQueue = com.android.volley.toolbox.Volley.newRequestQueue(c);
+        RequestQueue requestQueue = com.android.volley.toolbox.Volley.newRequestQueue(context);
         requestQueue.add(stringRequest);
 
 
@@ -575,7 +581,7 @@ public class VolleyFunctions {
         };
 
         //Adding the string request to the queue
-        RequestQueue requestQueue = com.android.volley.toolbox.Volley.newRequestQueue(c);
+        RequestQueue requestQueue = com.android.volley.toolbox.Volley.newRequestQueue(context);
         requestQueue.add(stringRequest);
 
 
@@ -615,7 +621,7 @@ public class VolleyFunctions {
         };
 
         //Adding the string request to the queue
-        RequestQueue requestQueue = com.android.volley.toolbox.Volley.newRequestQueue(c);
+        RequestQueue requestQueue = com.android.volley.toolbox.Volley.newRequestQueue(context);
         requestQueue.add(stringRequest);
 
 
@@ -623,12 +629,13 @@ public class VolleyFunctions {
 
     public void addPendingBill(final String orderJson, final String customer_id, final String customer_name, final String total, final String address, final String shop_number) {
 
+        progressDialog.show();
         StringRequest stringRequest = new StringRequest(Request.Method.POST, ip + "addPendingBill.php",
                 new Response.Listener<String>() {
                     @Override
                     public void onResponse(String response) {
                         //If we are getting success from server
-
+                        progressDialog.dismiss();
                         responseRet = response.trim().toString();
                         callback.onComplete(responseRet);
                     }
@@ -637,8 +644,7 @@ public class VolleyFunctions {
                     @Override
                     public void onErrorResponse(VolleyError error) {
                         //You can handle error here if you want
-
-
+                        progressDialog.dismiss();
                         responseRet = error.toString();
                         System.out.println("ERROR HAS BEEN OCCURERD");
                     }
@@ -662,7 +668,7 @@ public class VolleyFunctions {
         };
 
         //Adding the string request to the queue
-        RequestQueue requestQueue = com.android.volley.toolbox.Volley.newRequestQueue(c);
+        RequestQueue requestQueue = com.android.volley.toolbox.Volley.newRequestQueue(context);
         requestQueue.add(stringRequest);
 
 
@@ -704,7 +710,7 @@ public class VolleyFunctions {
         };
 
         //Adding the string request to the queue
-        RequestQueue requestQueue = com.android.volley.toolbox.Volley.newRequestQueue(c);
+        RequestQueue requestQueue = com.android.volley.toolbox.Volley.newRequestQueue(context);
         requestQueue.add(stringRequest);
 
 
@@ -744,7 +750,7 @@ public class VolleyFunctions {
         };
 
         //Adding the string request to the queue
-        RequestQueue requestQueue = com.android.volley.toolbox.Volley.newRequestQueue(c);
+        RequestQueue requestQueue = com.android.volley.toolbox.Volley.newRequestQueue(context);
         requestQueue.add(stringRequest);
 
 
@@ -752,13 +758,15 @@ public class VolleyFunctions {
 
     public void viewRecords(final String dateTo, final String dateFrom, final String shop_number) {
 
+
+        progressDialog.show();
         System.out.println(shop_number + "is the shop number");
         StringRequest stringRequest = new StringRequest(Request.Method.POST, ip + "viewRecords.php",
                 new Response.Listener<String>() {
                     @Override
                     public void onResponse(String response) {
                         //If we are getting success from server
-
+                        progressDialog.dismiss();
                         responseRet = response.trim().toString();
                         callback.onComplete(responseRet);
                     }
@@ -767,8 +775,7 @@ public class VolleyFunctions {
                     @Override
                     public void onErrorResponse(VolleyError error) {
                         //You can handle error here if you want
-
-
+                        progressDialog.dismiss();
                         responseRet = error.toString();
                         System.out.println("ERROR HAS BEEN OCCURERD");
                     }
@@ -789,7 +796,7 @@ public class VolleyFunctions {
         };
 
         //Adding the string request to the queue
-        RequestQueue requestQueue = com.android.volley.toolbox.Volley.newRequestQueue(c);
+        RequestQueue requestQueue = com.android.volley.toolbox.Volley.newRequestQueue(context);
         requestQueue.add(stringRequest);
 
 
@@ -830,7 +837,7 @@ public class VolleyFunctions {
         };
 
         //Adding the string request to the queue
-        RequestQueue requestQueue = com.android.volley.toolbox.Volley.newRequestQueue(c);
+        RequestQueue requestQueue = com.android.volley.toolbox.Volley.newRequestQueue(context);
         requestQueue.add(stringRequest);
 
 
@@ -873,7 +880,7 @@ public class VolleyFunctions {
         };
 
         //Adding the string request to the queue
-        RequestQueue requestQueue = com.android.volley.toolbox.Volley.newRequestQueue(c);
+        RequestQueue requestQueue = com.android.volley.toolbox.Volley.newRequestQueue(context);
         requestQueue.add(stringRequest);
 
 
@@ -915,7 +922,7 @@ public class VolleyFunctions {
         };
 
         //Adding the string request to the queue
-        RequestQueue requestQueue = com.android.volley.toolbox.Volley.newRequestQueue(c);
+        RequestQueue requestQueue = com.android.volley.toolbox.Volley.newRequestQueue(context);
         requestQueue.add(stringRequest);
 
 
@@ -956,7 +963,7 @@ public class VolleyFunctions {
         };
 
         //Adding the string request to the queue
-        RequestQueue requestQueue = com.android.volley.toolbox.Volley.newRequestQueue(c);
+        RequestQueue requestQueue = com.android.volley.toolbox.Volley.newRequestQueue(context);
         requestQueue.add(stringRequest);
 
 

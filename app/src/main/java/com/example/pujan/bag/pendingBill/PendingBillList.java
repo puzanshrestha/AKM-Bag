@@ -14,6 +14,8 @@ import android.view.View;
 import android.widget.ProgressBar;
 import android.widget.Toast;
 
+import com.example.pujan.bag.ActionListActivity;
+import com.example.pujan.bag.MainActivity;
 import com.example.pujan.bag.R;
 import com.example.pujan.bag.VolleyFunctions;
 import com.example.pujan.bag.database.DbHelper;
@@ -36,7 +38,7 @@ public class PendingBillList extends AppCompatActivity implements VolleyFunction
     public boolean onOptionsItemSelected(MenuItem item) {
         switch (item.getItemId()) {
             case android.R.id.home:
-                this.finish();
+                startActivity(new Intent(this, ActionListActivity.class));
         }
         return true;
     }
