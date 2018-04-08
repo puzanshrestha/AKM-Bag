@@ -1,5 +1,6 @@
 package com.example.pujan.bag.orderDetailsFragment;
 
+import android.content.Intent;
 import android.os.Bundle;
 import android.support.annotation.IdRes;
 import android.support.annotation.NonNull;
@@ -12,6 +13,7 @@ import android.support.v7.widget.Toolbar;
 import android.text.Html;
 import android.text.InputType;
 import android.util.Log;
+import android.view.MenuItem;
 import android.view.View;
 import android.widget.Button;
 import android.widget.EditText;
@@ -24,6 +26,7 @@ import com.example.pujan.bag.R;
 import com.example.pujan.bag.VolleyFunctions;
 import com.example.pujan.bag.orderDetailsFragment.customerSelectFragment.SelectCustomerFragment;
 import com.example.pujan.bag.orderDetailsFragment.printPackageFragment.FragmentPrintDemo;
+import com.example.pujan.bag.pendingBill.PendingBillList;
 import com.example.pujan.bag.printPackage.PrintEntity;
 
 import org.json.JSONArray;
@@ -67,7 +70,16 @@ public class OrderActivity extends AppCompatActivity implements BagListFragment.
     private RadioButton radioDiscountNone, radioDiscountPercent, radioDiscountAmount;
     private RadioGroup radioDiscountMode;
 
+    @Override
+    public boolean onOptionsItemSelected(MenuItem item) {
+        switch (item.getItemId()) {
+            case android.R.id.home:
+                Intent i = new Intent(this, PendingBillList.class);
+                startActivity(i);
 
+        }
+        return true;
+    }
     @Override
     public void onCreate(Bundle savedInstanceState) {
         super.onCreate(savedInstanceState);

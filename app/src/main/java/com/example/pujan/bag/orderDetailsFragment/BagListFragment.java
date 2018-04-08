@@ -33,6 +33,8 @@ import org.json.JSONException;
 import org.json.JSONObject;
 
 import java.util.ArrayList;
+import java.util.Collections;
+import java.util.Comparator;
 import java.util.LinkedHashMap;
 
 import static android.view.View.GONE;
@@ -181,15 +183,28 @@ public class BagListFragment extends Fragment implements SearchView.OnQueryTextL
 
     @Override
     public boolean onQueryTextChange(String newText) {
-        ArrayList<BagEntity> newbag = new ArrayList<>();
+        ArrayList<BagEntity> listStartsWith = new ArrayList<>();
+        ArrayList<BagEntity> listContains = new ArrayList<>();
+
         for (BagEntity bagEntity : bagData) {
             String name = bagEntity.getName().toLowerCase();
-            if (name.contains(newText.toLowerCase())) {
-                newbag.add(bagEntity);
+            if (name.startsWith(newText.toLowerCase())) {
+                listStartsWith.add(bagEntity);
             }
         }
-        if(newbag.size()>0)
-        bagViewFragmentAdapter.setFilter(newbag);
+        Collections.sort(listStartsWith, new Comparator<BagEntity>() {
+            public int compare(BagEntity obj1, BagEntity obj2) {
+                return (obj1.getName()).compareTo(obj2.getName());
+            }
+        });
+        for (BagEntity bagEntity : bagData) {
+            String name = bagEntity.getName().toLowerCase();
+            if ((name.contains(newText.toLowerCase()))&(!listStartsWith.contains(bagEntity))) {
+                listContains.add(bagEntity);
+            }
+        }
+        listStartsWith.addAll(listContains);
+        bagViewFragmentAdapter.setFilter(listStartsWith);
         return false;
     }
 

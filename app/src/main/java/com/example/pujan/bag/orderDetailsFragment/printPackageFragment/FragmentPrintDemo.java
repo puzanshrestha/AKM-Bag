@@ -53,20 +53,19 @@ public class FragmentPrintDemo extends DialogFragment implements VolleyFunctions
      */
     String customer_id = "";
     String customer_name = "";
-    String address="";
-    String shop_number="";
+    String address = "";
+    String shop_number = "";
     String discount, source;
-    int total=0;
+    int total = 0;
 
-    public FragmentPrintDemo(ArrayList<PrintEntity> getData, String customer_id, String customer_name,String address,int total, int discount, String source) {
+    public FragmentPrintDemo(ArrayList<PrintEntity> getData, String customer_id, String customer_name, String address, int total, int discount, String source) {
         this.getData = getData;
         this.customer_id = customer_id;
         this.customer_name = customer_name;
         this.discount = String.valueOf(discount);
         this.source = source;
-        this.address=address;
-        this.total=total;
-
+        this.address = address;
+        this.total = total;
 
 
     }
@@ -86,7 +85,7 @@ public class FragmentPrintDemo extends DialogFragment implements VolleyFunctions
 
     {
         DbHelper dbh = new DbHelper(getContext());
-        this.shop_number=dbh.getShop();
+        this.shop_number = dbh.getShop();
         View view = inflater.inflate(R.layout.main, null);
         getDialog().requestWindowFeature(Window.FEATURE_NO_TITLE);
 
@@ -112,10 +111,8 @@ public class FragmentPrintDemo extends DialogFragment implements VolleyFunctions
 
             btnPendingBill = (Button) view.findViewById(R.id.pendingBillBtn);
             btnPendingBill.setOnClickListener(new ClickEvent());
-            btnPendingBill.setEnabled(false);
 
-            if(customer_id.equals("0"))
-            {
+            if (customer_id.equals("0")) {
                 btnPendingBill.setVisibility(GONE);
             }
         } catch (Exception ex) {
@@ -123,37 +120,33 @@ public class FragmentPrintDemo extends DialogFragment implements VolleyFunctions
         }
 
 
-
-
-        return  view;
+        return view;
     }
 
-     public String getreceipt ()
-        {
-            DbHelper dbh = new DbHelper(getContext());
-            String Receipt_No = dbh.getReceipt().split(",")[0];
+    public String getreceipt() {
+        DbHelper dbh = new DbHelper(getContext());
+        String Receipt_No = dbh.getReceipt().split(",")[0];
 
-            return Receipt_No;
-        }
-    public String getdatereceipt()
-    {
+        return Receipt_No;
+    }
+
+    public String getdatereceipt() {
         DbHelper dbh = new DbHelper(getContext());
         String dateReceipt = dbh.getReceipt().split(",")[1];
         return dateReceipt;
     }
 
-    public void setReceiptAll(String receipt_no,String dateToday,String Receipt_prev_no)
-    {
+    public void setReceiptAll(String receipt_no, String dateToday, String Receipt_prev_no) {
         DbHelper dbh = new DbHelper(getContext());
-        dbh.setReceipt(receipt_no,dateToday,Receipt_prev_no);
+        dbh.setReceipt(receipt_no, dateToday, Receipt_prev_no);
     }
-public String date()
-{
-    SimpleDateFormat sdf = new SimpleDateFormat("yyyy/MM/dd");
-    Date date = new Date();
-    String sDate = sdf.format(date);
-    return sDate;
-}
+
+    public String date() {
+        SimpleDateFormat sdf = new SimpleDateFormat("yyyy/MM/dd");
+        Date date = new Date();
+        String sDate = sdf.format(date);
+        return sDate;
+    }
 
 
     String alignMiddle(String input) {
@@ -170,7 +163,8 @@ public String date()
     @Override
     public void onComplete(String output) {
 
- if (output.equals("addedPendingBill")) {
+        if (output.equals("addedPendingBill")) {
+     /*
             Toast.makeText(getContext(), "Added To Pending Bill List", Toast.LENGTH_SHORT).show();
             String msg = "";
             String lang = getString(R.string.strLang);
@@ -186,12 +180,12 @@ public String date()
                 cmd[2] &= 0xEF;
                 mService.write(cmd);
 
-              /*  msg += alignMiddle("PBRS Enterprises") + "\n";
+              *//*  msg += alignMiddle("PBRS Enterprises") + "\n";
 
                 msg += alignMiddle("New Road, Kathmandu") + "\n";
 
                 msg += alignMiddle("Phone:+977-1-5589330") + "\n\n";
-                */
+                *//*
 
                 msg += "               " + "Date : " + date() + "\n\n";
                 msg +="Receipt No : " + getreceipt() + "\n";
@@ -310,7 +304,9 @@ public String date()
 
                 System.out.println(msg);
 
-            }
+            }*/
+            Toast.makeText(getContext(), "Successfully added to Pending Bill List", Toast.LENGTH_SHORT).show();
+
             Intent i = new Intent(getContext(), ActionListActivity.class);
             startActivity(i);
         } else if (output.equals("updated")) {
@@ -337,7 +333,7 @@ public String date()
 
                 */
                 msg += "               " + "Date : " + date() + "\n\n";
-                msg +="Receipt No : " + getreceipt() + "\n";
+                msg += "Receipt No : " + getreceipt() + "\n";
                 cmd[2] &= 0xEF;
                 mService.write(cmd);
 
@@ -451,11 +447,9 @@ public String date()
             }
             Intent i = new Intent(getContext(), ActionListActivity.class);
             startActivity(i);
-        }
-        else
-            {
+        } else {
             Toast.makeText(getContext(), "Failed to insert record", Toast.LENGTH_SHORT).show();
-            }
+        }
     }
 
     class ClickEvent implements View.OnClickListener {
@@ -463,28 +457,22 @@ public String date()
 
             String receipt;
 
-            if (v == btnSearch)
-            {
+            if (v == btnSearch) {
                 Intent serverIntent = new Intent(getContext(), FragmentDeviceListActivity.class);
                 startActivityForResult(serverIntent, REQUEST_CONNECT_DEVICE);
 
-            }
-            else if (v == btnSendDraw)
-            {
+            } else if (v == btnSendDraw) {
 
-                if (getdatereceipt().equals(date()))
-                    {
-                        setReceiptAll(String.valueOf(Integer.parseInt(getreceipt()) + 1), date(), getreceipt());
-                    }
-                else
-                    {
-                        setReceiptAll("1",date(),getreceipt());
-                    }
+                if (getdatereceipt().equals(date())) {
+                    setReceiptAll(String.valueOf(Integer.parseInt(getreceipt()) + 1), date(), getreceipt());
+                } else {
+                    setReceiptAll("1", date(), getreceipt());
+                }
                 receipt = getreceipt();
                 Gson test = new Gson();
                 String jsonData = test.toJson(getData);
                 VolleyFunctions t = new VolleyFunctions(getContext());
-                t.addOrder( jsonData, customer_id, customer_name, discount,source,shop_number,receipt);
+                t.addOrder(jsonData, customer_id, customer_name, discount, source, shop_number, receipt);
                 t.trigAsyncResponse(FragmentPrintDemo.this);
 
 
@@ -493,7 +481,7 @@ public String date()
                 Gson test = new Gson();
                 String jsonData = test.toJson(getData);
                 VolleyFunctions t = new VolleyFunctions(getContext());
-                t.addPendingBill( jsonData, customer_id, customer_name,String.valueOf(total), address,shop_number);
+                t.addPendingBill(jsonData, customer_id, customer_name, String.valueOf(total), address, shop_number);
                 t.trigAsyncResponse(FragmentPrintDemo.this);
             }
         }
@@ -525,7 +513,7 @@ public String date()
                     Toast.makeText(getContext(), "Device connection was lost",
                             Toast.LENGTH_SHORT).show();
                     btnSendDraw.setEnabled(false);
-                    btnPendingBill.setEnabled(false);
+                    btnPendingBill.setEnabled(true);
                     break;
                 case BluetoothService.MESSAGE_UNABLE_CONNECT:
                     Toast.makeText(getContext(), "Unable to connect device",

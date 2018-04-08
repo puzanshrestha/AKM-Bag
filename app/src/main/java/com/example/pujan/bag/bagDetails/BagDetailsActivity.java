@@ -205,9 +205,6 @@ public class BagDetailsActivity extends AppCompatActivity implements VolleyFunct
 
 
     public void delete() {
-
-
-
         final AlertDialog.Builder alertDialogBuilder = new AlertDialog.Builder(this);
         alertDialogBuilder.setMessage("Are you sure,You want to Delete?");
         alertDialogBuilder.setPositiveButton("Yes",

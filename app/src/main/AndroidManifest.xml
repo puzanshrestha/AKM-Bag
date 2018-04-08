@@ -44,12 +44,11 @@
         <activity android:name=".transactionalReports.BagReports" />
         <activity android:name=".bagStock.StockListActivity" />
         <activity android:name=".bagStock.StockDetailsActivity" />
-        <activity android:name=".pendingBill.pendingBillList" />
         <activity android:name=".transactionalReports.RePrintBill" />
         <activity android:name=".orderDetailsFragment.OrderActivity" />
         <activity android:name=".orderDetailsFragment.printPackageFragment.FragmentDeviceListActivity" />
         <activity android:name=".bagDetails.BagDetailsActivity" />
-        <activity android:name=".orderDetailsFragment.customerSelectFragment.SelectCustomerFragment"></activity>
+        <activity android:name=".pendingBill.PendingBillList"/>
     </application>
 
 </manifest>
